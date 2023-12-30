@@ -5,45 +5,43 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
 import { IoIosAlert } from "react-icons/io";
 import Spinner from "react-bootstrap/Spinner";
-function FormVerifyEmail(props) {
-    const [isShowHideEyePassword, setIsShowHideEyePassword] = useState(true);
+function SendOTP(props) {
     return (
         <>
             <div className="note-for-user">
                 <IoIosAlert className="note-icon" />
                 <span>
-                    Use the 6-digit number sent to your email for verification.
-                    If your email isn't valid, go back to{" "}
-                    <strong>Sign Up</strong> with a correct one
+                    Provide your email to receive on 6-digit number for reset
+                    password
                 </span>
             </div>
 
             <FloatingLabel
                 controlId="floatingInput"
-                label="OTP Number"
+                label="Email"
                 className="mt-3"
             >
                 <Form.Control
-                    type="number"
-                    placeholder="OTP Number"
-                    value={props.email}
+                    type="text"
+                    placeholder="Email"
                     onChange={(event) => {
-                        props.setNumberOTP(event.target.value);
+                        props.setEmailSendOTP(event.target.value);
                     }}
                 />
             </FloatingLabel>
             <div className="btn-form">
                 <span
+                    style={{ backgroundColor: "#ffc008" }}
                     className="btn"
                     onClick={() => {
-                        props.handleVerifyEmail();
+                        props.handleSendEmail();
                     }}
                 >
-                    Verify
+                    Get OTP
                 </span>
             </div>
         </>
     );
 }
 
-export default FormVerifyEmail;
+export default SendOTP;

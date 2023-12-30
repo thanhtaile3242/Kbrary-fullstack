@@ -4,13 +4,12 @@ import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
 import Spinner from "react-bootstrap/Spinner";
-function FormSignIn(props) {
-    const [isShowHideEyePassword, setIsShowHideEyePassword] = useState(true);
+function ResetPassword(props) {
     return (
         <>
             <FloatingLabel
                 controlId="floatingInput"
-                label="Email or Username"
+                label="New password"
                 className="mb-4 signin-input"
             >
                 <Form.Control
@@ -18,13 +17,13 @@ function FormSignIn(props) {
                     placeholder="name@example.com"
                     value={props.signinName}
                     onChange={(event) => {
-                        props.setSigninName(event.target.value);
+                        props.setNewPassword(event.target.value);
                     }}
                 />
             </FloatingLabel>
             <FloatingLabel
                 controlId="floatingPassword"
-                label="Password"
+                label="Confirm password"
                 className="password-input"
             >
                 <Form.Control
@@ -32,21 +31,23 @@ function FormSignIn(props) {
                     placeholder="Password"
                     value={props.signinPassword}
                     onChange={(event) => {
-                        props.setSigninPassword(event.target.value);
+                        props.setConfirmPassword(event.target.value);
                     }}
                 />
             </FloatingLabel>
+
             <div className="btn-form">
                 <span
+                    style={{ backgroundColor: "#ffc008", cursor: "pointer" }}
                     onClick={() => {
-                        props.handleSignIn();
+                        props.handleResetPassword();
                     }}
                 >
-                    Sign In
+                    Reset password
                 </span>
             </div>
         </>
     );
 }
 
-export default FormSignIn;
+export default ResetPassword;

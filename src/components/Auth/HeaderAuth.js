@@ -1,0 +1,50 @@
+import Logo from "../../assets/logo.svg";
+import { useNavigate } from "react-router-dom";
+import "./HeaderAuth.scss";
+const HeaderAuth = (props) => {
+    const navigate = useNavigate();
+    return (
+        <>
+            <div className="header-container">
+                <div className="logo-container">
+                    <img src={Logo} alt="" />
+                </div>
+
+                <>
+                    {props.isSignUp ? (
+                        <div className="auth-container">
+                            <span className="text-signin">
+                                Already have an account ?
+                            </span>
+                            <span
+                                className="sign-in"
+                                onClick={() => {
+                                    navigate("/signin");
+                                }}
+                            >
+                                Sign In
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="auth-container">
+                            <span className="text-signup">
+                                Don't have an account ?
+                            </span>
+                            <span
+                                className="sign-up"
+                                onClick={() => {
+                                    navigate("/signup");
+                                }}
+                            >
+                                Sign Up
+                            </span>
+                        </div>
+                    )}
+                </>
+
+                {/* <div className="auth-container-after">d</div> */}
+            </div>
+        </>
+    );
+};
+export default HeaderAuth;

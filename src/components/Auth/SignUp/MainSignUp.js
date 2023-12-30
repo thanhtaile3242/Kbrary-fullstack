@@ -1,21 +1,27 @@
 import { useState } from "react";
 import FormSignUp from "./FormSignUp.js";
-import FormSignIn from "./FormSignIn.js";
+
+import FormSignIn from "../FormSignIn.js";
 import FormVerifyEmail from "./VerifyEmail.js";
-import "../SignIn/SignIn.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./SignUp.scss";
-import axios from "../utils/axiosCustomize.js";
+import "../MainAuth.scss";
+import axios from "../../utils/axiosCustomize.js";
 import {
-    SmileOutlined,
     SolutionOutlined,
     UserOutlined,
     SafetyOutlined,
 } from "@ant-design/icons";
 import { Steps } from "antd";
-import { ToastContainer, toast } from "react-toastify";
-
-const SignUp = () => {
+import { toast } from "react-toastify";
+import HeaderAuth from "../HeaderAuth.js";
+const validateEmail = (email) => {
+    return String(email)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+};
+const MainSignUp = () => {
     // Steps Component
     const [statusSignUp, setStatusSignUp] = useState(true);
     const [statusSignIn, setStatusSignIn] = useState(false);
@@ -26,13 +32,28 @@ const SignUp = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     // Verify Email Component
-    const [numberOTP, setNumberOTP] = useState("");
+    const [codeEmail, setCodeEmail] = useState("");
     // Sign In Component
     const [signinName, setSigninName] = useState("");
     const [signinPassword, setSigninPassword] = useState("");
 
     // Handle function
     const handleSignUp = async () => {
+        // Validate
+        const isValidEmail = validateEmail(email);
+        if (!isValidEmail) {
+            toast.error("Invalid email");
+            return;
+        }
+        if (!username) {
+            toast.error("Invalid username");
+            return;
+        }
+        if (!password) {
+            toast.error("Invalid password");
+            return;
+        }
+
         const data = {
             email,
             username,
@@ -40,24 +61,33 @@ const SignUp = () => {
         };
         const res = await axios.post(`api/user/signup`, data);
 
-        if (res.status === "success") {
-            await axios.post(`api/user/sendOTP`, {
+        if (res.status === true) {
+            const res2 = await axios.post(`api/user/sendOTPEmail`, {
                 email,
             });
-            toast.success(res.message);
-            setStatusVerifyEmail(true);
-            setStatusSignUp(false);
+            if (res2.status === true) {
+                toast.success(res.message);
+                setStatusVerifyEmail(true);
+                setStatusSignUp(false);
+            } else {
+                return toast.error("Fulfill valid information");
+            }
         } else {
-            return toast.error("Fulfill your information");
+            return toast.error("Fulfill valid information");
         }
     };
     const handleVerifyEmail = async () => {
+        // Validate
+        if (!codeEmail) {
+            toast.error("Invalid code OTP");
+            return;
+        }
         const data = {
             email,
-            OTP: numberOTP,
+            codeEmail,
         };
-        const res = await axios.post(`api/user/verifyemail`, data);
-        if (res.status === "success") {
+        const res = await axios.post(`api/user/verifyOTPEmail`, data);
+        if (res.status === true) {
             toast.success(res.message);
             setStatusSignIn(true);
             setStatusVerifyEmail(false);
@@ -66,9 +96,20 @@ const SignUp = () => {
         }
     };
     const handleSignIn = async () => {
-        const data = { signinName, password: signinPassword };
+        // Validate
+        if (!signinName) {
+            toast.error("Invalid username");
+            return;
+        }
+        if (!signinPassword) {
+            toast.error("Invalid password");
+            return;
+        }
+
+        const data = { username: signinName, password: signinPassword };
         const res = await axios.post(`api/user/signin`, data);
-        if (res.status === "success") {
+        if (res.status === true) {
+            localStorage.setItem("user-info-kbrary", JSON.stringify(res.data));
             toast.success(res.message);
             setStatusSignIn(false);
         } else {
@@ -79,10 +120,7 @@ const SignUp = () => {
     return (
         <>
             <div>
-                <div className="navigate-container">
-                    <span className="btn signup">Sign Up</span>
-                    <span className="btn signin">Sign In</span>
-                </div>
+                <HeaderAuth isSignUp={true} />
                 <div className="form-heading">
                     <h2>Welcome to Kmin library </h2>
                 </div>
@@ -92,7 +130,7 @@ const SignUp = () => {
                             items={[
                                 {
                                     title: "Sign Up",
-                                    status: statusSignUp ? "wait" : "finish",
+                                    status: statusSignUp ? "finish" : "wait",
                                     icon: (
                                         <UserOutlined
                                             onClick={() => {
@@ -106,30 +144,14 @@ const SignUp = () => {
                                 {
                                     title: "Verification",
                                     status: statusVerifyEmail
-                                        ? "wait"
-                                        : "finish",
-                                    icon: (
-                                        <SafetyOutlined
-                                            onClick={() => {
-                                                setStatusVerifyEmail(true);
-                                                setStatusSignUp(false);
-                                                setStatusSignIn(false);
-                                            }}
-                                        />
-                                    ),
+                                        ? "finish"
+                                        : "wait",
+                                    icon: <SafetyOutlined />,
                                 },
                                 {
                                     title: "Sign In",
-                                    status: statusSignIn ? "wait" : "finish",
-                                    icon: (
-                                        <SolutionOutlined
-                                            onClick={() => {
-                                                setStatusSignIn(true);
-                                                setStatusSignUp(false);
-                                                setStatusVerifyEmail(false);
-                                            }}
-                                        />
-                                    ),
+                                    status: statusSignIn ? "finish" : "wait",
+                                    icon: <SolutionOutlined />,
                                 },
                             ]}
                         />
@@ -149,8 +171,10 @@ const SignUp = () => {
                     {/* Verify Email */}
                     {statusVerifyEmail && (
                         <FormVerifyEmail
-                            setNumberOTP={setNumberOTP}
+                            setCodeEmail={setCodeEmail}
                             handleVerifyEmail={handleVerifyEmail}
+                            text={`Use the 6-digit number sent to your email for verification.
+                                If your email isn't valid, go back to Sign Up with a correct one`}
                         />
                     )}
                     {/* Sign In Component */}
@@ -169,4 +193,4 @@ const SignUp = () => {
     );
 };
 
-export default SignUp;
+export default MainSignUp;

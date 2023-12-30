@@ -1,0 +1,43 @@
+.header-container {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 100px;
+    .logo-container {
+        img {
+            width: 120px;
+        }
+    }
+    .auth-container {
+        margin-left: 150px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-weight: 600;
+        font-size: 22px;
+        .sign-up {
+            text-align: center;
+            min-width: 100px;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #4cb9e7;
+
+            cursor: pointer;
+            &:hover {
+                background-color: #79bfea;
+            }
+        }
+        .sign-in {
+            text-align: center;
+            min-width: 100px;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #ffc008;
+            cursor: pointer;
+            &:hover {
+                background-color: #fcde69;
+            }
+        }
+    }
+}
