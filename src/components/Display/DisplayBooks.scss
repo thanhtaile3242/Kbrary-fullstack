@@ -1,0 +1,147 @@
+.book-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .book-item {
+        border-radius: 15px;
+        padding: 0 60px;
+        width: 100%;
+        height: 300px;
+        background-color: white;
+        display: flex;
+        .image-container {
+            display: flex;
+            align-items: center;
+            img {
+                width: 240px;
+                height: 240px;
+                overflow: hidden;
+            }
+        }
+        .info-container {
+            padding: 35px 10px;
+            display: flex;
+            .book-detail {
+                width: 530px;
+                display: flex;
+                flex-direction: column;
+                gap: 22px;
+                h2 {
+                    margin: 0;
+                    font-weight: 500;
+                    font-size: 38px;
+                    max-width: 95%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                span {
+                    font-size: 20px;
+                    b {
+                        color: #004380;
+                    }
+                }
+                .btn-container {
+                    display: flex;
+                    gap: 30px;
+                    margin-top: 8px;
+                    .btn {
+                        min-width: 133px;
+                    }
+                    .btn-borrow {
+                        color: white;
+                        background-color: #004380;
+                    }
+                }
+            }
+            .status {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                width: 150px;
+                height: 40px;
+                border-radius: 15px;
+                padding: 10px;
+                color: green;
+                background-color: rgb(232, 244, 232);
+                .icon {
+                    font-size: 25px;
+                }
+                span {
+                    font-size: 22px;
+                }
+            }
+        }
+    }
+}
+
+.status2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 40px;
+    width: 150px;
+    border-radius: 15px;
+    padding: 5px;
+    color: red;
+    background-color: rgb(250, 225, 225);
+    .icon2 {
+        font-size: 25px;
+    }
+    span {
+        font-size: 22px;
+    }
+}
+.list-borrow-container {
+    position: relative;
+    .py-5 {
+        padding-top: 0 !important;
+        .align-items-center {
+            align-items: start !important;
+            .col {
+                position: sticky;
+                top: 20px;
+                h5 {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 150px;
+                    display: flex;
+                    align-items: center;
+                    gap: 2px;
+                }
+                .col-lg-7 {
+                    width: 100% !important;
+                }
+                .d-flex {
+                    gap: 10px;
+                    align-items: center;
+                }
+                .ms-2 {
+                    margin-top: 19px;
+                }
+                .btn-borrow {
+                    font-size: 25px;
+                    padding: 5px;
+                    border-radius: 10px;
+                    color: white;
+                    text-align: center;
+                    margin-top: 10px;
+                    display: block;
+                    background-color: #004380;
+                    cursor: pointer;
+                    &:hover {
+                        background-color: #0254a1;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// {/* <div className="status2">
+//             <IoMdCloseCircle className="icon2" />
+//             <span>Hết sách</span>
+//         </div> */}

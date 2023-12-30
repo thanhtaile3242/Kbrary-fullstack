@@ -1,0 +1,30 @@
+h5 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 22px;
+}
+.ant-picker {
+    width: 100%;
+    background-color: #3a71ca;
+    border: 1px solid white;
+    .ant-picker-input {
+        input {
+            padding-top: 4px;
+            height: 34.4px;
+            font-size: 17px;
+            color: white;
+
+            &::placeholder {
+                color: white;
+            }
+        }
+        .anticon-calendar {
+            color: white;
+        }
+    }
+}
