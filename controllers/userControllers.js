@@ -32,6 +32,7 @@ export const signUpController = async (req, res) => {
         } else {
             const { username, email, password } = req.body;
             const codeEmail = generateSixDigitRandom();
+            const codeResetPassword = generateSixDigitRandom();
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = {
                 username: username,
@@ -40,6 +41,7 @@ export const signUpController = async (req, res) => {
                 role: "USER",
                 codeVerify: {
                     codeEmail: codeEmail,
+                    codeResetPassword: codeResetPassword,
                 },
             };
             const result = await User.create(newUser);
@@ -61,9 +63,7 @@ export const signUpController = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        return res
-            .status(500)
-            .json({ status: false, message: "Insernal Server Error" });
+        return res.status(500).json({ status: false, message: error.message });
     }
 };
 
@@ -88,11 +88,11 @@ export const sendOTPEmailController = async (req, res) => {
             if (result) {
                 const { codeVerify } = result;
                 const codeEmail = codeVerify.codeEmail;
-                const html = `Here is your one-time verification code (${codeEmail}). Please use this code within the next 5 minutes to verify your email address`;
+                const html = `Here is your one-time verification code <b>${codeEmail}</b>. Please use this code within the next 5 minutes to verify your email address`;
                 sendEmail(email, html);
                 return res.status(200).json({
                     status: true,
-                    message: "Email is sent !!!",
+                    message: "Code verify email is sent !!!",
                 });
             } else {
                 return res.status(400).json({
@@ -132,19 +132,26 @@ export const verifyOTPEmailController = async (req, res) => {
                 email: email,
             });
             if (user) {
-                const updatedUser = await User.findOneAndUpdate(
-                    { email: email, isValidEmail: false },
-                    {
-                        $set: {
-                            isValidEmail: true,
-                            "codeVerify.codeEmail": null,
+                const codeEmailSystem = user.codeVerify.codeEmail;
+                if (codeEmailSystem === codeEmail) {
+                    const updatedUser = await User.findOneAndUpdate(
+                        { email: email, isValidEmail: false },
+                        {
+                            $set: {
+                                isValidEmail: true,
+                                "codeVerify.codeEmail": null,
+                            },
                         },
-                    },
-                    { new: true }
-                );
-                return res
-                    .status(200)
-                    .json({ status: true, message: "Email is valid" });
+                        { new: true }
+                    );
+                    return res
+                        .status(200)
+                        .json({ status: true, message: "Email is valid" });
+                } else {
+                    return res
+                        .status(400)
+                        .json({ status: false, message: "OTP is unmatching" });
+                }
             } else {
                 return res.status(400).json({
                     status: false,
@@ -267,8 +274,8 @@ export const logOutController = async (req, res) => {
             .json({ status: false, message: "Insernal Server Error" });
     }
 };
-// Reset password
-export const sendOTPResetPasswordController = async (req, res) => {
+//
+export const sendOTPResetController = async (req, res) => {
     try {
         const schema = Joi.object({
             email: Joi.string()
@@ -288,12 +295,12 @@ export const sendOTPResetPasswordController = async (req, res) => {
             const result = await User.findOne({ email: email });
             if (result) {
                 const { codeVerify } = result;
-                const codeEmail = codeVerify.codeEmail;
-                const html = `Here is your one-time verification code (${codeEmail}). Please use this code within the next 5 minutes to verify your email address`;
+                const codeResetPassword = codeVerify.codeResetPassword;
+                const html = `Here is your one-time verification code <b>${codeResetPassword}</b>. Please use this code within the next 5 minutes to reset your password`;
                 sendEmail(email, html);
                 return res.status(200).json({
                     status: true,
-                    message: "Email is sent !!!",
+                    message: "Code reset password is sent !!!",
                 });
             } else {
                 return res.status(400).json({
@@ -309,4 +316,117 @@ export const sendOTPResetPasswordController = async (req, res) => {
             message: `Internal server error: ${error.message}`,
         });
     }
+};
+//
+export const verifyOTPResetController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            email: Joi.string()
+                .email({
+                    minDomainSegments: 2,
+                    tlds: { allow: ["com", "net"] },
+                })
+                .required(),
+            codeResetPassword: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { email, codeResetPassword } = req.body;
+            const user = await User.findOne({
+                email: email,
+            });
+            if (user) {
+                const codeResetPasswordSystem =
+                    user.codeVerify.codeResetPassword;
+                if (codeResetPasswordSystem === codeResetPassword) {
+                    const newCodeRest = generateSixDigitRandom();
+
+                    const updatedUser = await User.findOneAndUpdate(
+                        { email: email },
+                        {
+                            $set: {
+                                "codeVerify.codeResetPassword": newCodeRest,
+                            },
+                        },
+                        { new: true }
+                    );
+                    return res.status(200).json({
+                        status: true,
+                        message: "Code reset password is valid",
+                    });
+                } else {
+                    return res
+                        .status(400)
+                        .json({ status: false, message: "OTP is unmatching" });
+                }
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: "Incorrect OTP code",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: false,
+            message: `Internal server error: ${error.message}`,
+        });
+    }
+};
+//
+export const resetPasswordController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            email: Joi.string()
+                .email({
+                    minDomainSegments: 2,
+                    tlds: { allow: ["com", "net"] },
+                })
+                .required(),
+            newPassword: Joi.string().required(),
+            confirmPassword: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { email, newPassword, confirmPassword } = req.body;
+            const result = await User.findOne({ email: email });
+            if (result) {
+                if (newPassword === confirmPassword) {
+                    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+                    await User.findOneAndUpdate(
+                        { email: email },
+                        {
+                            $set: {
+                                password: hashedPassword,
+                            },
+                        }
+                    );
+                    return res.status(200).json({
+                        status: true,
+                        message: "Password is reset successfully",
+                    });
+                } else {
+                    return res.status(400).json({
+                        status: false,
+                        message: "Unmatching password",
+                    });
+                }
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: "User not found",
+                });
+            }
+        }
+    } catch (error) {}
 };
