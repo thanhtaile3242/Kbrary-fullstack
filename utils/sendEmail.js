@@ -12,7 +12,7 @@ const sendEMail = async (email, html) => {
     const info = await transporter.sendMail({
         from: '"Kbrary" <Kbrary.edu@example.com>', // sender address
         to: email,
-        subject: "Forget Password", // Subject line
+        subject: "Notification from Kbrary", // Subject line
         html: html, // html body
     });
 

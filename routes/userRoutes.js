@@ -9,6 +9,11 @@ import {
     sendOTPResetController,
     verifyOTPResetController,
     resetPasswordController,
+    createUserController,
+    getAllUserController,
+    getDetailUserController,
+    updateUserController,
+    deleteUserController,
 } from "../controllers/userControllers.js";
 import { validateSignInData } from "../middlewares/userMiddleware.js";
 // Sign up
@@ -26,5 +31,12 @@ router.post("/sendOTPReset", sendOTPResetController);
 // Verify OTP (reset password)
 router.post("/verifyOTPReset", verifyOTPResetController);
 // Reset password
-router.post("/resetPassword", resetPasswordController);
+router.put("/resetPassword", resetPasswordController);
+
+// Admin feature
+router.post("/create", createUserController);
+router.get("/getAll", getAllUserController);
+router.get("/detailUser/:id", getDetailUserController);
+router.put("/updateUser", updateUserController);
+router.delete("/deleteUser/:id", deleteUserController);
 export default router;

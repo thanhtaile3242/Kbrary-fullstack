@@ -36,7 +36,7 @@ export const signUpController = async (req, res) => {
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = {
                 username: username,
-                email: email,
+                email: email.toLowerCase(),
                 password: hashedPassword,
                 role: "USER",
                 codeVerify: {
@@ -428,5 +428,201 @@ export const resetPasswordController = async (req, res) => {
                 });
             }
         }
-    } catch (error) {}
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const createUserController = async (req, res) => {
+    try {
+        // Validate
+        const schema = Joi.object({
+            username: Joi.string().alphanum().min(3).max(20).required(),
+
+            email: Joi.string()
+                .email({
+                    minDomainSegments: 2,
+                    tlds: { allow: ["com", "net"] },
+                })
+                .required(),
+
+            password: Joi.string()
+                .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+                .required(),
+
+            role: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { username, email, password, role } = req.body;
+            const codeResetPassword = generateSixDigitRandom();
+            const codeEmail = generateSixDigitRandom();
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newUser = {
+                username: username,
+                email: email.toLowerCase(),
+                password: hashedPassword,
+                role: role,
+                codeVerify: {
+                    codeEmail: codeEmail,
+                    codeResetPassword: codeResetPassword,
+                },
+            };
+            const result = await User.create(newUser);
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Create an account successfully",
+                    data: {
+                        username: result.username,
+                        email: result.email,
+                    },
+                });
+            } else {
+                return res.status(500).json({
+                    status: false,
+                    message: "Can not create a new account",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const getAllUserController = async (req, res) => {
+    try {
+        const result = await User.find({})
+            .sort({ updatedAt: "desc" })
+            .select("_id, username email role");
+        return res.status(200).json({
+            status: true,
+            message: "Get all user successfully",
+            data: result,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const getDetailUserController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.pramas, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { id } = req.params;
+            const result = await User.findById(id).select(
+                "username email role codeVerify"
+            );
+
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Get detail successfully",
+                    data: result,
+                });
+            } else {
+                return res.status(400).json({
+                    status: true,
+                    message: "User not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const updateUserController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+            username: Joi.string().alphanum().min(3).max(20).required(),
+            email: Joi.string()
+                .email({
+                    minDomainSegments: 2,
+                    tlds: { allow: ["com", "net"] },
+                })
+                .required(),
+            role: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { id, email, username, role } = req.body;
+            const result = await User.findByIdAndUpdate(
+                { _id: id },
+                {
+                    $set: {
+                        email: email.toLowerCase(),
+                        username: username,
+                        role: role,
+                    },
+                },
+                { new: true }
+            );
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Update user successfully",
+                });
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: "User not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const deleteUserController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.pramas, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { id } = req.params;
+            const result = await User.findByIdAndDelete({ _id: id });
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Delete user successfully",
+                });
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: "User not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
 };
