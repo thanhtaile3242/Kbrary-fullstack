@@ -4,11 +4,17 @@ import MainSignUp from "./components/Auth/SignUp/MainSignUp.js";
 import MainSignIn from "./components/Auth/SignIn/MainSignIn.js";
 import MainForget from "./components/Auth/ForgetPassword/MainForget.js";
 import { ToastContainer, toast } from "react-toastify";
+import HomePage from "./pages/HomePage.js";
+import Admin from "./pages/Admin.js";
 const Layout = () => {
     return (
         <>
             <Routes>
-                <Route path="/" element={<App />} />
+                <Route path="/" element={<App />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="admin" element={<Admin />} />
+                </Route>
+
                 <Route path="signup" element={<MainSignUp />} />
                 <Route path="signin" element={<MainSignIn />} />
                 <Route path="forgetpassword" element={<MainForget />} />

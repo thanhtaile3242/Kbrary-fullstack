@@ -4,6 +4,23 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 100px;
+    position: relative;
+
+    .menu-container {
+        position: absolute;
+        left: 380px;
+        width: 500px;
+        top: 50px;
+        .ant-menu {
+            border: 0;
+        }
+        .ant-menu-title-content {
+            font-size: 25px;
+        }
+        .ant-menu-item-selected {
+            color: #004380;
+        }
+    }
     .logo-container {
         img {
             width: 120px;
@@ -37,5 +54,87 @@
                 background-color: #f5e293;
             }
         }
+    }
+    .auth-container-after {
+        display: flex;
+        position: relative;
+        .icon-noti {
+            position: absolute;
+            top: 1px;
+            right: 2px;
+            svg {
+                position: absolute;
+                top: 15px;
+                right: 14px;
+                width: 25px;
+                height: 25px;
+            }
+        }
+        .ant-float-btn {
+            width: 55px;
+            height: 55px;
+        }
+        .ant-scroll-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            top: -5px;
+            background-color: red;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+        }
+        gap: 30px;
+        .circle {
+            text-align: center;
+            height: 60px;
+            width: 60px;
+            padding: 15px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+        }
+        .alert {
+            margin: 0;
+        }
+        .account {
+            background-color: #ffc008;
+            cursor: pointer;
+        }
+    }
+}
+
+.account__list {
+    position: absolute;
+    top: 120%;
+    left: 60px;
+    min-width: 130px;
+    padding: 5px;
+    border: 2px solid #e7e7ec;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+
+    line-height: 40px;
+    li {
+        display: flex;
+        gap: 18px;
+    }
+    i {
+        margin-left: 5px;
+        justify-self: center;
+        align-self: center;
+        font-size: 20px;
+        color: #888888;
+    }
+    span {
+        font-size: 18px;
+        color: black;
+    }
+    &:hover {
+        background-color: #f7f7f9;
     }
 }

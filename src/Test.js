@@ -1,69 +1,64 @@
-import { QuestionCircleOutlined } from "@ant-design/icons";
 import React from "react";
-import { FloatButton } from "antd";
-import styled from "styled-components";
-const Button: React.FunctionComponent = styled(FloatButton)`
-    background-color: red;
-    position: absolute;
-    z-index: 99;
-    top: 100px;
-`;
-
-const AppTest = () => (
-    <>
-        <div
-            style={{
-                position: "relative",
-            }}
-        >
-            <Button
-                shape="circle"
-                badge={{
-                    count: 5,
-                }}
-                style={{
-                    right: 24 + 70 + 70,
-                }}
-            />
-        </div>
-
-        {/* <FloatButton.Group
-            shape="circle"
-            style={{
-                right: 24 + 70,
-            }}
-        >
-            <FloatButton
-                // href="https://ant.design/index-cn"
-                tooltip={<div>custom badge color</div>}
-                badge={{
-                    count: 5,
-                    color: "blue",
-                    overflowCount: 999,
-                }}
-            />
-            <FloatButton
-                badge={{
-                    count: 5,
-                }}
-            />
-        </FloatButton.Group> */}
-        {/*  */}
-        {/* <FloatButton.Group shape="circle">
-            <FloatButton
-                badge={{
-                    count: 12,
-                }}
-                icon={<QuestionCircleOutlined />}
-            />
-            <FloatButton
-                badge={{
-                    count: 123,
-                    overflowCount: 999,
-                }}
-            />
-            <FloatButton.BackTop visibilityHeight={0} />
-        </FloatButton.Group> */}
-    </>
+import { Space, Table, Tag } from "antd";
+const { Column, ColumnGroup } = Table;
+const data = [
+    {
+        key: "1",
+        firstName: "John",
+        lastName: "Brown",
+        age: 32,
+        address: "New York No. 1 Lake Park",
+        tags: ["nice", "developer"],
+    },
+    {
+        key: "2",
+        firstName: "Jim",
+        lastName: "Green",
+        age: 42,
+        address: "London No. 1 Lake Park",
+        tags: ["loser"],
+    },
+    {
+        key: "3",
+        firstName: "Joe",
+        lastName: "Black",
+        age: 32,
+        address: "Sydney No. 1 Lake Park",
+        tags: ["cool", "teacher"],
+    },
+];
+const App = () => (
+    <Table dataSource={data}>
+        <ColumnGroup title="Name">
+            <Column title="First Name" dataIndex="firstName" key="firstName" />
+            <Column title="Last Name" dataIndex="lastName" key="lastName" />
+        </ColumnGroup>
+        <Column title="Age" dataIndex="age" key="age" />
+        <Column title="Address" dataIndex="address" key="address" />
+        <Column
+            title="Tags"
+            dataIndex="tags"
+            key="tags"
+            render={(tags) => (
+                <>
+                    {tags.map((tag) => (
+                        <Tag color="blue" key={tag}>
+                            {tag}
+                        </Tag>
+                    ))}
+                </>
+            )}
+        />
+        <Column
+            title="Action"
+            key="action"
+            render={(_, record) => (
+                <Space size="middle">
+                    <a>Invite {record.lastName}</a>
+                    <a>Delete</a>
+                </Space>
+            )}
+        />
+    </Table>
 );
-export default AppTest;
+export default App;

@@ -5,8 +5,9 @@ import "../MainAuth.scss";
 import axios from "../../utils/axiosCustomize.js";
 import { toast } from "react-toastify";
 import HeaderAuth from "../HeaderAuth.js";
-
+import { useNavigate, Link } from "react-router-dom";
 const MainSignIn = () => {
+    const navigate = useNavigate();
     // Sign In Component
     const [signinName, setSigninName] = useState("");
     const [signinPassword, setSigninPassword] = useState("");
@@ -27,6 +28,7 @@ const MainSignIn = () => {
         if (res.status === true) {
             localStorage.setItem("user-info-kbrary", JSON.stringify(res.data));
             toast.success(res.message);
+            navigate("/");
         } else {
             return toast.error("Type correct information");
         }

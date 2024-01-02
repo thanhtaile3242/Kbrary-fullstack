@@ -1,5 +1,5 @@
 import Logo from "../../assets/logo.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./HeaderAuth.scss";
 const HeaderAuth = (props) => {
     const navigate = useNavigate();
@@ -7,7 +7,14 @@ const HeaderAuth = (props) => {
         <>
             <div className="header-container">
                 <div className="logo-container">
-                    <img src={Logo} alt="" />
+                    <img
+                        src={Logo}
+                        alt=""
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                            navigate("/");
+                        }}
+                    />
                 </div>
 
                 <>

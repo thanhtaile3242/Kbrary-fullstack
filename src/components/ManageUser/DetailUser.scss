@@ -1,0 +1,27 @@
+.btn-update {
+    position: absolute;
+    right: 95px;
+    top: 165px;
+}
+.btn-close-user {
+    position: absolute;
+    right: 200px;
+    top: 165px;
+}
+.btn-delete {
+    font-size: 35px;
+    position: absolute;
+    right: 45px;
+    top: 167px;
+}
+.list-requests {
+    margin-top: 50px;
+    .title {
+        font-size: 18px;
+        color: #085ed7;
+        margin-bottom: 10px;
+    }
+}
+.ant-table-cell {
+    text-align: center !important;
+}

@@ -85,7 +85,7 @@ const FormForget = () => {
             toast.error("Unmatching password");
             return;
         }
-        const res = await axios.post(`api/user/resetPassword`, {
+        const res = await axios.put(`api/user/resetPassword`, {
             email: emailSendOTP,
             newPassword: newPassword,
             confirmPassword: confirmPassword,
