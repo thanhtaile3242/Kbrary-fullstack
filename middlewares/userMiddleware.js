@@ -16,6 +16,7 @@ export const validateSignInData = async (req, res, next) => {
     } else {
         const { username, password } = req.body;
         const result = await User.findOne({ username: username });
+        console.log(result);
         if (result) {
             req.userInfo = result;
             next();

@@ -8,6 +8,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 app.options("*", cors());
+app.use(express.static("./public/imageUser"));
 // Routes
 app.use("/api/user", userRoute);
 

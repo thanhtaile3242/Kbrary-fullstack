@@ -14,8 +14,11 @@ import {
     getDetailUserController,
     updateUserController,
     deleteUserController,
+    uploadUserImageController,
 } from "../controllers/userControllers.js";
 import { validateSignInData } from "../middlewares/userMiddleware.js";
+import { uploadUserImage } from "../middlewares/uploadFileMiddlware.js";
+
 // Sign up
 router.post("/signup", signUpController);
 // Send OTP (email)
@@ -39,4 +42,10 @@ router.get("/getAll", getAllUserController);
 router.get("/detailUser/:id", getDetailUserController);
 router.put("/updateUser", updateUserController);
 router.delete("/deleteUser/:id", deleteUserController);
+// Upload file
+router.post(
+    "/uploadUserImage",
+    uploadUserImage.single("file"),
+    uploadUserImageController
+);
 export default router;

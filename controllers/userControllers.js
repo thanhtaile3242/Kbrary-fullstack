@@ -1,9 +1,11 @@
 import User from "../models/userModel.js";
 import Joi from "joi";
+import multer from "multer";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import sendEmail from "../utils/sendEmail.js";
 import Redis from "ioredis";
+import { uploadUserImage } from "../middlewares/uploadFileMiddlware.js";
 const redis = new Redis();
 function generateSixDigitRandom() {
     return Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
@@ -23,6 +25,8 @@ export const signUpController = async (req, res) => {
             password: Joi.string()
                 .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
                 .required(),
+
+            role: Joi.string().required(),
         });
         const { error } = schema.validate(req.body, {
             abortEarly: false,
@@ -30,7 +34,7 @@ export const signUpController = async (req, res) => {
         if (error) {
             return res.status(500).json({ status: false, message: error });
         } else {
-            const { username, email, password } = req.body;
+            const { username, email, password, role } = req.body;
             const codeEmail = generateSixDigitRandom();
             const codeResetPassword = generateSixDigitRandom();
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,7 +42,7 @@ export const signUpController = async (req, res) => {
                 username: username,
                 email: email.toLowerCase(),
                 password: hashedPassword,
-                role: "USER",
+                role: role,
                 codeVerify: {
                     codeEmail: codeEmail,
                     codeResetPassword: codeResetPassword,
@@ -169,9 +173,7 @@ export const verifyOTPEmailController = async (req, res) => {
 };
 
 export const signInController = async (req, res) => {
-    const username = req.userInfo.username;
-    const email = req.userInfo.email;
-    const role = req.userInfo.role;
+    const { username, email, avatarName, role, _id } = req.userInfo;
     const maxAttempts = parseInt(5, 10);
     const lockoutTime = parseInt(120, 10);
     const lockoutKey = `lockout: ${username}`;
@@ -208,8 +210,10 @@ export const signInController = async (req, res) => {
         await redis.del(attemptsKey);
         //
         const payload = {
+            id: _id,
             username: username,
             email: email,
+            avatarName: avatarName,
         };
         // Generate access_token and refresh_token
         const access_token = jwt.sign(payload, "LTT-secret-key-access", {
@@ -498,7 +502,7 @@ export const createUserController = async (req, res) => {
 //
 export const getAllUserController = async (req, res) => {
     try {
-        const result = await User.find({})
+        const result = await User.find({ role: "USER" })
             .sort({ updatedAt: "desc" })
             .select("_id, username email role");
         return res.status(200).json({
@@ -525,7 +529,7 @@ export const getDetailUserController = async (req, res) => {
         } else {
             const { id } = req.params;
             const result = await User.findById(id).select(
-                "username email role codeVerify"
+                "username email role codeVerify avatarName"
             );
 
             if (result) {
@@ -624,5 +628,65 @@ export const deleteUserController = async (req, res) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ status: false, message: error.message });
+    }
+};
+
+export const uploadUserImageController = async (req, res) => {
+    try {
+        const { email } = req.body;
+        uploadUserImage.single("file")(req, res, function (err) {
+            if (req.fileValidationError) {
+                return res.status(400).json({
+                    status: false,
+                    message: req.fileValidationError,
+                });
+            } else if (!req.file) {
+                return res.status(400).json({
+                    status: false,
+                    message: "Please select an image to upload",
+                });
+            } else if (err instanceof multer.MulterError) {
+                return res.status(500).json({
+                    status: false,
+                    message:
+                        err.message || "An error occurred during file upload",
+                });
+            } else if (err) {
+                return res.status(500).json({
+                    status: false,
+                    message:
+                        err.message || "An error occurred during file upload",
+                });
+            }
+        });
+        // Save filename into database via email
+        const fileName = req.file.filename;
+        const result = await User.findOneAndUpdate(
+            { email: email },
+            {
+                $set: {
+                    avatarName: fileName,
+                },
+            },
+            { new: true }
+        );
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                email: email,
+                filename: result.avatarName,
+                message: "Avatar uploaded successfully",
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Avatar uploaded unsuccessfully",
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: error.message || "Internal Server Error",
+        });
     }
 };

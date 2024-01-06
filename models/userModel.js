@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
             required: true,
             enum: ["ADMIN", "USER"],
         },
+        avatarName: {
+            type: String,
+            default: null,
+        },
         isValidEmail: {
             type: Boolean,
             required: false,
