@@ -11,61 +11,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { IoNotifications } from "react-icons/io5";
 import { FloatButton } from "antd";
-const items = [
-    {
-        label: "Home",
-        key: "home",
-    },
-    {
-        label: "",
-        key: "",
-    },
-    {
-        label: "",
-        key: "",
-    },
-    {
-        label: "Books",
-        key: "books",
-    },
-    {
-        label: "",
-        key: "",
-    },
-    {
-        label: "",
-        key: "",
-    },
-    {
-        label: "Admin",
-        key: "admin",
-    },
-];
-const Menu123 = () => {
-    const navigate = useNavigate();
-    const [current, setCurrent] = useState("home");
-    const onClick = (e) => {
-        if (e.key === "home") {
-            navigate("/");
-        }
-        if (e.key === "admin") {
-            navigate("/admin");
-        }
-        if (e.key === "info") {
-            navigate("/");
-        }
-        setCurrent(e.key);
-    };
-    return (
-        <Menu
-            onClick={onClick}
-            selectedKeys={current}
-            mode="horizontal"
-            items={items}
-        />
-    );
-};
-// export default App;
 
 const Header = (props) => {
     const navigate = useNavigate();
@@ -76,7 +21,35 @@ const Header = (props) => {
     const handleSignUp = () => {
         navigate("/signup");
     };
+    // Select menu
+    const [isSelectedHome, setIsSelectedHome] = useState(false);
+    const [isSelectedBook, setIsSelectedBook] = useState(false);
+    const [isSelectedAdmin, setIsSelectedAdmin] = useState(false);
+    const [isSelectedUser, setIsSelectedUser] = useState(false);
+    const handleSelectHome = (event) => {
+        setIsSelectedHome(true);
+        setIsSelectedBook(false);
+        setIsSelectedAdmin(false);
+        navigate("/");
+    };
+    const handleSelectBook = (event) => {
+        setIsSelectedBook(true);
+        setIsSelectedHome(false);
+        setIsSelectedAdmin(false);
+    };
+    const handleSelectAdmin = (event) => {
+        setIsSelectedAdmin(true);
+        setIsSelectedBook(false);
+        setIsSelectedHome(false);
+        navigate("/admin");
+    };
 
+    const handleSelectUser = (event) => {
+        setIsSelectedUser(true);
+        setIsSelectedBook(false);
+        setIsSelectedHome(false);
+        navigate("/profile");
+    };
     return (
         <>
             <div className="header-container">
@@ -91,7 +64,52 @@ const Header = (props) => {
                     />
                 </div>
                 <div className="menu-container">
-                    <Menu123 />
+                    <span
+                        className={
+                            isSelectedHome ? "item item-selected" : "item"
+                        }
+                        onClick={() => {
+                            handleSelectHome();
+                        }}
+                    >
+                        Home
+                    </span>
+
+                    <span
+                        className={
+                            isSelectedBook ? "item item-selected" : "item"
+                        }
+                        onClick={() => {
+                            handleSelectBook();
+                        }}
+                    >
+                        Books
+                    </span>
+                    {props.role === "USER" ? (
+                        <span
+                            className="item"
+                            className={
+                                isSelectedUser ? "item item-selected" : "item"
+                            }
+                            onClick={() => {
+                                handleSelectUser();
+                            }}
+                        >
+                            Profile
+                        </span>
+                    ) : (
+                        <span
+                            className="item"
+                            className={
+                                isSelectedAdmin ? "item item-selected" : "item"
+                            }
+                            onClick={() => {
+                                handleSelectAdmin();
+                            }}
+                        >
+                            Admin
+                        </span>
+                    )}
                 </div>
 
                 {props.isLogIn ? (
@@ -110,7 +128,16 @@ const Header = (props) => {
                                 setIsShowHideUserInfo(!isShowHideUserInfo);
                             }}
                         >
-                            <FaUserAlt />
+                            {props.avatar ? (
+                                <img
+                                    style={{ height: "60px", width: "60px" }}
+                                    src={`http://localhost:8802/${props.avatar}`}
+                                    alt=""
+                                />
+                            ) : (
+                                <FaUserAlt />
+                            )}
+
                             {isShowHideUserInfo && (
                                 <ul class="account__list">
                                     <li></li>
@@ -126,6 +153,7 @@ const Header = (props) => {
                                                     "user-info-kbrary"
                                                 );
                                                 props.setIsLogIn(false);
+                                                navigate("/");
                                             }}
                                         >
                                             Log out

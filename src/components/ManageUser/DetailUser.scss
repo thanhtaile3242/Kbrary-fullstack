@@ -15,7 +15,7 @@
     top: 167px;
 }
 .list-requests {
-    margin-top: 50px;
+    margin-top: 40px;
     .title {
         font-size: 18px;
         color: #085ed7;
@@ -24,4 +24,31 @@
 }
 .ant-table-cell {
     text-align: center !important;
+}
+.user-info-container {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    .avatar-change-container {
+        padding-left: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        .avatar-change {
+            height: 160px;
+            width: 160px;
+        }
+        .btn-avatar {
+            margin-top: 10px;
+        }
+    }
+}
+.ReactModal__Content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.btn-change-password {
+    margin-top: 5px;
 }

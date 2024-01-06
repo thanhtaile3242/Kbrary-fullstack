@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 import Modal from "react-bootstrap/Modal";
 import "./ManageUser.scss";
+import { FaSearch } from "react-icons/fa";
 import { Breadcrumb } from "antd";
 import { Space, Table, Tag } from "antd";
 import DetailUser from "./DetailUser.js";
@@ -16,7 +17,12 @@ const validateEmail = (email) => {
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         );
 };
-
+function filterArray(input, data) {
+    const filteredData = data.filter(
+        (item) => item.email.includes(input) || item.username.includes(input)
+    );
+    return filteredData;
+}
 const ManageUser = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -31,6 +37,8 @@ const ManageUser = () => {
     // Detail
     const [detailUser, setDetailUser] = useState(false);
     const [idDetailUser, setIdDetailUser] = useState("");
+    // Search
+    const [inputSearch, setInputSearch] = useState("");
     // Handle Function
     useEffect(() => {
         async function fetchListUser() {
@@ -83,6 +91,16 @@ const ManageUser = () => {
         }
     };
 
+    const handleSearchUser = async (event) => {
+        event.preventDefault();
+        const listSearchUser = filterArray(inputSearch, listUser);
+        setListUser(listSearchUser);
+        if (!inputSearch) {
+            const response = await axios.get(`api/user/getAll`);
+            setListUser(response.data);
+        }
+    };
+
     return (
         <>
             <div
@@ -115,15 +133,16 @@ const ManageUser = () => {
                     ]}
                 />
                 {!detailUser && (
-                    <Button
-                        style={{
-                            backgroundColor: "#1777ff",
-                            marginBottom: "8px",
-                        }}
-                        onClick={handleShow}
-                    >
-                        Create new user
-                    </Button>
+                    <>
+                        <Button
+                            style={{
+                                backgroundColor: "#1777ff",
+                            }}
+                            onClick={handleShow}
+                        >
+                            Create new user
+                        </Button>
+                    </>
                 )}
 
                 <Modal
@@ -203,51 +222,73 @@ const ManageUser = () => {
                 </Modal>
             </div>
             {detailUser ? (
-                <DetailUser
-                    idDetailUser={idDetailUser}
-                    setDetailUser={setDetailUser}
-                    setListUser={setListUser}
-                />
+                <>
+                    <DetailUser
+                        idDetailUser={idDetailUser}
+                        setDetailUser={setDetailUser}
+                        setListUser={setListUser}
+                    />
+                </>
             ) : (
-                <Table
-                    dataSource={listUser}
-                    pagination={{
-                        pageSize: 7,
-                    }}
-                >
-                    <Column
-                        title="Username"
-                        dataIndex="username"
-                        key="username"
-                    />
-                    <Column
-                        title="Email"
-                        dataIndex="email"
-                        key="email"
-                        ellipsis="true"
-                    />
-                    <Column title="Role" dataIndex="role" key="role" />
-                    <Column
-                        title="Feature"
-                        key="action"
-                        render={(record) => (
-                            <span
-                                style={{
-                                    color: "black",
-                                    backgroundColor: "#ffc008",
-                                    marginLeft: "10px",
+                <>
+                    <div className="search-container">
+                        <form
+                            onSubmit={(event) => {
+                                handleSearchUser(event);
+                            }}
+                        >
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={inputSearch}
+                                onChange={(event) => {
+                                    setInputSearch(event.target.value);
                                 }}
-                                className="btn"
-                                onClick={() => {
-                                    setIdDetailUser(record._id);
-                                    setDetailUser(true);
-                                }}
-                            >
-                                Detail
-                            </span>
-                        )}
-                    />
-                </Table>
+                            />
+                        </form>
+
+                        <FaSearch className="search-icon" />
+                    </div>
+                    <Table
+                        dataSource={listUser}
+                        pagination={{
+                            pageSize: 7,
+                        }}
+                    >
+                        <Column
+                            title="Username"
+                            dataIndex="username"
+                            key="username"
+                        />
+                        <Column
+                            title="Email"
+                            dataIndex="email"
+                            key="email"
+                            ellipsis="true"
+                        />
+                        <Column title="Role" dataIndex="role" key="role" />
+                        <Column
+                            title="Feature"
+                            key="action"
+                            render={(record) => (
+                                <span
+                                    style={{
+                                        color: "black",
+                                        backgroundColor: "#ffc008",
+                                        marginLeft: "10px",
+                                    }}
+                                    className="btn"
+                                    onClick={() => {
+                                        setIdDetailUser(record._id);
+                                        setDetailUser(true);
+                                    }}
+                                >
+                                    Detail
+                                </span>
+                            )}
+                        />
+                    </Table>
+                </>
             )}
         </>
     );

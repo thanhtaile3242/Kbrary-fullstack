@@ -7,18 +7,22 @@
     position: relative;
 
     .menu-container {
+        display: flex;
+        justify-content: space-between;
         position: absolute;
-        left: 380px;
+        left: 390px;
         width: 500px;
-        top: 50px;
-        .ant-menu {
-            border: 0;
+        top: 60px;
+
+        .item {
+            font-size: 28px;
+            cursor: pointer;
+            &:hover {
+                color: #79bfea;
+            }
         }
-        .ant-menu-title-content {
-            font-size: 25px;
-        }
-        .ant-menu-item-selected {
-            color: #004380;
+        .item-selected {
+            color: #79bfea;
         }
     }
     .logo-container {

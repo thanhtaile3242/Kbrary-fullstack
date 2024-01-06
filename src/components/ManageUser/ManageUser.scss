@@ -1,7 +1,6 @@
 .btn-modal {
     display: flex;
     justify-content: end;
-    margin-bottom: 10px;
 }
 
 .modal-add-user {
@@ -43,4 +42,18 @@ th {
 }
 table {
     height: 200px !important;
+}
+.search-container {
+    position: relative;
+    input {
+        padding-left: 35px;
+        width: 400px;
+        margin-bottom: 15px;
+    }
+    .search-icon {
+        position: absolute;
+        top: 11px;
+        left: 12px;
+        font-size: 16px;
+    }
 }

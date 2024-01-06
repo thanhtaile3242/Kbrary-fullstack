@@ -10,19 +10,29 @@ import Footer from "./components/Footer/Footer.js";
 import { useEffect, useState } from "react";
 function App() {
     const [isLogIn, setIsLogIn] = useState(false);
+    const [avatar, setAvatar] = useState("");
+    const [role, setRole] = useState("");
     useEffect(() => {
         const user = localStorage.getItem("user-info-kbrary");
         if (user) {
             setIsLogIn(true);
+            setAvatar(JSON.parse(user).avatarName);
+            setRole(JSON.parse(user).role);
         }
     }, []);
+
     return (
         <>
             <div style={{ position: "sticky", top: "0", zIndex: "999" }}>
-                <Header isLogIn={isLogIn} setIsLogIn={setIsLogIn} />
+                <Header
+                    isLogIn={isLogIn}
+                    setIsLogIn={setIsLogIn}
+                    avatar={avatar}
+                    role={role}
+                />
             </div>
             <div className="main-container">
-                <Outlet />
+                <Outlet context={[avatar, setAvatar, role]} />
             </div>
             <div
                 className="footer-container"

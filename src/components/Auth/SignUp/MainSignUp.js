@@ -1,8 +1,8 @@
 import { useState } from "react";
 import FormSignUp from "./FormSignUp.js";
-
 import FormSignIn from "../FormSignIn.js";
 import FormVerifyEmail from "./VerifyEmail.js";
+import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../MainAuth.scss";
 import axios from "../../utils/axiosCustomize.js";
@@ -22,6 +22,7 @@ const validateEmail = (email) => {
         );
 };
 const MainSignUp = () => {
+    const navigate = useNavigate();
     // Steps Component
     const [statusSignUp, setStatusSignUp] = useState(true);
     const [statusSignIn, setStatusSignIn] = useState(false);
@@ -58,6 +59,7 @@ const MainSignUp = () => {
             email,
             username,
             password,
+            role: "USER",
         };
         const res = await axios.post(`api/user/signup`, data);
 
@@ -111,7 +113,7 @@ const MainSignUp = () => {
         if (res.status === true) {
             localStorage.setItem("user-info-kbrary", JSON.stringify(res.data));
             toast.success(res.message);
-            setStatusSignIn(false);
+            navigate("/");
         } else {
             return toast.error("Type correct information");
         }
