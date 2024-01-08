@@ -15,10 +15,12 @@ import {
     updateUserController,
     deleteUserController,
     uploadUserImageController,
+    resetPasswordController2,
 } from "../controllers/userControllers.js";
-import { validateSignInData } from "../middlewares/userMiddleware.js";
-import { uploadUserImage } from "../middlewares/uploadFileMiddlware.js";
-
+import {
+    validateSignInData,
+    uploadUserImage,
+} from "../middlewares/userMiddleware.js";
 // Sign up
 router.post("/signup", signUpController);
 // Send OTP (email)
@@ -33,19 +35,23 @@ router.post("/logout", logOutController);
 router.post("/sendOTPReset", sendOTPResetController);
 // Verify OTP (reset password)
 router.post("/verifyOTPReset", verifyOTPResetController);
-// Reset password
+// Reset password 1 (without current password)
 router.put("/resetPassword", resetPasswordController);
+// Reset password 2 (with current password)
+router.put("/resetPassword2", resetPasswordController2);
 
-// Admin feature
+// Admin role
 router.post("/create", createUserController);
-router.get("/getAll", getAllUserController);
+// *
+router.get("/getAll/:role", getAllUserController);
 router.get("/detailUser/:id", getDetailUserController);
 router.put("/updateUser", updateUserController);
 router.delete("/deleteUser/:id", deleteUserController);
-// Upload file
+// Upload file image
 router.post(
     "/uploadUserImage",
-    uploadUserImage.single("file"),
+    uploadUserImage.single("avatar"),
     uploadUserImageController
 );
+
 export default router;

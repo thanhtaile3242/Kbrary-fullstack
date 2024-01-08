@@ -5,7 +5,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import sendEmail from "../utils/sendEmail.js";
 import Redis from "ioredis";
-import { uploadUserImage } from "../middlewares/uploadFileMiddlware.js";
+import {
+    uploadUserImage,
+    validateSignInData,
+} from "../middlewares/userMiddleware.js";
 const redis = new Redis();
 function generateSixDigitRandom() {
     return Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
@@ -39,7 +42,7 @@ export const signUpController = async (req, res) => {
             const codeResetPassword = generateSixDigitRandom();
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = {
-                username: username,
+                username: username.toLowerCase(),
                 email: email.toLowerCase(),
                 password: hashedPassword,
                 role: role,
@@ -348,7 +351,6 @@ export const verifyOTPResetController = async (req, res) => {
                     user.codeVerify.codeResetPassword;
                 if (codeResetPasswordSystem === codeResetPassword) {
                     const newCodeRest = generateSixDigitRandom();
-
                     const updatedUser = await User.findOneAndUpdate(
                         { email: email },
                         {
@@ -438,6 +440,73 @@ export const resetPasswordController = async (req, res) => {
     }
 };
 //
+export const resetPasswordController2 = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            email: Joi.string()
+                .email({
+                    minDomainSegments: 2,
+                    tlds: { allow: ["com", "net"] },
+                })
+                .required(),
+            currentPassword: Joi.string().required(),
+            newPassword: Joi.string().required(),
+            confirmPassword: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { email, newPassword, confirmPassword, currentPassword } =
+                req.body;
+            if (newPassword !== confirmPassword) {
+                return res.status(400).json({
+                    status: false,
+                    message: "Unmatching Password",
+                });
+            }
+            const result = await User.findOne({ email: email });
+            if (result) {
+                const systemPassword = result.password;
+                const isMatch = await bcrypt.compare(
+                    currentPassword,
+                    systemPassword
+                );
+                if (isMatch) {
+                    const hashedPassword = await bcrypt.hash(newPassword, 10);
+                    await User.findOneAndUpdate(
+                        { email: email },
+                        {
+                            $set: {
+                                password: hashedPassword,
+                            },
+                        }
+                    );
+                    return res.status(200).json({
+                        status: true,
+                        message: "Password is reset successfully",
+                    });
+                } else {
+                    return res.status(400).json({
+                        status: false,
+                        message: "Incorrect current password",
+                    });
+                }
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: "User not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
 export const createUserController = async (req, res) => {
     try {
         // Validate
@@ -502,14 +571,22 @@ export const createUserController = async (req, res) => {
 //
 export const getAllUserController = async (req, res) => {
     try {
-        const result = await User.find({ role: "USER" })
+        const role = req.params.role;
+        const result = await User.find({ role: role })
             .sort({ updatedAt: "desc" })
-            .select("_id, username email role");
-        return res.status(200).json({
-            status: true,
-            message: "Get all user successfully",
-            data: result,
-        });
+            .select("_id username email role");
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Get all user successfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: true,
+                message: "Can not get all users",
+            });
+        }
     } catch (error) {
         console.log(error);
         return res.status(500).json({ status: false, message: error.message });
@@ -630,11 +707,11 @@ export const deleteUserController = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
-
+//
 export const uploadUserImageController = async (req, res) => {
     try {
         const { email } = req.body;
-        uploadUserImage.single("file")(req, res, function (err) {
+        uploadUserImage.single("avatar")(req, res, function (err) {
             if (req.fileValidationError) {
                 return res.status(400).json({
                     status: false,
