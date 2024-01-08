@@ -9,6 +9,7 @@
     top: 165px;
 }
 .btn-delete {
+    cursor: pointer;
     font-size: 35px;
     position: absolute;
     right: 45px;
@@ -22,9 +23,9 @@
         margin-bottom: 10px;
     }
 }
-.ant-table-cell {
-    text-align: center !important;
-}
+// .ant-table-cell {
+//     text-align: center !important;
+// }
 .user-info-container {
     margin-top: 60px;
     display: grid;

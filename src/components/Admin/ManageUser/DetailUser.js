@@ -1,30 +1,15 @@
-import Button from "react-bootstrap/Button";
-import ModalImage from "react-modal";
-import Avatar from "react-avatar-edit";
 import Col from "react-bootstrap/Col";
 import { toast } from "react-toastify";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import axios from "../utils/axiosCustomize.js";
+import axios from "../../utils/axiosCustomize.js";
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import { DeleteOutlined } from "@ant-design/icons";
-import "./DetailUser.scss";
+import "../SCSS/DetailAccount.scss";
 import Modal from "react-bootstrap/Modal";
-import { Space, Table, Tag } from "antd";
+import { Table, Tag } from "antd";
 import { useOutletContext } from "react-router-dom";
-import userAvatar from "../../assets/userAvatar.png";
-const dataURLtoFile = (dataurl, filename) => {
-    var arr = dataurl.split(","),
-        mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[arr.length - 1]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-};
+import userAvatar from "../../../assets/userAvatar.png";
 const columns = [
     {
         title: "No",
@@ -136,32 +121,17 @@ const validateEmail = (email) => {
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         );
 };
-const customStyles = {
-    content: {
-        top: "50%",
-        left: "50%",
-        right: "auto",
-        bottom: "auto",
-        marginRight: "-50%",
-        transform: "translate(-50%, -50%)",
-    },
-};
-function DetailUser(props) {
-    // updata avatar image
-    const [defaultAvatar, setDefaultAvatar] = useState("");
-    const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
-    const [imageAvatar, setImageAvatar] = useState(null);
-    const [avatar, setAvatar, role] = useOutletContext();
 
-    //
+const DetailUser = (props) => {
+    const [defaultAvatar, setDefaultAvatar] = useState("");
     const [show, setShow] = useState(false);
-    const navigate = useNavigate();
     const [userId, setUserId] = useState(props.idDetailUser);
     const [userInfor, setUserInfor] = useState({
         email: "",
         username: "",
         role: "",
     });
+    // Handle function
     useEffect(() => {
         async function fetchDetailUser() {
             const response = await axios.get(`api/user/detailUser/${userId}`);
@@ -173,12 +143,6 @@ function DetailUser(props) {
 
     const handleChangeInfor = (event) => {
         setUserInfor({ ...userInfor, [event.target.name]: event.target.value });
-    };
-
-    const onCrop = (event) => {
-        setDefaultAvatar(event);
-        const file = dataURLtoFile(event, "userAvatar.png");
-        setImageAvatar(file);
     };
 
     const handleUpdateUser = async () => {
@@ -205,8 +169,6 @@ function DetailUser(props) {
         const response = await axios.put(`api/user/updateUser`, data);
         if (response.status === true) {
             toast.success(response.message);
-            const result = await axios.get(`api/user/getAll`);
-            props.setListUser(result.data);
         } else {
             toast.error("Invalid information");
             return;
@@ -217,67 +179,41 @@ function DetailUser(props) {
         const response = await axios.delete(`api/user/deleteUser/${userId}`);
         if (response.status === true) {
             toast.success(response.message);
-            const result = await axios.get(`api/user/getAll`);
-            props.setListUser(result.data);
-            props.setDetailUser(false);
+            props.setShowDetailUser(false);
+            props.setShowListUsers(true);
         } else {
             toast.error("Invalid information");
             return;
         }
     };
 
-    const handleUpdateAvatar = async () => {
-        const email = userInfor.email;
-        const data = new FormData();
-        data.append("file", imageAvatar);
-        data.append("email", email);
-        const response = await axios.post(`api/user/uploadUserImage`, data);
-        if (response.status === true) {
-            toast.success(response.message);
-            setModalAvatarOpen(false);
-            setAvatar(response.filename);
-            setDefaultAvatar(response.filename);
-            const user = localStorage.getItem("user-info-kbrary");
-            if (user) {
-                const userObject = JSON.parse(user);
-                userObject.avatarName = response.filename;
-                console.log(userObject);
-                localStorage.setItem(
-                    "user-info-kbrary",
-                    JSON.stringify(userObject)
-                );
-            }
-        } else {
-            toast.error("Error Update Avatar");
-            return;
-        }
-    };
-
     return (
         <>
-            <DeleteOutlined
-                className="btn-delete"
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                    setShow(true);
-                }}
-            />
-            <button
-                className="btn btn-secondary btn-close-user"
-                onClick={() => {
-                    props.setDetailUser(false);
-                }}
-            >
-                Back
-            </button>
-            <button
-                className="btn btn-primary btn-update"
-                onClick={() => {
-                    handleUpdateUser();
-                }}
-            >
-                Update
-            </button>
+            <div className="header-detail-container">
+                <DeleteOutlined
+                    className="btn-delete"
+                    onClick={() => {
+                        setShow(true);
+                    }}
+                />
+                <span
+                    className="btn btn-secondary btn-close-user"
+                    onClick={() => {
+                        props.setShowDetailUser(false);
+                        props.setShowListUsers(true);
+                    }}
+                >
+                    Back
+                </span>
+                <span
+                    className="btn btn-primary btn-update"
+                    onClick={() => {
+                        handleUpdateUser();
+                    }}
+                >
+                    Update
+                </span>
+            </div>
             <div className="user-info-container">
                 <Form>
                     <Row className="mb-3">
@@ -339,38 +275,8 @@ function DetailUser(props) {
                         alt=""
                         className="avatar-change"
                     />
-                    <ModalImage
-                        isOpen={modalAvatarOpen}
-                        onRequestClose={() => {
-                            setModalAvatarOpen(false);
-                        }}
-                        style={customStyles}
-                    >
-                        <Avatar width={300} height={300} onCrop={onCrop} />
-                        <span
-                            className="btn btn-primary btn-avatar"
-                            onClick={() => {
-                                handleUpdateAvatar();
-                            }}
-                        >
-                            Save Avatar
-                        </span>
-                    </ModalImage>
-                    {role === "USER" ? (
-                        <span
-                            className="btn btn-primary btn-avatar"
-                            onClick={() => {
-                                setModalAvatarOpen(true);
-                            }}
-                        >
-                            Update Avatar
-                        </span>
-                    ) : (
-                        <></>
-                    )}
                 </div>
             </div>
-
             <div className="list-requests">
                 <label className="title">List of requests</label>
                 <Table
@@ -381,7 +287,8 @@ function DetailUser(props) {
                     }}
                 />
             </div>
-            <div>
+            <div className="modal-delete">
+                {/* Modal delete */}
                 <Modal
                     style={{ top: "200px" }}
                     backdrop="static"
@@ -391,35 +298,33 @@ function DetailUser(props) {
                     }}
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Modal heading</Modal.Title>
+                        <Modal.Title>Confirm delete the account</Modal.Title>
                     </Modal.Header>
                     <Modal.Body style={{ fontWeight: "300" }}>
-                        Confirm you want to delete the account
-                        <br />
                         Having email: <b>{userInfor?.email}</b>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="secondary"
+                        <span
+                            className="btn btn-secondary"
                             onClick={() => {
                                 setShow(false);
                             }}
                         >
                             Close
-                        </Button>
-                        <Button
-                            variant="primary"
+                        </span>
+                        <span
+                            className="btn btn-primary"
                             onClick={() => {
                                 handleDeleteUser();
                             }}
                         >
                             Confirm
-                        </Button>
+                        </span>
                     </Modal.Footer>
                 </Modal>
             </div>
         </>
     );
-}
+};
 
 export default DetailUser;

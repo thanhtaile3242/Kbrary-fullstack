@@ -10,7 +10,7 @@ import axios from "../utils/axiosCustomize.js";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { DeleteOutlined } from "@ant-design/icons";
-import "../ManageUser/DetailUser.scss";
+import "../Admin/SCSS/DetailAccount.scss";
 import Modal from "react-bootstrap/Modal";
 import { Space, Table, Tag } from "antd";
 import { useOutletContext } from "react-router-dom";
@@ -43,7 +43,7 @@ const customStyles = {
         transform: "translate(-50%, -50%)",
     },
 };
-function DetailUser(props) {
+function ProfileAccout(props) {
     // updata avatar image
     const [defaultAvatar, setDefaultAvatar] = useState(null);
     const [modalAvatarOpen, setModalAvatarOpen] = useState(false);
@@ -77,10 +77,6 @@ function DetailUser(props) {
         }
         fetchDetailUser();
     }, []);
-
-    // const handleChangeInfor = (event) => {
-    //     setUserInfor({ ...userInfor, [event.target.name]: event.target.value });
-    // };
 
     const onCrop = (event) => {
         setDefaultAvatar(event);
@@ -124,7 +120,7 @@ function DetailUser(props) {
         setIsPreview(false);
         const email = userInfor.email;
         const data = new FormData();
-        data.append("file", imageAvatar);
+        data.append("avatar", imageAvatar);
         data.append("email", email);
         const response = await axios.post(`api/user/uploadUserImage`, data);
         if (response.status === true) {
@@ -192,7 +188,13 @@ function DetailUser(props) {
                             />
                         </Form.Group>
                     </Row>
-                    <button className="btn btn-primary btn-change-passw">
+                    <button
+                        className="btn btn-primary btn-change-password"
+                        onClick={() => {
+                            props.setIsCurrentPass(true);
+                            props.setIsDetailUser(false);
+                        }}
+                    >
                         Change password
                     </button>
                 </Form>
@@ -235,6 +237,7 @@ function DetailUser(props) {
                     </ModalImage>
                     {role === "USER" ? (
                         <span
+                            style={{ fontWeight: "600" }}
                             className="btn btn-warning btn-avatar"
                             onClick={() => {
                                 setModalAvatarOpen(true);
@@ -253,4 +256,4 @@ function DetailUser(props) {
     );
 }
 
-export default DetailUser;
+export default ProfileAccout;

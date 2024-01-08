@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import ProfileAccout from "../components/ProfileUser/DetailAccount.js";
+import ProfileAccout from "../components/ProfileUser/ProfileAccout.js";
 import "./Admin.scss";
-import ManageUser from "../components/ManageUser/ManageUser.js";
+import ResetCurrentPass from "../components/ProfileUser/ResetCurrentPass.js";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -11,21 +11,24 @@ import {
     ProfileFilled,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, theme } from "antd";
+
 const { Header, Sider, Content } = Layout;
 
-const ProfileUser = () => {
-    const [isManageUser, setIsManageUser] = useState(true);
-    const handleMenuItemClick = (event) => {
-        if (event.key === "1") {
-            setIsManageUser(true);
-        }
-        if (event.key === "2") {
-            setIsManageUser(false);
-        }
-        if (event.key === "") {
-            setIsManageUser(false);
-        }
-    };
+const UserInfo = () => {
+    const [isResetCurrentPass, setIsCurrentPass] = useState(false);
+    const [isDetailUser, setIsDetailUser] = useState(true);
+
+    // const handleMenuItemClick = (event) => {
+    //     if (event.key === "1") {
+    //         setIsManageUser(true);
+    //     }
+    //     if (event.key === "2") {
+    //         setIsManageUser(false);
+    //     }
+    //     if (event.key === "") {
+    //         setIsManageUser(false);
+    //     }
+    // };
     return (
         <Layout style={{ maxHeight: "calc(100vh - 120px)" }}>
             <Sider trigger={null} collapsible>
@@ -35,7 +38,7 @@ const ProfileUser = () => {
                     theme="dark"
                     mode="inline"
                     defaultSelectedKeys={[1]}
-                    onClick={(event) => handleMenuItemClick(event)}
+                    // onClick={(event) => handleMenuItemClick(event)}
                     items={[
                         {
                             key: 1,
@@ -58,16 +61,22 @@ const ProfileUser = () => {
 
             <Layout style={{ minHeight: "calc(100vh - 120px)" }}>
                 <Content
+                    className="content-container"
                     style={{
                         margin: "24px 16px",
                         padding: 24,
                     }}
                 >
-                    {/* <div>{isManageUser && <ManageUser />}</div> */}
-                    <ProfileAccout />
+                    {isDetailUser && (
+                        <ProfileAccout
+                            setIsCurrentPass={setIsCurrentPass}
+                            setIsDetailUser={setIsDetailUser}
+                        />
+                    )}
+                    {isResetCurrentPass && <ResetCurrentPass />}
                 </Content>
             </Layout>
         </Layout>
     );
 };
-export default ProfileUser;
+export default UserInfo;

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./Admin.scss";
-import ManageUser from "../components/ManageUser/ManageUser.js";
+import ManageUsers from "../components/Admin/ManageUser/ManageUsers.js";
+import ManageAdmins from "../components/Admin/ManageAdmin/ManageAdmins.js";
+import ManageBooks from "../components/Admin/ManageBook/ManageBooks.js";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -13,16 +15,24 @@ import { Layout, Menu, Button, theme } from "antd";
 const { Header, Sider, Content } = Layout;
 
 const Admin = () => {
-    const [isManageUser, setIsManageUser] = useState(true);
+    const [isManageUsers, setIsManageUsers] = useState(true);
+    const [isManageAdmins, setIsManageAdmins] = useState(false);
+    const [isManageBooks, setIsManageBooks] = useState(false);
     const handleMenuItemClick = (event) => {
         if (event.key === "1") {
-            setIsManageUser(true);
+            setIsManageUsers(true);
+            setIsManageAdmins(false);
+            setIsManageBooks(false);
         }
         if (event.key === "2") {
-            setIsManageUser(false);
+            setIsManageAdmins(true);
+            setIsManageUsers(false);
+            setIsManageBooks(false);
         }
-        if (event.key === "") {
-            setIsManageUser(false);
+        if (event.key === "3") {
+            setIsManageBooks(true);
+            setIsManageUsers(false);
+            setIsManageAdmins(false);
         }
     };
     return (
@@ -33,7 +43,7 @@ const Admin = () => {
                     style={{ padding: "40px", width: "300px" }}
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={[1]}
+                    defaultSelectedKeys={["1"]}
                     onClick={(event) => handleMenuItemClick(event)}
                     items={[
                         {
@@ -43,11 +53,16 @@ const Admin = () => {
                         },
                         {
                             key: 2,
+                            icon: <UserOutlined />,
+                            label: "Manage admins",
+                        },
+                        {
+                            key: 3,
                             icon: <BookFilled />,
                             label: "Manage books",
                         },
                         {
-                            key: 3,
+                            key: 4,
                             icon: <ProfileFilled />,
                             label: "Manage requests",
                         },
@@ -62,7 +77,9 @@ const Admin = () => {
                         padding: 24,
                     }}
                 >
-                    <div>{isManageUser && <ManageUser />}</div>
+                    {isManageUsers && <ManageUsers />}
+                    {isManageAdmins && <ManageAdmins />}
+                    {isManageBooks && <ManageBooks />}
                 </Content>
             </Layout>
         </Layout>
