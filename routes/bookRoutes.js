@@ -8,6 +8,8 @@ import {
     findBooksController,
     detailBookController,
     updateBookImageController,
+    updateBookController,
+    deleteBookController,
 } from "../controllers/bookControllers.js";
 // Create a new book (Role: Admin)
 router.post(
@@ -22,11 +24,13 @@ router.get("/find", findBooksController);
 // Detail book
 router.get("/detailBook/:id", detailBookController);
 // Update book
-
+router.put("/update", updateBookController);
 // Update book image
 router.put(
     "/updateImage",
     uploadBookImage.single("imageBook"),
     updateBookImageController
 );
+// Delete book
+router.delete("/delete/:id", deleteBookController);
 export default router;

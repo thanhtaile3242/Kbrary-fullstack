@@ -221,3 +221,86 @@ export const updateBookImageController = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
+//
+export const updateBookController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+            bookName: Joi.string().required(),
+            category: Joi.string().required(),
+            quantity: Joi.string().required(),
+            status: Joi.string().required(),
+            description: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { id, bookName, category, quantity, status, description } =
+                req.body;
+            const result = await Book.findByIdAndUpdate(
+                { _id: id },
+                {
+                    $set: {
+                        bookName: bookName,
+                        searchBook: bookName
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, ""),
+                        category: category,
+                        quantity: +quantity,
+                        status: status,
+                        description: description,
+                    },
+                },
+                { new: true }
+            );
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Update book successfully",
+                });
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: "Book not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const deleteBookController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.pramas, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { id } = req.params;
+            const result = await Book.findByIdAndDelete({ _id: id });
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Delete book successfully",
+                });
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: "Book not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};

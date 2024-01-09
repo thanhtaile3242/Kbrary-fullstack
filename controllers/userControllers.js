@@ -612,7 +612,7 @@ export const getDetailUserController = async (req, res) => {
             if (result) {
                 return res.status(200).json({
                     status: true,
-                    message: "Get detail user successfully",
+                    message: "Get detail usersuccessfully",
                     data: result,
                 });
             } else {
