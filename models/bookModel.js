@@ -8,6 +8,11 @@ const bookSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        searchBook: {
+            type: String,
+            required: true,
+            index: true,
+        },
         category: {
             type: String,
             required: true,
@@ -33,7 +38,9 @@ const bookSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+// bookSchema.index({ bookName: "text" });
 
 bookSchema.plugin(uniqueValidator);
 const Book = mongoose.model("book", bookSchema);
+
 export default Book;

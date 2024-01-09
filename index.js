@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 app.options("*", cors());
 app.use(express.static("./public/imageUser"));
+app.use(express.static("./public/imageBook"));
 app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
 app.use("/api/user", userRoute);

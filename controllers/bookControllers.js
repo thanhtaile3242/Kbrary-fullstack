@@ -22,10 +22,20 @@ export const createBookController = async (req, res) => {
                 .status(500)
                 .json({ status: false, message: "Image file required" });
         }
-        const { bookName, category, quantity, status, description } = req.body;
+        const {
+            bookName,
+            category,
+            quantity,
+            status,
+            description,
+            searchBook,
+        } = req.body;
         const imageName = req.file.filename;
         const newBook = {
             bookName,
+            searchBook: bookName
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, ""),
             category,
             quantity,
             status,
@@ -78,18 +88,34 @@ export const getAllBooksController = async (req, res) => {
 export const findBooksController = async (req, res) => {
     try {
         const { bookName, category, status } = req.query;
+        const validBookName = Boolean(req.query.bookName);
+        let validCategory = req.query.category;
+        if (req.query.category === "null") {
+            validCategory = null;
+        }
+        let validStatus = req.query.status;
+        if (req.query.status === "null") {
+            validStatus = null;
+        }
+
+        let keyword = "";
+        if (validBookName) {
+            keyword = bookName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
         const criteria = {
-            bookName: { $regex: new RegExp(bookName, "i") },
+            searchBook: { $regex: new RegExp(keyword, "i") },
             status,
             category,
         };
-        if (!bookName) {
-            delete criteria.bookName;
+
+        if (!validBookName) {
+            delete criteria.searchBook;
         }
-        if (!status) {
+        if (!validStatus) {
             delete criteria.status;
         }
-        if (!category) {
+        if (!validCategory) {
             delete criteria.category;
         }
 
@@ -113,5 +139,85 @@ export const findBooksController = async (req, res) => {
             status: false,
             message: error.message,
         });
+    }
+};
+//
+export const detailBookController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.pramas, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { id } = req.params;
+            const result = await Book.findById(id).select(
+                "bookName category quantity status description imageName"
+            );
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Get detail book successfully",
+                    data: result,
+                });
+            } else {
+                return res.status(400).json({
+                    status: true,
+                    message: "Book not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const updateBookImageController = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        }
+        if (!req.file) {
+            return res
+                .status(500)
+                .json({ status: false, message: "Image file required" });
+        }
+        const { id } = req.body;
+        const imageName = req.file.filename;
+        const result = await Book.findByIdAndUpdate(
+            { _id: id },
+            {
+                $set: {
+                    imageName: imageName,
+                },
+            },
+            { new: true }
+        );
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                id: result._id,
+                imageName: result.imageName,
+                message: "image uploaded successfully",
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "image uploaded unsuccessfully",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
     }
 };
