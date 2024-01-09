@@ -6,3 +6,20 @@
         cursor: pointer;
     }
 }
+.image-change-container {
+    padding-top: 40px !important;
+    gap: 12px !important;
+}
+.create-book-container {
+    position: relative;
+    .delete-icon-detail {
+        position: absolute;
+        cursor: pointer;
+        font-size: 35px;
+        top: -30px;
+        right: 40px;
+        &:hover {
+            color: red;
+        }
+    }
+}

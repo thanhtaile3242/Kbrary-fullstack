@@ -3,7 +3,7 @@ import { Breadcrumb } from "antd";
 import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "../../utils/axiosCustomize.js";
-import { Table } from "antd";
+import { Space, Table, Tag } from "antd";
 const { Column } = Table;
 function filterArray(input, data) {
     const filteredData = data.filter(
@@ -77,29 +77,36 @@ const ListUser = (props) => {
                     pageSize: 7,
                 }}
             >
-                <Column title="Username" dataIndex="username" key="username" />
+                {/* <Column title="Username" dataIndex="username" key="username" /> */}
                 <Column
-                    title="Email"
-                    dataIndex="email"
-                    key="email"
-                    ellipsis="true"
-                />
-                <Column title="Role" dataIndex="role" key="role" />
-                <Column
-                    title="Feature"
+                    title="Username"
                     key="action"
                     render={(record) => (
                         <span
-                            className="btn btn-warning"
+                            className="detail-account"
                             onClick={() => {
                                 props.setIdDetailUser(record._id);
                                 props.setShowDetailUser(true);
                                 props.setShowListUsers(false);
                             }}
                         >
-                            Detail
+                            {record.username}
                         </span>
                     )}
+                />
+                <Column
+                    title="Email"
+                    dataIndex="email"
+                    key="email"
+                    ellipsis="true"
+                />
+                <Column
+                    title="Role"
+                    dataIndex="role"
+                    key="role"
+                    render={(record) => {
+                        return <Tag color="green">{record}</Tag>;
+                    }}
                 />
             </Table>
         </>

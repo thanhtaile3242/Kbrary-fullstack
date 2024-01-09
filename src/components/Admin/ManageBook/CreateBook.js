@@ -68,7 +68,9 @@ const CreateBook = (props) => {
             if (response.status === true) {
                 toast.success("Create a book successfully");
                 props.handleShowListBook();
+                return;
             } else {
+                return;
             }
         } else {
             toast.error("Fulfill information required");

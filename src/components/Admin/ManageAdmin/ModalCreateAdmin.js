@@ -102,6 +102,7 @@ const ModalCreateAdmin = (props) => {
                                 }}
                             />
                         </div>
+
                         <div className="col-md-6">
                             <label className="form-label">Password</label>
                             <input

@@ -1,6 +1,8 @@
 import Modal from "react-bootstrap/Modal";
 import AvatarEditor from "react-avatar-editor";
 import { IoIosAddCircle } from "react-icons/io";
+import axios from "../../utils/axiosCustomize.js";
+import { toast } from "react-toastify";
 import "./SCSS/ModalImageBook.scss";
 const dataURLtoFile = (dataurl, filename) => {
     var arr = dataurl.split(","),
@@ -31,14 +33,23 @@ const ModalImageBookDetail = (props) => {
         props.setImageEditor(editor);
     };
     // Final
-    const onCrop = () => {
+    const onCrop = async () => {
         const editor = props.imageEditor;
         if (editor != null) {
             const url = editor.getImageScaledToCanvas().toDataURL();
             props.setBookImageFinalURL(url);
             const file = dataURLtoFile(url, "book-image.png");
-            // props.setBookImageFile(file);
-            props.setShowImageEdit(false);
+            const data = new FormData();
+            data.append("id", props.bookId);
+            data.append("imageBook", file);
+            const response = await axios.put("api/book/updateImage", data);
+            if (response.status === true) {
+                toast.success("Update image successfully");
+                props.setShowImageEdit(false);
+                return;
+            } else {
+                return;
+            }
         }
     };
     //Handle function

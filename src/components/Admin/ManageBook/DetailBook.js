@@ -1,10 +1,12 @@
 import BookDefault from "../../../assets/bookDefault.png";
 import { useState, useEffect } from "react";
+import Modal from "react-bootstrap/Modal";
 import ModalImageBookDetail from "./ModalImageDetail.js";
 import ModalAddCategory from "./ModalAddCategory.js";
 import Avatar from "react-avatar-edit";
 import axios from "../../utils/axiosCustomize.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { DeleteOutlined } from "@ant-design/icons";
 import { IoIosAddCircle } from "react-icons/io";
 import "./SCSS/CreateBook.scss";
 
@@ -33,6 +35,8 @@ const DetailBook = (props) => {
     // Description
     const [description, setDescription] = useState(null);
 
+    // Modal delete book
+    const [show, setShow] = useState(false);
     // Handle function
     useEffect(() => {
         async function fetchCategory() {
@@ -68,25 +72,19 @@ const DetailBook = (props) => {
         fetchBook();
     }, []);
 
-    const handleCreateBook = async () => {
+    const handleUpdateBook = async () => {
         // Validate
-        if (
-            bookName &&
-            status &&
-            quantity &&
-            selectedCategory &&
-            description &&
-            bookImageFile
-        ) {
-            const data = new FormData();
-            data.append("bookName", bookName);
-            data.append("category", selectedCategory);
-            data.append("quantity", +quantity);
-            data.append("status", status);
-            data.append("description", description);
-            data.append("imageBook", bookImageFile);
+        if (bookName && status && quantity && selectedCategory && description) {
+            const data = {
+                id: props.idDetailBook,
+                bookName: bookName,
+                status: status,
+                category: selectedCategory,
+                description: description,
+                quantity: quantity.toString(),
+            };
 
-            const response = await axios.post("api/book/create", data);
+            const response = await axios.put("api/book/update", data);
             if (response.status === true) {
                 toast.success("Create a book successfully");
                 props.handleShowListBook();
@@ -98,9 +96,28 @@ const DetailBook = (props) => {
         }
     };
 
+    const handleDeleteBook = async () => {
+        const response = await axios.delete(
+            `api/book/delete/${props.idDetailBook}`
+        );
+        if (response.status === true) {
+            toast.success(response.message);
+            props.handleShowListBook(true);
+        } else {
+            toast.error("Invalid information");
+            return;
+        }
+    };
+
     return (
         <>
             <div className="create-book-container">
+                <DeleteOutlined
+                    className="delete-icon-detail"
+                    onClick={() => {
+                        setShow(true);
+                    }}
+                />
                 <div className="book-content">
                     <div className="two-items-row-1">
                         <div class="form-floating mb-3">
@@ -194,7 +211,12 @@ const DetailBook = (props) => {
                         >
                             Back
                         </span>
-                        <span className="btn btn-primary">Update book</span>
+                        <span
+                            className="btn btn-primary"
+                            onClick={handleUpdateBook}
+                        >
+                            Update book
+                        </span>
                     </div>
                 </div>
                 <div className="book-image">
@@ -209,6 +231,7 @@ const DetailBook = (props) => {
                         />
                         <div className="image-editor">
                             <ModalImageBookDetail
+                                bookId={props.idDetailBook}
                                 showImageEdit={showImageEdit}
                                 imageEditor={imageEditor}
                                 bookImageFile={bookImageFile}
@@ -235,6 +258,43 @@ const DetailBook = (props) => {
                 showAddCategory={showAddCategory}
                 setShowAddCategory={setShowAddCategory}
             />
+            <div className="modal-delete">
+                {/* Modal delete */}
+                <Modal
+                    className="delete-modal"
+                    style={{ top: "200px" }}
+                    backdrop="static"
+                    show={show}
+                    onHide={() => {
+                        setShow(false);
+                    }}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirm delete the book</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{ fontWeight: "300" }}>
+                        Having book name:&nbsp;<b>{bookName}</b>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <span
+                            className="btn btn-secondary"
+                            onClick={() => {
+                                setShow(false);
+                            }}
+                        >
+                            Close
+                        </span>
+                        <span
+                            className="btn btn-primary"
+                            onClick={() => {
+                                handleDeleteBook();
+                            }}
+                        >
+                            Confirm
+                        </span>
+                    </Modal.Footer>
+                </Modal>
+            </div>
         </>
     );
 };

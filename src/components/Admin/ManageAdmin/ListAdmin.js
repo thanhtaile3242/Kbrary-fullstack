@@ -1,5 +1,5 @@
 import "../SCSS/ListAccount.scss";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "../../utils/axiosCustomize.js";
@@ -99,7 +99,14 @@ const ListAdmin = (props) => {
                     key="email"
                     ellipsis="true"
                 />
-                <Column title="Role" dataIndex="role" key="role" />
+                <Column
+                    title="Role"
+                    dataIndex="role"
+                    key="role"
+                    render={(record) => {
+                        return <Tag color="orange">{record}</Tag>;
+                    }}
+                />
             </Table>
         </>
     );

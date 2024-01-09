@@ -304,7 +304,7 @@ const DetailAdmin = (props) => {
                         <Modal.Title>Confirm delete the account</Modal.Title>
                     </Modal.Header>
                     <Modal.Body style={{ fontWeight: "300" }}>
-                        Having email: <b>{adminInfor?.email}</b>
+                        Having email: &nbsp; <b>{adminInfor?.email}</b>
                     </Modal.Body>
                     <Modal.Footer>
                         <span
