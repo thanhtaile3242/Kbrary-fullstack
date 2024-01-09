@@ -10,6 +10,7 @@ export const createBookController = async (req, res) => {
             quantity: Joi.string().min(0).required(),
             status: Joi.string().required(),
             description: Joi.string().required(),
+            author: Joi.string().required(),
         });
         const { error } = schema.validate(req.body, {
             abortEarly: false,
@@ -22,14 +23,8 @@ export const createBookController = async (req, res) => {
                 .status(500)
                 .json({ status: false, message: "Image file required" });
         }
-        const {
-            bookName,
-            category,
-            quantity,
-            status,
-            description,
-            searchBook,
-        } = req.body;
+        const { bookName, category, quantity, status, description, author } =
+            req.body;
         const imageName = req.file.filename;
         const newBook = {
             bookName,
@@ -37,6 +32,7 @@ export const createBookController = async (req, res) => {
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, ""),
             category,
+            author,
             quantity,
             status,
             description,
@@ -63,7 +59,7 @@ export const getAllBooksController = async (req, res) => {
     try {
         const result = await Book.find({})
             .sort({ updatedAt: "desc" })
-            .select("_id bookName category quantity status");
+            .select("_id bookName category quantity status updatedAt");
         if (result) {
             return res.status(200).json({
                 status: true,
@@ -87,7 +83,17 @@ export const getAllBooksController = async (req, res) => {
 //
 export const findBooksController = async (req, res) => {
     try {
-        const { bookName, category, status } = req.query;
+        const { bookName, category, status, sortField, sortOrder } = req.query;
+
+        let order;
+        if (sortOrder === "ASC") order = 1;
+        else order = -1;
+
+        let validSortField = req.query.sortField;
+        if (req.query.sortField === "null") {
+            validSortField = null;
+        }
+
         const validBookName = Boolean(req.query.bookName);
         let validCategory = req.query.category;
         if (req.query.category === "null") {
@@ -119,7 +125,22 @@ export const findBooksController = async (req, res) => {
             delete criteria.category;
         }
 
-        const result = await Book.find(criteria);
+        let result;
+
+        if (sortField === "name") {
+            result = await Book.find(criteria).sort({
+                searchBook: order,
+            });
+        }
+        if (sortField === "time") {
+            result = await Book.find(criteria).sort({
+                updatedAt: order,
+            });
+        }
+        if (!validSortField) {
+            result = await Book.find(criteria);
+        }
+
         if (result) {
             return res.status(200).json({
                 status: true,
@@ -155,7 +176,7 @@ export const detailBookController = async (req, res) => {
         } else {
             const { id } = req.params;
             const result = await Book.findById(id).select(
-                "bookName category quantity status description imageName"
+                "bookName category quantity status description imageName author"
             );
             if (result) {
                 return res.status(200).json({
@@ -231,6 +252,7 @@ export const updateBookController = async (req, res) => {
             quantity: Joi.string().required(),
             status: Joi.string().required(),
             description: Joi.string().required(),
+            author: Joi.string().required(),
         });
         const { error } = schema.validate(req.body, {
             abortEarly: false,
@@ -238,8 +260,15 @@ export const updateBookController = async (req, res) => {
         if (error) {
             return res.status(500).json({ status: false, message: error });
         } else {
-            const { id, bookName, category, quantity, status, description } =
-                req.body;
+            const {
+                id,
+                bookName,
+                category,
+                quantity,
+                status,
+                description,
+                author,
+            } = req.body;
             const result = await Book.findByIdAndUpdate(
                 { _id: id },
                 {
@@ -251,6 +280,7 @@ export const updateBookController = async (req, res) => {
                         category: category,
                         quantity: +quantity,
                         status: status,
+                        author: author,
                         description: description,
                     },
                 },
