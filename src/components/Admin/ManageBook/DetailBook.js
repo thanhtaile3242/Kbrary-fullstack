@@ -1,24 +1,25 @@
 import BookDefault from "../../../assets/bookDefault.png";
 import { useState, useEffect } from "react";
-import ModalImageBook from "./ModalImageBook.js";
+import ModalImageBookDetail from "./ModalImageDetail.js";
 import ModalAddCategory from "./ModalAddCategory.js";
 import Avatar from "react-avatar-edit";
-import { useNavigate, Link } from "react-router-dom";
 import axios from "../../utils/axiosCustomize.js";
 import { ToastContainer, toast } from "react-toastify";
 import { IoIosAddCircle } from "react-icons/io";
 import "./SCSS/CreateBook.scss";
 
-const CreateBook = (props) => {
-    const navigate = useNavigate();
+const DetailBook = (props) => {
     // Image Book
     const [showImageEdit, setShowImageEdit] = useState(false);
     // The image file
     const [bookImageFile, setBookImageFile] = useState(null);
     // The edit image
     const [imageEditor, setImageEditor] = useState(null);
-    // The final image URL
+    // The final image URL (Preview)
     const [bookImageFinalURL, setBookImageFinalURL] = useState("");
+
+    // URL image from database
+    const [urlImageDB, setURLImageDB] = useState("");
     // Modal add category
     const [showAddCategory, setShowAddCategory] = useState(false);
     const [listCategory, setListCategory] = useState([]);
@@ -44,6 +45,27 @@ const CreateBook = (props) => {
             }
         }
         fetchCategory();
+    }, []);
+
+    useEffect(() => {
+        async function fetchBook() {
+            const response = await axios.get(
+                `api/book/detailBook/${props.idDetailBook}`
+            );
+
+            if (response.status === true) {
+                setBookName(response.data.bookName);
+                setStatus(response.data.status);
+                setQuantity(response.data.quantity);
+                setSelectedCategory(response.data.category);
+                setDescription(response.data.description);
+                setURLImageDB(response.data.imageName);
+                return;
+            } else {
+                return;
+            }
+        }
+        fetchBook();
     }, []);
 
     const handleCreateBook = async () => {
@@ -87,6 +109,7 @@ const CreateBook = (props) => {
                                 class="form-control"
                                 id="floatingInput"
                                 placeholder="bookname"
+                                value={bookName}
                                 onChange={(event) => {
                                     setBookName(event.target.value);
                                 }}
@@ -97,6 +120,7 @@ const CreateBook = (props) => {
                             <select
                                 class="form-select"
                                 id="floatingSelect"
+                                value={status}
                                 onChange={(event) => {
                                     setStatus(event.target.value);
                                 }}
@@ -114,6 +138,7 @@ const CreateBook = (props) => {
                                 type="number"
                                 class="form-control"
                                 id="floatingPassword"
+                                value={quantity}
                                 placeholder="Quality"
                                 onChange={(event) => {
                                     setQuantity(event.target.value);
@@ -123,7 +148,8 @@ const CreateBook = (props) => {
                         </div>
                         <div class="form-floating category-list">
                             <select
-                                class="form-select "
+                                class="form-select"
+                                value={selectedCategory}
                                 id="floatingSelect"
                                 onChange={(event) => {
                                     setSelectedCategory(event.target.value);
@@ -153,6 +179,7 @@ const CreateBook = (props) => {
                                 class="form-control description-text"
                                 placeholder="Leave a comment here"
                                 id="floatingTextarea2"
+                                value={description}
                                 onChange={(event) => {
                                     setDescription(event.target.value);
                                 }}
@@ -167,13 +194,7 @@ const CreateBook = (props) => {
                         >
                             Back
                         </span>
-
-                        <span
-                            className="btn btn-primary"
-                            onClick={handleCreateBook}
-                        >
-                            Save book
-                        </span>
+                        <span className="btn btn-primary">Update book</span>
                     </div>
                 </div>
                 <div className="book-image">
@@ -182,12 +203,12 @@ const CreateBook = (props) => {
                             src={
                                 bookImageFinalURL
                                     ? bookImageFinalURL
-                                    : BookDefault
+                                    : `http://localhost:8802/${urlImageDB}`
                             }
                             className="avatar-change"
                         />
                         <div className="image-editor">
-                            <ModalImageBook
+                            <ModalImageBookDetail
                                 showImageEdit={showImageEdit}
                                 imageEditor={imageEditor}
                                 bookImageFile={bookImageFile}
@@ -218,4 +239,4 @@ const CreateBook = (props) => {
     );
 };
 
-export default CreateBook;
+export default DetailBook;

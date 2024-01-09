@@ -3,34 +3,35 @@ import axios from "../../utils/axiosCustomize.js";
 import "./SCSS/ManageBooks.scss";
 import { toast } from "react-toastify";
 import Modal from "react-bootstrap/Modal";
-// import "../ManageUser/SCSS/ManageUser.scss";
-
 import { Breadcrumb } from "antd";
-
+import DetailBook from "./DetailBook.js";
 import ListBook from "./ListBook.js";
 import CreateBook from "./CreateBook.js";
-const validateEmail = (email) => {
-    return String(email)
-        .toLowerCase()
-        .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
-};
 
 const ManageBooks = () => {
     // 1. List books
     const [showListBook, setShowListBook] = useState(true);
-    // const [listBook, setListBook] = useState([]);
-    // 2. Modal create book
+    // 2. Create book
     const [showCreateBook, setShowCreateBook] = useState(false);
+    // 3, Detail book
+    const [showDetailBook, setShowDetailBook] = useState(false);
+    const [idDetailBook, setIdDetailBook] = useState("");
+
     // Handle function
     const handleShowCreateBook = () => {
         setShowListBook(false);
+        setShowDetailBook(false);
         setShowCreateBook(true);
     };
     const handleShowListBook = () => {
-        setShowListBook(true);
+        setShowDetailBook(false);
         setShowCreateBook(false);
+        setShowListBook(true);
+    };
+    const handleShowDetailBook = () => {
+        setShowCreateBook(false);
+        setShowListBook(false);
+        setShowDetailBook(true);
     };
     return (
         <>
@@ -55,10 +56,20 @@ const ManageBooks = () => {
                 />
             </div>
             {showListBook && (
-                <ListBook handleShowCreateBook={handleShowCreateBook} />
+                <ListBook
+                    handleShowCreateBook={handleShowCreateBook}
+                    handleShowDetailBook={handleShowDetailBook}
+                    setIdDetailBook={setIdDetailBook}
+                />
             )}
             {showCreateBook && (
                 <CreateBook handleShowListBook={handleShowListBook} />
+            )}
+            {showDetailBook && (
+                <DetailBook
+                    handleShowListBook={handleShowListBook}
+                    idDetailBook={idDetailBook}
+                />
             )}
         </>
     );

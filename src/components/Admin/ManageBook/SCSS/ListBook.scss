@@ -1,0 +1,30 @@
+.find-book-container {
+    // margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    .ant-select-lg {
+        min-width: 130px !important;
+    }
+}
+.remove-filter-icon {
+    font-size: 30px;
+    cursor: pointer;
+    &:hover {
+        color: #085ed7;
+    }
+}
+
+.ant-select-selector {
+    min-width: 170px !important;
+}
+
+input.search-input::placeholder {
+    color: #bfbfbf;
+}
+.search-container {
+    margin-top: 20px;
+}
+.ant-table-content {
+    margin-top: 25px;
+}

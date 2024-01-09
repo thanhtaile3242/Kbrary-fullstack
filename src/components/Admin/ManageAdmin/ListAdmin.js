@@ -40,6 +40,7 @@ const ListAdmin = (props) => {
             setListAdmin(response.data);
         }
     };
+
     return (
         <>
             <div className="search-container">
