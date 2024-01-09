@@ -31,7 +31,8 @@ const CreateBook = (props) => {
     const [quantity, setQuantity] = useState(null);
     // Description
     const [description, setDescription] = useState(null);
-
+    // Author
+    const [author, setAuthor] = useState("");
     // Handle function
     useEffect(() => {
         async function fetchCategory() {
@@ -54,13 +55,15 @@ const CreateBook = (props) => {
             quantity &&
             selectedCategory &&
             description &&
-            bookImageFile
+            bookImageFile &&
+            author
         ) {
             const data = new FormData();
             data.append("bookName", bookName);
             data.append("category", selectedCategory);
             data.append("quantity", +quantity);
             data.append("status", status);
+            data.append("author", author);
             data.append("description", description);
             data.append("imageBook", bookImageFile);
 
@@ -110,12 +113,25 @@ const CreateBook = (props) => {
                             <label for="floatingSelect">Status</label>
                         </div>
                     </div>
-                    <div className="two-items-row-2 mb-4">
+                    <div className="two-items-row-2 mb-4 three-item">
+                        <div class="form-floating">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="floatingPassword"
+                                placeholder="Author"
+                                onChange={(event) => {
+                                    setAuthor(event.target.value);
+                                }}
+                            />
+                            <label for="floatingPassword">Author</label>
+                        </div>
                         <div class="form-floating">
                             <input
                                 type="number"
                                 class="form-control"
                                 id="floatingPassword"
+                                value={quantity}
                                 placeholder="Quality"
                                 onChange={(event) => {
                                     setQuantity(event.target.value);

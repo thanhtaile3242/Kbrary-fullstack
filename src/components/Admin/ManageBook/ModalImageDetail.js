@@ -91,11 +91,12 @@ const ModalImageBookDetail = (props) => {
                     <div className="image-center">
                         <AvatarEditor
                             ref={setEditorRef}
-                            width={300}
-                            border={0}
-                            height={300}
                             borderRadius={50}
                             image={props.bookImageFile}
+                            width={300}
+                            border={0}
+                            height={330}
+                            scale={0.75}
                         />
                     </div>
                 </Modal.Body>

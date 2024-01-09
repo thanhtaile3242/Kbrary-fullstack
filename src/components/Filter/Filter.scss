@@ -1,9 +1,10 @@
 .filter-container {
     margin: 10px 50px;
-    padding: 3cap;
+    padding: 20px;
     border-radius: 15px;
+    padding-left: 70px;
     background-color: white;
-    gap: 60px;
+    gap: 90px;
     display: flex;
     align-items: center;
     .search-container {
@@ -13,9 +14,10 @@
             font-size: 20px;
             padding-left: 40px;
             height: 45px;
-            width: 100%;
+            width: 135% !important;
             background-color: #f6f5f3;
             border: none;
+            font-weight: 300;
         }
         .search-icon {
             position: absolute;
@@ -28,10 +30,9 @@
         display: flex;
         align-items: center;
         gap: 15px;
-        span {
-            font-size: 22px;
-            font-weight: 300;
-        }
+        // .category-select {
+        //     font-size: px;
+        // }
     }
 
     .select-dropdown {
@@ -58,7 +59,7 @@
 }
 .arrow {
     cursor: pointer;
-    font-size: 20px;
+    font-size: 25px;
     color: #fac903;
     transition: transform 0.6s ease;
 }

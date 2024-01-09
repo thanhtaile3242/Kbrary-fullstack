@@ -81,7 +81,8 @@ const ModalImageBook = (props) => {
                             ref={setEditorRef}
                             width={300}
                             border={0}
-                            height={300}
+                            height={330}
+                            scale={0.7}
                             borderRadius={50}
                             image={props.bookImageFile}
                         />

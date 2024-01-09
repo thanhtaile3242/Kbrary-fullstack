@@ -1,11 +1,11 @@
 .book-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     .book-item {
         border-radius: 15px;
         padding: 0 60px;
-        width: 100%;
+        width: 104%;
         height: 300px;
         background-color: white;
         display: flex;
@@ -13,14 +13,17 @@
             display: flex;
             align-items: center;
             img {
-                width: 240px;
-                height: 240px;
+                border-radius: 30px;
+                width: 250px;
+                height: 250px;
                 overflow: hidden;
             }
         }
         .info-container {
             padding: 35px 10px;
+            padding-left: 20px;
             display: flex;
+            gap: 20px;
             .book-detail {
                 width: 530px;
                 display: flex;
@@ -82,7 +85,7 @@
     justify-content: center;
     gap: 10px;
     height: 40px;
-    width: 150px;
+    min-width: 180px;
     border-radius: 15px;
     padding: 5px;
     color: red;
@@ -96,21 +99,23 @@
 }
 .list-borrow-container {
     position: relative;
+    left: 70px;
+    width: 495px !important;
     .py-5 {
         padding-top: 0 !important;
         .align-items-center {
             align-items: start !important;
             .col {
                 position: sticky;
-                top: 20px;
+                top: 130px;
                 h5 {
+                    max-width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 13px;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    width: 150px;
-                    display: flex;
-                    align-items: center;
-                    gap: 2px;
                 }
                 .col-lg-7 {
                     width: 100% !important;
@@ -141,7 +146,17 @@
     }
 }
 
-// {/* <div className="status2">
-//             <IoMdCloseCircle className="icon2" />
-//             <span>Hết sách</span>
-//         </div> */}
+.btn-more {
+    margin: 0;
+}
+
+.ms-2 {
+    top: 15px;
+    width: 185px;
+    font-size: 20px;
+    position: absolute;
+    left: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

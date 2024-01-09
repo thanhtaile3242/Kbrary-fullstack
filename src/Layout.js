@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import HomePage from "./pages/HomePage.js";
 import Admin from "./pages/Admin.js";
 import UserInfo from "./pages/UserInfo.js";
+import BookPage from "./pages/BookPage.js";
 const Layout = () => {
     return (
         <>
@@ -15,6 +16,7 @@ const Layout = () => {
                     <Route index element={<HomePage />} />
                     <Route path="admin" element={<Admin />} />
                     <Route path="profile" element={<UserInfo />} />
+                    <Route path="book" element={<BookPage />} />
                 </Route>
                 <Route path="signup" element={<MainSignUp />} />
                 <Route path="signin" element={<MainSignIn />} />

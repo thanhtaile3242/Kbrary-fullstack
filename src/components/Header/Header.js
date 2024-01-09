@@ -36,6 +36,7 @@ const Header = (props) => {
         setIsSelectedBook(true);
         setIsSelectedHome(false);
         setIsSelectedAdmin(false);
+        navigate("/book");
     };
     const handleSelectAdmin = (event) => {
         setIsSelectedAdmin(true);

@@ -8,6 +8,7 @@
     }
 }
 .remove-filter-icon {
+    margin-left: 30px;
     font-size: 30px;
     cursor: pointer;
     &:hover {
@@ -16,7 +17,10 @@
 }
 
 .ant-select-selector {
-    min-width: 170px !important;
+    min-width: 160px !important;
+}
+.search-input {
+    width: 330px !important;
 }
 
 input.search-input::placeholder {

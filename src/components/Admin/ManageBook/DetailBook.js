@@ -34,7 +34,8 @@ const DetailBook = (props) => {
     const [quantity, setQuantity] = useState(null);
     // Description
     const [description, setDescription] = useState(null);
-
+    // Author
+    const [author, setAuthor] = useState("");
     // Modal delete book
     const [show, setShow] = useState(false);
     // Handle function
@@ -63,6 +64,7 @@ const DetailBook = (props) => {
                 setQuantity(response.data.quantity);
                 setSelectedCategory(response.data.category);
                 setDescription(response.data.description);
+                setAuthor(response.data.author);
                 setURLImageDB(response.data.imageName);
                 return;
             } else {
@@ -74,11 +76,19 @@ const DetailBook = (props) => {
 
     const handleUpdateBook = async () => {
         // Validate
-        if (bookName && status && quantity && selectedCategory && description) {
+        if (
+            bookName &&
+            status &&
+            quantity &&
+            selectedCategory &&
+            description &&
+            author
+        ) {
             const data = {
                 id: props.idDetailBook,
                 bookName: bookName,
                 status: status,
+                author: author,
                 category: selectedCategory,
                 description: description,
                 quantity: quantity.toString(),
@@ -149,7 +159,20 @@ const DetailBook = (props) => {
                             <label for="floatingSelect">Status</label>
                         </div>
                     </div>
-                    <div className="two-items-row-2 mb-4">
+                    <div className="two-items-row-2 mb-4 three-item">
+                        <div class="form-floating">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="floatingPassword"
+                                placeholder="Author"
+                                value={author}
+                                onChange={(event) => {
+                                    setAuthor(event.target.value);
+                                }}
+                            />
+                            <label for="floatingPassword">Author</label>
+                        </div>
                         <div class="form-floating">
                             <input
                                 type="number"

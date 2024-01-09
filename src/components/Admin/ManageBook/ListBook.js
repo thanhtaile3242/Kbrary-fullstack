@@ -2,41 +2,38 @@ import { useState, useEffect } from "react";
 import axios from "../../utils/axiosCustomize.js";
 import { FaSearch } from "react-icons/fa";
 import { Select } from "antd";
+import { FaArrowDown } from "react-icons/fa";
 import "./SCSS/ListBook.scss";
 import { MdFilterAltOff } from "react-icons/md";
 import { Space, Table, Tag } from "antd";
 const { Column, ColumnGroup } = Table;
-function filterArray(input, data) {
-    const filteredData = data.filter(
-        (item) => item.email.includes(input) || item.username.includes(input)
-    );
-    return filteredData;
-}
+
 const ListBook = (props) => {
     const [listBook, setListBook] = useState([]);
     const [listCategory, setListCategory] = useState([]);
-
-    //
     const [bookName, setBookName] = useState("");
-    const [category, setCategory] = useState("");
-    const [status, setStatus] = useState("");
+    const [category, setCategory] = useState(null);
+    const [status, setStatus] = useState(null);
+    const [sortField, setSortField] = useState(null);
+    const [isAsc, setIsAsc] = useState(true);
 
-    const handleClearFilter = async () => {
-        setBookName("");
-        setCategory(null);
-        setStatus(null);
-        const response = await axios.get(`api/book/getAll`);
-        if (response.status === true) {
-            setListBook(response.data);
-            return;
-        } else {
-            return;
-        }
-    };
     useEffect(() => {
         if (bookName === "") {
             async function fetchListBook() {
-                const response = await axios.get(`api/book/getAll`);
+                let sortOrder;
+                if (isAsc) sortOrder = "ASC";
+                else sortOrder = "DESC";
+                const queryParams = {
+                    bookName,
+                    category,
+                    status,
+                    sortField,
+                    sortOrder,
+                };
+                const queryString = new URLSearchParams(queryParams).toString();
+                const response = await axios.get(
+                    `api/book/find?${queryString}`
+                );
                 if (response.status === true) {
                     setListBook(response.data);
                     return;
@@ -66,17 +63,37 @@ const ListBook = (props) => {
         fetchListBook();
     }, []);
 
+    const handleChangeOrder = () => {
+        setIsAsc(!isAsc);
+    };
+    const handleClearFilter = async () => {
+        setBookName("");
+        setCategory(null);
+        setStatus(null);
+        setSortField(null);
+        const response = await axios.get(`api/book/find`);
+        if (response.status === true) {
+            setListBook(response.data);
+            return;
+        } else {
+            return;
+        }
+    };
     const handleSelectBookId = (id) => {
         props.handleShowDetailBook();
         props.setIdDetailBook(id);
     };
-
     const handleSearchBooks = async (event) => {
         event.preventDefault();
+        let sortOrder;
+        if (isAsc) sortOrder = "ASC";
+        else sortOrder = "DESC";
         const queryParams = {
             bookName,
             category,
             status,
+            sortField,
+            sortOrder,
         };
         const queryString = new URLSearchParams(queryParams).toString();
         const response = await axios.get(`api/book/find?${queryString}`);
@@ -93,7 +110,6 @@ const ListBook = (props) => {
             <div className="search-container">
                 <div className="find-book-container">
                     <form
-                        style={{ height: "38px" }}
                         onSubmit={(event) => {
                             handleSearchBooks(event);
                         }}
@@ -109,7 +125,6 @@ const ListBook = (props) => {
                         />
                         <FaSearch className="search-icon" />
                     </form>
-
                     <Select
                         className="category-select"
                         size="large"
@@ -151,6 +166,36 @@ const ListBook = (props) => {
                                 label: "Out of stock",
                             },
                         ]}
+                    />
+                    <Select
+                        className="status-select"
+                        size="large"
+                        allowClear
+                        showSearch
+                        value={sortField}
+                        name="sort nè"
+                        placeholder="Select sort"
+                        optionFilterProp="children"
+                        onChange={(value) => {
+                            setSortField(value);
+                        }}
+                        options={[
+                            {
+                                value: "name",
+                                label: "Name",
+                            },
+                            {
+                                value: "time",
+                                label: "Time",
+                            },
+                        ]}
+                    />
+                    <FaArrowDown
+                        className={`arrow ${isAsc ? "rotated" : ""}`}
+                        onClick={(event) => {
+                            handleChangeOrder();
+                            handleSearchBooks(event);
+                        }}
                     />
                     <MdFilterAltOff
                         className="remove-filter-icon"
@@ -212,6 +257,24 @@ const ListBook = (props) => {
                             color = "volcano";
                         }
                         return <Tag color={color}>{record}</Tag>;
+                    }}
+                    align="left"
+                />
+                <Column
+                    title="Time"
+                    dataIndex="updatedAt"
+                    key="updatedAt"
+                    render={(record) => {
+                        const date = new Date(record);
+                        const formattedDate = `${date.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })} - ${date.toLocaleDateString("en-US", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                        })}`;
+                        return <Tag color={"gold"}>{`${formattedDate}`}</Tag>;
                     }}
                     align="left"
                 />
