@@ -1,4 +1,3 @@
-import Header from "../../components/Header/Header.js";
 import Filter from "../../components/Filter/Filter.js";
 import DisplayBooks from "../../components/Display/DisplayBooks.js";
 import "./BookPage.scss";
@@ -14,12 +13,6 @@ const BookPage = () => {
             } else {
                 return;
             }
-            // const responseCategory = await axios.get("api/category/getAll");
-            // if (responseCategory.status === true) {
-            //     setListCategory(responseCategory.data);
-            // } else {
-            //     return;
-            // }
         }
         fetchData();
     }, []);

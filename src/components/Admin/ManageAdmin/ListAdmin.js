@@ -95,16 +95,22 @@ const ListAdmin = (props) => {
                 />
                 <Column
                     title="Email"
-                    dataIndex="email"
                     key="email"
                     ellipsis="true"
+                    render={(record) => (
+                        <span className="detail-account">{record.email}</span>
+                    )}
                 />
                 <Column
                     title="Role"
                     dataIndex="role"
                     key="role"
                     render={(record) => {
-                        return <Tag color="orange">{record}</Tag>;
+                        return (
+                            <Tag color="orange" className="detail-account">
+                                {record}
+                            </Tag>
+                        );
                     }}
                 />
                 <Column
@@ -121,7 +127,12 @@ const ListAdmin = (props) => {
                             month: "2-digit",
                             year: "numeric",
                         })}`;
-                        return <Tag color={"gold"}>{`${formattedDate}`}</Tag>;
+                        return (
+                            <Tag
+                                color={"gold"}
+                                className="detail-account"
+                            >{`${formattedDate}`}</Tag>
+                        );
                     }}
                     align="left"
                 />

@@ -14,8 +14,46 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import book1 from "../../assets/book1.png";
 import React from "react";
 import { MdLibraryBooks } from "react-icons/md";
-export default function RequestBorrow(props) {
-    const listBook = props.listBook;
+import { FaPlus, FaMinus } from "react-icons/fa";
+import { useNavigate, Link } from "react-router-dom";
+import "./SCSS/ListBorrow.scss";
+import { FaClipboardList } from "react-icons/fa";
+const ListBorrow = (props) => {
+    const navigate = useNavigate();
+    const listBorrowBook = props.listBorrowBook;
+
+    const handleIncreaseBook = (item) => {
+        const idItem = item._id;
+        listBorrowBook.forEach((book) => {
+            if (book._id === idItem) {
+                book.quantityBorrow++;
+            }
+        });
+        props.setListBorrowBook([...listBorrowBook]);
+    };
+    const handleDescreaseBook = (item) => {
+        const idItem = item._id;
+        listBorrowBook.forEach((book) => {
+            if (book._id === idItem) {
+                book.quantityBorrow--;
+            }
+        });
+
+        listBorrowBook.forEach((book, index) => {
+            if (book.quantityBorrow == 0) {
+                listBorrowBook.splice(index, 1);
+            }
+        });
+
+        props.setListBorrowBook([...listBorrowBook]);
+    };
+    const handleDeleteBook = (item) => {
+        const idItem = item._id;
+        const listBorrowBookNew = listBorrowBook.filter(
+            (item) => item._id !== idItem
+        );
+        props.setListBorrowBook(listBorrowBookNew);
+    };
     return (
         <>
             <MDBContainer className="py-5 h-100">
@@ -26,23 +64,27 @@ export default function RequestBorrow(props) {
                                 <MDBRow>
                                     <MDBCol lg="7">
                                         <MDBTypography
+                                            className="book-cart-title"
                                             tag="h5"
-                                            style={{ width: "300px" }}
+                                            onClick={() => {
+                                                navigate("/borrow");
+                                            }}
                                         >
-                                            <MdLibraryBooks
+                                            <FaClipboardList
                                                 style={{
                                                     fontSize: "30px",
                                                     color: "black",
                                                     marginRight: "10px",
                                                 }}
                                             />
-                                            Danh sách mượn
+                                            Book cart
                                         </MDBTypography>
                                         <hr />
                                         <div className="d-flex justify-content-between align-items-center mb-2">
                                             <div>
                                                 <p className="mb-0">
-                                                    You have {listBook.length}{" "}
+                                                    You have{" "}
+                                                    {listBorrowBook.length}{" "}
                                                     books in your cart
                                                 </p>
                                             </div>
@@ -54,7 +96,7 @@ export default function RequestBorrow(props) {
                                                 overflowY: "scroll",
                                             }}
                                         >
-                                            {listBook.map((item) => {
+                                            {listBorrowBook.map((item) => {
                                                 return (
                                                     <MDBCard className="mb-2">
                                                         <MDBCardBody>
@@ -72,14 +114,9 @@ export default function RequestBorrow(props) {
                                                                         />
                                                                     </div>
                                                                     <div className="ms-2">
-                                                                        {/* <MDBTypography
-                                                                            tag="h5"
-                                                                            className="title-book"
-                                                                        > */}
                                                                         {
                                                                             item.bookName
                                                                         }
-                                                                        {/* </MDBTypography> */}
                                                                     </div>
                                                                 </div>
                                                                 <div className="d-flex flex-row align-items-center">
@@ -88,28 +125,80 @@ export default function RequestBorrow(props) {
                                                                             width: "80px",
                                                                         }}
                                                                     >
+                                                                        <span
+                                                                            style={{
+                                                                                position:
+                                                                                    "absolute",
+                                                                                fontSize:
+                                                                                    "23px",
+                                                                                right: "110px",
+                                                                                top: "35.5px",
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                item.quantityBorrow
+                                                                            }
+                                                                        </span>
+
                                                                         <MDBTypography
                                                                             tag="h5"
                                                                             className="mb-0"
                                                                         >
-                                                                            1
                                                                             <span
                                                                                 style={{
                                                                                     display:
                                                                                         "flex",
                                                                                     flexDirection:
                                                                                         "column",
-                                                                                    width: "25px",
+                                                                                    width: "20px",
                                                                                     alignItems:
                                                                                         "center",
                                                                                 }}
                                                                             >
-                                                                                <IoIosArrowUp />
-                                                                                <IoIosArrowDown />
+                                                                                <FaPlus
+                                                                                    style={{
+                                                                                        cursor: "pointer",
+                                                                                        position:
+                                                                                            "absolute",
+                                                                                        fontSize:
+                                                                                            "20px",
+                                                                                        right: "76px",
+                                                                                        top: "31px",
+                                                                                    }}
+                                                                                    onClick={() => {
+                                                                                        handleIncreaseBook(
+                                                                                            item
+                                                                                        );
+                                                                                    }}
+                                                                                />
+                                                                                <FaMinus
+                                                                                    style={{
+                                                                                        cursor: "pointer",
+                                                                                        position:
+                                                                                            "absolute",
+                                                                                        fontSize:
+                                                                                            "20px",
+                                                                                        right: "76px",
+                                                                                        top: "56px",
+                                                                                    }}
+                                                                                    onClick={() => {
+                                                                                        handleDescreaseBook(
+                                                                                            item
+                                                                                        );
+                                                                                    }}
+                                                                                />
                                                                             </span>
                                                                             <MDBIcon
+                                                                                style={{
+                                                                                    cursor: "pointer",
+                                                                                }}
                                                                                 fas
                                                                                 icon="trash-alt"
+                                                                                onClick={() => {
+                                                                                    handleDeleteBook(
+                                                                                        item
+                                                                                    );
+                                                                                }}
                                                                             />
                                                                         </MDBTypography>
                                                                     </div>
@@ -132,4 +221,6 @@ export default function RequestBorrow(props) {
             </MDBContainer>
         </>
     );
-}
+};
+
+export default ListBorrow;

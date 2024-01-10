@@ -51,7 +51,7 @@ const ModalUpdateCategory = (props) => {
     return (
         <>
             <Modal
-                size="sm"
+                size="md"
                 className="modal-add-category"
                 backdrop="static"
                 show={props.showModalUpdate}

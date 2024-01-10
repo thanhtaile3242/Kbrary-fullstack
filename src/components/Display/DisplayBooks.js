@@ -3,7 +3,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { IoMdCloseCircle } from "react-icons/io";
 import book1 from "../../assets/book1.png";
 import book2 from "../../assets/book2.png";
-import RequestBorrow from "./RequestBorrow.js";
+import ListBorrow from "./ListBorrow.js";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useState, useEffect } from "react";
@@ -12,7 +12,26 @@ import { MDBIcon } from "mdb-react-ui-kit";
 import axios from "../utils/axiosCustomize.js";
 const DisplayBooks = (props) => {
     const listBook = props.listBook;
-    console.log("check", listBook);
+    const listBorrowBook = props.listBorrowBook;
+    const handleAddBook = (book) => {
+        const idBook = book._id;
+        const isExist = listBorrowBook.find((book) => book._id === idBook);
+        if (!isExist) {
+            const newBook = { ...book, quantityBorrow: 1 };
+
+            props.setListBorrowBook([...listBorrowBook, newBook]);
+            return;
+        } else {
+            listBorrowBook.forEach((book) => {
+                if (book._id === idBook) {
+                    book.quantityBorrow++;
+                }
+            });
+            props.setListBorrowBook([...listBorrowBook]);
+            return;
+        }
+    };
+
     return (
         <>
             <div className="book-container">
@@ -40,7 +59,12 @@ const DisplayBooks = (props) => {
                                             More
                                         </span>
 
-                                        <span className="btn btn-borrow">
+                                        <span
+                                            className="btn btn-borrow"
+                                            onClick={() => {
+                                                handleAddBook(item);
+                                            }}
+                                        >
                                             Borrow
                                         </span>
                                     </div>
@@ -61,9 +85,11 @@ const DisplayBooks = (props) => {
                     );
                 })}
             </div>
-
             <div className="list-borrow-container">
-                <RequestBorrow listBook={listBook} />
+                {/* <ListBorrow
+                    listBorrowBook={props.listBorrowBook}
+                    setListBorrowBook={props.setListBorrowBook}
+                /> */}
             </div>
         </>
     );

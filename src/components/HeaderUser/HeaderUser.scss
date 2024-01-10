@@ -104,8 +104,10 @@
             margin: 0;
         }
         .account {
-            background-color: #ffc008;
+            // padding-right: 45px;
+            // border-right: 3.5px solid #ebebf0 !important;
             cursor: pointer;
+            border-radius: 0;
         }
     }
 }
@@ -140,5 +142,15 @@
     }
     &:hover {
         background-color: #f7f7f9;
+    }
+}
+.detail-borrow {
+    cursor: pointer;
+    color: #004380;
+    position: absolute;
+    right: 80px !important;
+
+    &:hover {
+        color: #79bfea;
     }
 }

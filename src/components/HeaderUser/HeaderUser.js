@@ -6,45 +6,32 @@ import {
 import { Menu } from "antd";
 import { useState, useEffect } from "react";
 import Logo from "../../assets/logo.svg";
-import "./Header.scss";
+import "./HeaderUser.scss";
 import { useNavigate, Link } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { IoNotifications } from "react-icons/io5";
 import { FloatButton } from "antd";
+import { FaListCheck } from "react-icons/fa6";
 
-const Header = (props) => {
+const HeaderUser = (props) => {
     const navigate = useNavigate();
     const [isShowHideUserInfo, setIsShowHideUserInfo] = useState(false);
-    const handleSignIn = () => {
-        navigate("/signin");
-    };
-    const handleSignUp = () => {
-        navigate("/signup");
-    };
     // Select menu
     const [isSelectedHome, setIsSelectedHome] = useState(false);
     const [isSelectedBook, setIsSelectedBook] = useState(false);
-    const [isSelectedAdmin, setIsSelectedAdmin] = useState(false);
     const [isSelectedUser, setIsSelectedUser] = useState(false);
     const handleSelectHome = (event) => {
         setIsSelectedHome(true);
         setIsSelectedBook(false);
-        setIsSelectedAdmin(false);
+        setIsSelectedUser(false);
         navigate("/");
     };
     const handleSelectBook = (event) => {
         setIsSelectedBook(true);
+        setIsSelectedUser(false);
         setIsSelectedHome(false);
-        setIsSelectedAdmin(false);
-        navigate("/book");
+        navigate("/bookUser");
     };
-    const handleSelectAdmin = (event) => {
-        setIsSelectedAdmin(true);
-        setIsSelectedBook(false);
-        setIsSelectedHome(false);
-        navigate("/admin");
-    };
-
     const handleSelectUser = (event) => {
         setIsSelectedUser(true);
         setIsSelectedBook(false);
@@ -86,35 +73,24 @@ const Header = (props) => {
                     >
                         Books
                     </span>
-                    {props.role === "USER" ? (
-                        <span
-                            className="item"
-                            className={
-                                isSelectedUser ? "item item-selected" : "item"
-                            }
-                            onClick={() => {
-                                handleSelectUser();
-                            }}
-                        >
-                            Profile
-                        </span>
-                    ) : (
-                        <span
-                            className="item"
-                            className={
-                                isSelectedAdmin ? "item item-selected" : "item"
-                            }
-                            onClick={() => {
-                                handleSelectAdmin();
-                            }}
-                        >
-                            Admin
-                        </span>
-                    )}
-                </div>
 
+                    <span
+                        className="item"
+                        className={
+                            isSelectedUser ? "item item-selected" : "item"
+                        }
+                        onClick={() => {
+                            handleSelectUser();
+                        }}
+                    >
+                        Profile
+                    </span>
+                </div>
                 {props.isLogIn ? (
-                    <div className="auth-container-after">
+                    <div
+                        className="auth-container-after"
+                        style={{ gap: "90px" }}
+                    >
                         <div className="alert circle">
                             <FloatButton
                                 tooltip={<div>custom badge color</div>}
@@ -138,38 +114,44 @@ const Header = (props) => {
                             ) : (
                                 <FaUserAlt />
                             )}
-
                             {isShowHideUserInfo && (
                                 <ul class="account__list">
-                                    <li></li>
                                     <li>
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         <span>Profile</span>
                                     </li>
-                                    <li>
+                                    <li
+                                        onClick={() => {
+                                            localStorage.removeItem(
+                                                "user-info-kbrary"
+                                            );
+                                            props.setIsLogIn(false);
+                                            navigate("/");
+                                        }}
+                                    >
                                         <i class="fa-solid fa-right-to-bracket"></i>
-                                        <span
-                                            onClick={() => {
-                                                localStorage.removeItem(
-                                                    "user-info-kbrary"
-                                                );
-                                                props.setIsLogIn(false);
-                                                navigate("/");
-                                            }}
-                                        >
-                                            Log out
-                                        </span>
+                                        <span>Log out</span>
                                     </li>
                                 </ul>
                             )}
                         </div>
+
+                        <FloatButton
+                            tooltip={<div>Detail borrow</div>}
+                            badge={{ count: 1 }}
+                            className="icon-noti detail-borrow"
+                            icon={<FaListCheck />}
+                            onClick={() => {
+                                navigate("/borrow");
+                            }}
+                        />
                     </div>
                 ) : (
                     <div className="auth-container-before">
                         <span
                             className="sign-up"
                             onClick={() => {
-                                handleSignUp();
+                                navigate("/signup");
                             }}
                         >
                             Sign Up
@@ -177,7 +159,7 @@ const Header = (props) => {
                         <span
                             className="sign-in"
                             onClick={() => {
-                                handleSignIn();
+                                navigate("/signin");
                             }}
                         >
                             Sign In
@@ -188,4 +170,5 @@ const Header = (props) => {
         </>
     );
 };
-export default Header;
+
+export default HeaderUser;

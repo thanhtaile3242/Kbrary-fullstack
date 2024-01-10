@@ -237,14 +237,19 @@ const ListBook = (props) => {
                     key="category"
                     align="left"
                     render={(record) => (
-                        <span>{record.category.categoryName}</span>
+                        <span className="detail-account">
+                            {record.category.categoryName}
+                        </span>
                     )}
                 />
                 <Column
                     title="Quantity"
-                    dataIndex="quantity"
-                    key="quantity"
                     align="left"
+                    render={(record) => (
+                        <span className="detail-account">
+                            {record.quantity}
+                        </span>
+                    )}
                 />
                 <Column
                     title="Status"
@@ -258,7 +263,11 @@ const ListBook = (props) => {
                         if (record === "OUTOFSTOCK") {
                             color = "volcano";
                         }
-                        return <Tag color={color}>{record}</Tag>;
+                        return (
+                            <Tag color={color} className="detail-account">
+                                {record}
+                            </Tag>
+                        );
                     }}
                     align="left"
                 />
@@ -276,7 +285,12 @@ const ListBook = (props) => {
                             month: "2-digit",
                             year: "numeric",
                         })}`;
-                        return <Tag color={"gold"}>{`${formattedDate}`}</Tag>;
+                        return (
+                            <Tag
+                                color={"gold"}
+                                className="detail-account"
+                            >{`${formattedDate}`}</Tag>
+                        );
                     }}
                     align="left"
                 />
