@@ -81,3 +81,59 @@ export const getAllCategoriesController = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
+export const updateCategoryController = async (req, res) => {
+    try {
+        const { id, updateCategory } = req.body;
+        const result = await Category.findByIdAndUpdate(
+            { _id: id },
+            {
+                $set: {
+                    categoryName: updateCategory,
+                },
+            },
+            { new: true }
+        );
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Update category successfully",
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Can not update category",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+//
+export const getOneCategoryController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await Category.findById({ _id: id });
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Get one category successfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Can not get one category",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};

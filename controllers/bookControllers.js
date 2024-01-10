@@ -128,17 +128,30 @@ export const findBooksController = async (req, res) => {
         let result;
 
         if (sortField === "name") {
-            result = await Book.find(criteria).sort({
-                searchBook: order,
-            });
+            result = await Book.find(criteria)
+                .populate({
+                    path: "category",
+                    select: "categoryName",
+                })
+                .sort({
+                    searchBook: order,
+                });
         }
         if (sortField === "time") {
-            result = await Book.find(criteria).sort({
-                updatedAt: order,
-            });
+            result = await Book.find(criteria)
+                .populate({
+                    path: "category",
+                    select: "categoryName",
+                })
+                .sort({
+                    updatedAt: order,
+                });
         }
         if (!validSortField) {
-            result = await Book.find(criteria);
+            result = await Book.find(criteria).populate({
+                path: "category",
+                select: "categoryName",
+            });
         }
 
         if (result) {

@@ -537,7 +537,7 @@ export const createUserController = async (req, res) => {
             const codeEmail = generateSixDigitRandom();
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = {
-                username: username,
+                username: username.toLowerCase(),
                 email: email.toLowerCase(),
                 password: hashedPassword,
                 role: role,
@@ -574,7 +574,7 @@ export const getAllUserController = async (req, res) => {
         const role = req.params.role;
         const result = await User.find({ role: role })
             .sort({ updatedAt: "desc" })
-            .select("_id username email role");
+            .select("_id username email role updatedAt");
         if (result) {
             return res.status(200).json({
                 status: true,

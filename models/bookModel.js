@@ -18,7 +18,8 @@ const bookSchema = new mongoose.Schema(
             required: true,
         },
         category: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: "category",
             required: true,
         },
         quantity: {
