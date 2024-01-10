@@ -1,9 +1,9 @@
-import Header from "../components/Header/Header.js";
-import Filter from "../components/Filter/Filter.js";
-import DisplayBooks from "../components/Display/DisplayBooks.js";
+import Header from "../../components/Header/Header.js";
+import Filter from "../../components/Filter/Filter.js";
+import DisplayBooks from "../../components/Display/DisplayBooks.js";
 import "./BookPage.scss";
 import { useState, useEffect } from "react";
-import axios from "../components/utils/axiosCustomize.js";
+import axios from "../../components/utils/axiosCustomize.js";
 const BookPage = () => {
     const [listBook, setListBook] = useState([]);
     useEffect(() => {

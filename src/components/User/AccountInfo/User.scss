@@ -2,6 +2,7 @@
     margin-top: 25px;
     position: relative;
     .forget-btn {
+        font-weight: 500;
         position: absolute;
         left: 10px;
         top: 5px;
@@ -23,4 +24,14 @@
 }
 .form-container {
     margin: 50px 100px !important;
+}
+.selected-account {
+    font-weight: 500;
+    color: #019cda;
+}
+.pointer-account {
+    cursor: pointer;
+}
+.btn-reset {
+    font-weight: 500;
 }

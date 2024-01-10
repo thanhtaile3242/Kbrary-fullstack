@@ -31,7 +31,7 @@ function SendOTP(props) {
             </FloatingLabel>
             <div className="btn-form">
                 <span
-                    style={{ backgroundColor: "#ffc008" }}
+                    style={{ backgroundColor: "#ffc008", fontWeight: "500" }}
                     className="btn"
                     onClick={() => {
                         props.handleSendEmail();

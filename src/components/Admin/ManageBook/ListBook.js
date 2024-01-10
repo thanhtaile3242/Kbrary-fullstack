@@ -234,9 +234,11 @@ const ListBook = (props) => {
                 />
                 <Column
                     title="Category"
-                    dataIndex="category"
                     key="category"
                     align="left"
+                    render={(record) => (
+                        <span>{record.category.categoryName}</span>
+                    )}
                 />
                 <Column
                     title="Quantity"

@@ -1,19 +1,18 @@
-import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../Auth/MainAuth.scss";
+import "../../Auth/MainAuth.scss";
 import "./User.scss";
-import ResetPassword from "../Auth/ForgetPassword/ResetPassword.js";
-import SendOTP from "../Auth/ForgetPassword/SendOTP.js";
-import VerifyReset from "../Auth/ForgetPassword/VerifyReset.js";
-import axios from "../utils/axiosCustomize.js";
 import {
     BellOutlined,
     SafetyOutlined,
     SettingOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
 import { Steps } from "antd";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import axios from "../../utils/axiosCustomize.js";
+import ResetPassword from "../../Auth/ForgetPassword/ResetPassword.js";
+import SendOTP from "../../Auth/ForgetPassword/SendOTP.js";
+import VerifyReset from "../../Auth/ForgetPassword/VerifyReset.js";
 const validateEmail = (email) => {
     return String(email)
         .toLowerCase()
@@ -22,8 +21,6 @@ const validateEmail = (email) => {
         );
 };
 const ForgetCurrentPass = () => {
-    //
-    const navigate = useNavigate();
     // Steps Component
     const [statusGetOTP, setStatusGetOTP] = useState(true);
     const [statusVerify, setStatusVerify] = useState(false);

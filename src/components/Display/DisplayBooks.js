@@ -33,7 +33,7 @@ const DisplayBooks = (props) => {
                                     </span>
                                     <span>
                                         <b>Category: </b>
-                                        {item.category}
+                                        {item.category.categoryName}
                                     </span>
                                     <div className="btn-container">
                                         <span className="btn btn-warning btn-more">

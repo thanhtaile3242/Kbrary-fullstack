@@ -36,9 +36,10 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        .avatar-change {
-            height: 160px;
-            width: 160px;
+        img {
+            cursor: pointer;
+            height: 200px;
+            width: 200px;
         }
         .btn-avatar {
             margin-top: 10px;
@@ -51,5 +52,5 @@
     gap: 15px;
 }
 .btn-change-password {
-    margin-top: 5px;
+    margin: 0;
 }

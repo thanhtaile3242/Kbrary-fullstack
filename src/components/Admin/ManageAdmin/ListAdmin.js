@@ -74,7 +74,7 @@ const ListAdmin = (props) => {
             <Table
                 dataSource={listAdmin}
                 pagination={{
-                    pageSize: 7,
+                    pageSize: 8,
                 }}
             >
                 <Column
@@ -106,6 +106,24 @@ const ListAdmin = (props) => {
                     render={(record) => {
                         return <Tag color="orange">{record}</Tag>;
                     }}
+                />
+                <Column
+                    title="Time"
+                    dataIndex="updatedAt"
+                    key="updatedAt"
+                    render={(record) => {
+                        const date = new Date(record);
+                        const formattedDate = `${date.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })} - ${date.toLocaleDateString("en-US", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                        })}`;
+                        return <Tag color={"gold"}>{`${formattedDate}`}</Tag>;
+                    }}
+                    align="left"
                 />
             </Table>
         </>

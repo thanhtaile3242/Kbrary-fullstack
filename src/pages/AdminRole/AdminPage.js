@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./Admin.scss";
-import ManageUsers from "../components/Admin/ManageUser/ManageUsers.js";
-import ManageAdmins from "../components/Admin/ManageAdmin/ManageAdmins.js";
-import ManageBooks from "../components/Admin/ManageBook/ManageBooks.js";
+import ManageUsers from "../../components/Admin/ManageUser/ManageUsers.js";
+import ManageAdmins from "../../components/Admin/ManageAdmin/ManageAdmins.js";
+import ManageBooks from "../../components/Admin/ManageBook/ManageBooks.js";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,

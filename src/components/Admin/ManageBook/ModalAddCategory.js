@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { Table } from "antd";
+import ModalUpdateCategory from "./ModalUpdateCategory";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
 import axios from "../../utils/axiosCustomize.js";
 import "./SCSS/ModalAddCategory.scss";
+import { FiEdit } from "react-icons/fi";
 const { Column } = Table;
 
 const ModalAddCategory = (props) => {
     const [newCategory, setNewCategory] = useState("");
+    //
+    const [showModalUpdate, setShowModalUpdate] = useState(false);
 
     const handleAddCategory = async (event) => {
         event.preventDefault();
@@ -30,27 +34,17 @@ const ModalAddCategory = (props) => {
             return;
         }
     };
+    const [idCategoryUpdate, setIdCategoryUpdate] = useState("");
     const handleDeleteCategory = async (record) => {
         const idCategory = record._id;
-
-        const response = await axios.delete(
-            `api/category/delete/${idCategory}`
-        );
-        if (response.status === true) {
-            const newCategoryList = props.listCategory.filter(
-                (item) => item._id !== idCategory
-            );
-            props.setListCategory(newCategoryList);
-            toast.success("Delete a category");
-            return;
-        } else {
-            toast.error("Can not delete a category");
-            return;
-        }
+        setIdCategoryUpdate(idCategory);
+        setShowModalUpdate(true);
+        props.setShowAddCategory(false);
     };
     return (
         <>
             <Modal
+                size="lg"
                 className="modal-add-category"
                 backdrop="static"
                 show={props.showAddCategory}
@@ -86,7 +80,6 @@ const ModalAddCategory = (props) => {
                                 pageSize: 2,
                             }}
                         >
-                            <Column dataIndex="" key="" />
                             <Column
                                 dataIndex="categoryName"
                                 key="categoryName"
@@ -97,16 +90,21 @@ const ModalAddCategory = (props) => {
                             <Column dataIndex="" key="" />
                             <Column dataIndex="" key="" />
                             <Column dataIndex="" key="" />
+                            <Column dataIndex="" key="" />
+                            <Column dataIndex="" key="" />
+                            <Column dataIndex="" key="" />
+                            <Column dataIndex="" key="" />
+                            <Column dataIndex="" key="" />
+                            <Column dataIndex="" key="" />
                             <Column
                                 key="action"
                                 render={(record) => (
                                     <span
-                                        className="btn btn-warning delete-btn"
                                         onClick={() => {
                                             handleDeleteCategory(record);
                                         }}
                                     >
-                                        Delete
+                                        <FiEdit className="edit-btn" />
                                     </span>
                                 )}
                             />
@@ -133,6 +131,15 @@ const ModalAddCategory = (props) => {
                     </span>
                 </Modal.Footer>
             </Modal>
+            {showModalUpdate && (
+                <ModalUpdateCategory
+                    showModalUpdate={showModalUpdate}
+                    setShowModalUpdate={setShowModalUpdate}
+                    idCategoryUpdate={idCategoryUpdate}
+                    setShowAddCategory={props.setShowAddCategory}
+                    setListCategory={props.setListCategory}
+                />
+            )}
         </>
     );
 };

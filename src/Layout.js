@@ -4,10 +4,10 @@ import MainSignUp from "./components/Auth/SignUp/MainSignUp.js";
 import MainSignIn from "./components/Auth/SignIn/MainSignIn.js";
 import MainForget from "./components/Auth/ForgetPassword/MainForget.js";
 import { ToastContainer, toast } from "react-toastify";
-import HomePage from "./pages/HomePage.js";
-import Admin from "./pages/Admin.js";
-import UserInfo from "./pages/UserInfo.js";
-import BookPage from "./pages/BookPage.js";
+import HomePage from "./pages/HomePage/HomePage.js";
+import Admin from "./pages/AdminRole/AdminPage.js";
+import UserInfo from "./pages/UserRole/UserPage.js";
+import BookPage from "./pages/BookPage/BookPage.js";
 const Layout = () => {
     return (
         <>

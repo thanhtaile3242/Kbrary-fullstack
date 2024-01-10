@@ -45,8 +45,8 @@ const ModalCreateAdmin = (props) => {
             return;
         }
         const data = {
-            email,
-            username,
+            email: email.toLowerCase(),
+            username: username.toLowerCase(),
             password,
             role,
         };

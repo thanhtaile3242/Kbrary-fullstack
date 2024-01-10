@@ -2,7 +2,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import HomePage from "./pages/HomePage.js";
+import HomePage from "./pages/HomePage/HomePage.js";
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header/Header.js";
 import Footer from "./components/Footer/Footer.js";

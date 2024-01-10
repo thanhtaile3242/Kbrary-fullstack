@@ -150,7 +150,7 @@ const CreateBook = (props) => {
                                 <option value={null}>...</option>
                                 {listCategory.map((item) => {
                                     return (
-                                        <option value={item.categoryName}>
+                                        <option value={item._id}>
                                             {item.categoryName}
                                         </option>
                                     );
@@ -230,6 +230,7 @@ const CreateBook = (props) => {
                 listCategory={listCategory}
                 setListCategory={setListCategory}
                 showAddCategory={showAddCategory}
+                setShowAddCategory={setShowAddCategory}
                 setShowAddCategory={setShowAddCategory}
             />
         </>
