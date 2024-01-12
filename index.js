@@ -6,6 +6,7 @@ import connection from "./models/database.js";
 import userRoute from "./Routes/userRoutes.js";
 import bookRoute from "./Routes/bookRoutes.js";
 import categoryRoute from "./Routes/categoryRoutes.js";
+import userRequestRoute from "./Routes/userRequestRoutes.js";
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/user", userRoute);
 app.use("/api/book", bookRoute);
 app.use("/api/category", categoryRoute);
+app.use("/api/userRequest", userRequestRoute);
 (async () => {
     try {
         await connection();

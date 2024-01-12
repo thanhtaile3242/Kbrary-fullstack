@@ -7,7 +7,7 @@ export const createBookController = async (req, res) => {
         const schema = Joi.object({
             bookName: Joi.string().required(),
             category: Joi.string().required(),
-            quantity: Joi.string().min(0).required(),
+            quantitySystem: Joi.string().min(0).required(),
             status: Joi.string().required(),
             description: Joi.string().required(),
             author: Joi.string().required(),
@@ -23,8 +23,14 @@ export const createBookController = async (req, res) => {
                 .status(500)
                 .json({ status: false, message: "Image file required" });
         }
-        const { bookName, category, quantity, status, description, author } =
-            req.body;
+        const {
+            bookName,
+            category,
+            quantitySystem,
+            status,
+            description,
+            author,
+        } = req.body;
         const imageName = req.file.filename;
         const newBook = {
             bookName,
@@ -33,7 +39,7 @@ export const createBookController = async (req, res) => {
                 .replace(/[\u0300-\u036f]/g, ""),
             category,
             author,
-            quantity,
+            quantitySystem,
             status,
             description,
             imageName,
@@ -189,7 +195,7 @@ export const detailBookController = async (req, res) => {
         } else {
             const { id } = req.params;
             const result = await Book.findById(id).select(
-                "bookName category quantity status description imageName author"
+                "bookName category quantitySystem status description imageName author"
             );
             if (result) {
                 return res.status(200).json({
@@ -262,7 +268,7 @@ export const updateBookController = async (req, res) => {
             id: Joi.string().required(),
             bookName: Joi.string().required(),
             category: Joi.string().required(),
-            quantity: Joi.string().required(),
+            quantitySystem: Joi.string().required(),
             status: Joi.string().required(),
             description: Joi.string().required(),
             author: Joi.string().required(),
@@ -277,7 +283,7 @@ export const updateBookController = async (req, res) => {
                 id,
                 bookName,
                 category,
-                quantity,
+                quantitySystem,
                 status,
                 description,
                 author,
@@ -291,7 +297,7 @@ export const updateBookController = async (req, res) => {
                             .normalize("NFD")
                             .replace(/[\u0300-\u036f]/g, ""),
                         category: category,
-                        quantity: +quantity,
+                        quantitySystem: +quantitySystem,
                         status: status,
                         author: author,
                         description: description,

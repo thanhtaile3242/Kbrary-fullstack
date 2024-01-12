@@ -18,11 +18,11 @@ const bookSchema = new mongoose.Schema(
             required: true,
         },
         category: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "category",
             required: true,
         },
-        quantity: {
+        quantitySystem: {
             type: Number,
             required: true,
         },
