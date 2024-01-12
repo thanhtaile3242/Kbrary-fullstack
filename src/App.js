@@ -10,6 +10,14 @@ import { useEffect, useState } from "react";
 import HeaderAdmin from "./components/HeaderAdmin/HeaderAdmin.js";
 import HeaderUser from "./components/HeaderUser/HeaderUser.js";
 function App() {
+    //
+    const [numberBorrowBook, setNumberBorrowBook] = useState(null);
+    //
+    const [userInfo, setUserInfo] = useState({
+        userId: "",
+        email: "",
+        username: "",
+    });
     const [isLogIn, setIsLogIn] = useState(false);
     const [avatar, setAvatar] = useState("");
     const [role, setRole] = useState("");
@@ -19,6 +27,11 @@ function App() {
             setIsLogIn(true);
             setAvatar(JSON.parse(user).avatarName);
             setRole(JSON.parse(user).role);
+            setUserInfo({
+                userId: JSON.parse(user).id,
+                email: JSON.parse(user).email,
+                username: JSON.parse(user).username,
+            });
         }
     }, []);
 
@@ -34,6 +47,7 @@ function App() {
                     />
                 ) : (
                     <HeaderUser
+                        numberBorrowBook={numberBorrowBook}
                         isLogIn={isLogIn}
                         setIsLogIn={setIsLogIn}
                         avatar={avatar}
@@ -48,7 +62,15 @@ function App() {
                     backgroundColor: "#f5f5fa",
                 }}
             >
-                <Outlet context={[avatar, setAvatar, role]} />
+                <Outlet
+                    context={[
+                        avatar,
+                        setAvatar,
+                        role,
+                        setNumberBorrowBook,
+                        userInfo,
+                    ]}
+                />
             </div>
             <div
                 className="footer-container"

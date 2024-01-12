@@ -1,13 +1,23 @@
-const originalDateString = "2024-01-09T01:53:18.892Z";
-const date = new Date(originalDateString);
+import React from "react";
+import { DatePicker, Space } from "antd";
+import moment from "moment";
 
-const formattedDate = `${date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-})} - ${date.toLocaleDateString("en-US", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-})}`;
+const onChange = (date, dateString) => {
+    console.log(date, dateString);
+};
 
-console.log(formattedDate);
+const disabledDate = (current) => {
+    return current && current < moment().endOf("day");
+};
+
+const App = () => (
+    <Space direction="vertical">
+        <DatePicker
+            onChange={onChange}
+            disabledDate={disabledDate}
+            allowClear
+        />
+    </Space>
+);
+
+export default App;

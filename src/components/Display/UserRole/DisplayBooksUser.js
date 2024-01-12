@@ -1,16 +1,17 @@
-import "./SCSS/DisplayBooks.scss";
+import "../SCSS/DisplayBooks.scss";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdCloseCircle } from "react-icons/io";
-import book1 from "../../assets/book1.png";
-import book2 from "../../assets/book2.png";
 import ListBorrow from "./ListBorrow.js";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useState, useEffect } from "react";
 import { MDBListGroup, MDBListGroupItem } from "mdb-react-ui-kit";
 import { MDBIcon } from "mdb-react-ui-kit";
-import axios from "../utils/axiosCustomize.js";
+import axios from "../../utils/axiosCustomize.js";
+import { useOutletContext } from "react-router-dom";
 const DisplayBooks = (props) => {
+    const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
+        useOutletContext();
     const listBook = props.listBook;
     const listBorrowBook = props.listBorrowBook;
     const handleAddBook = (book) => {
@@ -18,7 +19,6 @@ const DisplayBooks = (props) => {
         const isExist = listBorrowBook.find((book) => book._id === idBook);
         if (!isExist) {
             const newBook = { ...book, quantityBorrow: 1 };
-
             props.setListBorrowBook([...listBorrowBook, newBook]);
             return;
         } else {
@@ -31,6 +31,14 @@ const DisplayBooks = (props) => {
             return;
         }
     };
+
+    useEffect(() => {
+        let total = null;
+        listBorrowBook.forEach((item) => {
+            total += item.quantityBorrow;
+        });
+        setNumberBorrowBook(total);
+    });
 
     return (
         <>
@@ -86,10 +94,10 @@ const DisplayBooks = (props) => {
                 })}
             </div>
             <div className="list-borrow-container">
-                {/* <ListBorrow
+                <ListBorrow
                     listBorrowBook={props.listBorrowBook}
                     setListBorrowBook={props.setListBorrowBook}
-                /> */}
+                />
             </div>
         </>
     );

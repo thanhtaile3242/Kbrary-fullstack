@@ -1,8 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import Layout from "./Layout.js";
-
-import DetailRequest from "./components/Display/DetailRequestBorrow.js";
 import reportWebVitals from "./reportWebVitals";
 import "./index.scss";
 import { BrowserRouter } from "react-router-dom";

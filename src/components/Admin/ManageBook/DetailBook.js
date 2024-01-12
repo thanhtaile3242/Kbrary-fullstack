@@ -31,7 +31,7 @@ const DetailBook = (props) => {
     // Status
     const [status, setStatus] = useState(null);
     // Quantity
-    const [quantity, setQuantity] = useState(null);
+    const [quantitySystem, setQuantitySystem] = useState(null);
     // Description
     const [description, setDescription] = useState(null);
     // Author
@@ -61,7 +61,7 @@ const DetailBook = (props) => {
             if (response.status === true) {
                 setBookName(response.data.bookName);
                 setStatus(response.data.status);
-                setQuantity(response.data.quantity);
+                setQuantitySystem(response.data.quantitySystem);
                 setSelectedCategory(response.data.category);
                 setDescription(response.data.description);
                 setAuthor(response.data.author);
@@ -79,7 +79,7 @@ const DetailBook = (props) => {
         if (
             bookName &&
             status &&
-            quantity &&
+            quantitySystem &&
             selectedCategory &&
             description &&
             author
@@ -91,7 +91,7 @@ const DetailBook = (props) => {
                 author: author,
                 category: selectedCategory,
                 description: description,
-                quantity: quantity.toString(),
+                quantitySystem: quantitySystem.toString(),
             };
 
             const response = await axios.put("api/book/update", data);
@@ -178,10 +178,10 @@ const DetailBook = (props) => {
                                 type="number"
                                 class="form-control"
                                 id="floatingPassword"
-                                value={quantity}
+                                value={quantitySystem}
                                 placeholder="Quality"
                                 onChange={(event) => {
-                                    setQuantity(event.target.value);
+                                    setQuantitySystem(event.target.value);
                                 }}
                             />
                             <label for="floatingPassword">Quantity</label>

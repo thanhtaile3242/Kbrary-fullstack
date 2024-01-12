@@ -28,7 +28,7 @@ const CreateBook = (props) => {
     // Status
     const [status, setStatus] = useState(null);
     // Quantity
-    const [quantity, setQuantity] = useState(null);
+    const [quantitySystem, setQuantitySystem] = useState(null);
     // Description
     const [description, setDescription] = useState(null);
     // Author
@@ -52,7 +52,7 @@ const CreateBook = (props) => {
         if (
             bookName &&
             status &&
-            quantity &&
+            quantitySystem &&
             selectedCategory &&
             description &&
             bookImageFile &&
@@ -61,7 +61,7 @@ const CreateBook = (props) => {
             const data = new FormData();
             data.append("bookName", bookName);
             data.append("category", selectedCategory);
-            data.append("quantity", +quantity);
+            data.append("quantitySystem", +quantitySystem);
             data.append("status", status);
             data.append("author", author);
             data.append("description", description);
@@ -131,10 +131,10 @@ const CreateBook = (props) => {
                                 type="number"
                                 class="form-control"
                                 id="floatingPassword"
-                                value={quantity}
+                                value={quantitySystem}
                                 placeholder="Quality"
                                 onChange={(event) => {
-                                    setQuantity(event.target.value);
+                                    setQuantitySystem(event.target.value);
                                 }}
                             />
                             <label for="floatingPassword">Quantity</label>

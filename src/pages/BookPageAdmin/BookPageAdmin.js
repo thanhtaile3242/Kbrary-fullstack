@@ -1,5 +1,5 @@
 import Filter from "../../components/Filter/Filter.js";
-import DisplayBooks from "../../components/Display/DisplayBooks.js";
+import DisplayBooksAdmin from "../../components/Display/AdminRole/DisplayBooksAdmin.js";
 import "./BookPage.scss";
 import { useState, useEffect } from "react";
 import axios from "../../components/utils/axiosCustomize.js";
@@ -21,7 +21,7 @@ const BookPage = () => {
             <div className="manage-container">
                 <Filter setListBook={setListBook} />
                 <div className="manage-main">
-                    <DisplayBooks listBook={listBook} />
+                    <DisplayBooksAdmin listBook={listBook} />
                 </div>
             </div>
         </>

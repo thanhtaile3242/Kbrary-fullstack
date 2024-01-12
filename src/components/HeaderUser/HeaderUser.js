@@ -62,7 +62,6 @@ const HeaderUser = (props) => {
                     >
                         Home
                     </span>
-
                     <span
                         className={
                             isSelectedBook ? "item item-selected" : "item"
@@ -73,7 +72,6 @@ const HeaderUser = (props) => {
                     >
                         Books
                     </span>
-
                     <span
                         className="item"
                         className={
@@ -138,11 +136,11 @@ const HeaderUser = (props) => {
 
                         <FloatButton
                             tooltip={<div>Detail borrow</div>}
-                            badge={{ count: 1 }}
+                            badge={{ count: props.numberBorrowBook }}
                             className="icon-noti detail-borrow"
                             icon={<FaListCheck />}
                             onClick={() => {
-                                navigate("/borrow");
+                                navigate("/borrowPending");
                             }}
                         />
                     </div>

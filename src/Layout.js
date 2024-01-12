@@ -9,7 +9,7 @@ import Admin from "./pages/AdminRole/AdminPage.js";
 import UserInfo from "./pages/UserRole/UserPage.js";
 import BookPageAdmin from "./pages/BookPageAdmin/BookPageAdmin.js";
 import BookPageUser from "./pages/BookPageUser/BookPageUser.js";
-import UserBorrow from "./pages/UserRole/UserBorrow.js";
+import DetailPendingRequest from "./pages/UserRole/DetailPendingRequest.js";
 const Layout = () => {
     return (
         <>
@@ -24,7 +24,10 @@ const Layout = () => {
                     <Route index element={<HomePage />} />
                     <Route path="profile" element={<UserInfo />} />
                     <Route path="bookUser" element={<BookPageUser />} />
-                    <Route path="borrow" element={<UserBorrow />} />
+                    <Route
+                        path="borrowPending"
+                        element={<DetailPendingRequest />}
+                    />
                 </Route>
 
                 <Route path="signup" element={<MainSignUp />} />
@@ -34,7 +37,7 @@ const Layout = () => {
 
             <ToastContainer
                 position="top-right"
-                autoClose={5000}
+                autoClose={2000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick

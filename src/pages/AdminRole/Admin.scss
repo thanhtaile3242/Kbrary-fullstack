@@ -1,10 +1,12 @@
 .ant-layout-sider {
-    min-width: 320px !important;
-    width: 320px !important;
+    min-width: 300px !important;
 }
 .ant-menu-item {
     margin-bottom: 20px !important;
 }
 li {
     font-size: 16px;
+}
+.ant-menu-submenu {
+    margin-bottom: 20px !important;
 }

@@ -8,12 +8,13 @@ import "./Filter.scss";
 import { Select } from "antd";
 import axios from "../utils/axiosCustomize.js";
 const Filter = (props) => {
+    const [listCategory, setListCategory] = useState([]);
     const [bookName, setBookName] = useState("");
     const [category, setCategory] = useState(null);
     const [status, setStatus] = useState(null);
-    const [listCategory, setListCategory] = useState([]);
-    const [sortField, setSortField] = useState(null);
-    const [isAsc, setIsAsc] = useState(true);
+    const [sortCriteria, setSortCriteria] = useState(null);
+    // const [sortField, setSortField] = useState(null);
+    // const [isAsc, setIsAsc] = useState(true);
     useEffect(() => {
         async function fetchListCategory() {
             const response = await axios.get("api/category/getAll");
@@ -25,42 +26,54 @@ const Filter = (props) => {
         }
         fetchListCategory();
     }, []);
-    useEffect(() => {
-        if (bookName === "") {
-            async function fetchListBook() {
-                let sortOrder;
-                if (isAsc) sortOrder = "ASC";
-                else sortOrder = "DESC";
-                const queryParams = {
-                    bookName,
-                    category,
-                    status,
-                    sortField,
-                    sortOrder,
-                };
-                const queryString = new URLSearchParams(queryParams).toString();
-                const response = await axios.get(
-                    `api/book/find?${queryString}`
-                );
-                if (response.status === true) {
-                    props.setListBook(response.data);
-                    return;
-                } else {
-                    return;
-                }
-            }
-            fetchListBook();
+    const handleClearFilter = async () => {
+        setBookName("");
+        setCategory(null);
+        setStatus(null);
+        setSortCriteria(null);
+        const response = await axios.get(`api/book/find`);
+        if (response.status === true) {
+            props.setListBook(response.data);
+            return;
+        } else {
+            return;
         }
-    }, [bookName]);
-    //
-    const handleChangeOrder = () => {
-        setIsAsc(!isAsc);
     };
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [bookName]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [category]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [status]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [sortCriteria]);
+    //
+
     const handleSearchBooks = async (event) => {
         event.preventDefault();
-        let sortOrder;
-        if (isAsc) sortOrder = "ASC";
-        else sortOrder = "DESC";
+        let sortField = null;
+        let sortOrder = null;
+        if (sortCriteria === "nameASC") {
+            sortField = "name";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "nameDESC") {
+            sortField = "name";
+            sortOrder = "DESC";
+        }
+        if (sortCriteria === "timeASC") {
+            sortField = "time";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "timeDESC") {
+            sortField = "time";
+            sortOrder = "DESC";
+        }
+
         const queryParams = {
             bookName,
             category,
@@ -68,6 +81,15 @@ const Filter = (props) => {
             sortField,
             sortOrder,
         };
+        if (!status) {
+            delete queryParams.status;
+        }
+        if (!category) {
+            delete queryParams.category;
+        }
+        if (!bookName) {
+            delete queryParams.bookName;
+        }
         const queryString = new URLSearchParams(queryParams).toString();
         const response = await axios.get(`api/book/find?${queryString}`);
         if (response.status === true) {
@@ -77,12 +99,44 @@ const Filter = (props) => {
             return;
         }
     };
-    const handleClearFilter = async () => {
-        setBookName("");
-        setCategory(null);
-        setStatus(null);
-        setSortField(null);
-        const response = await axios.get(`api/book/find`);
+    const handleSearchBooksNotPrevent = async () => {
+        let sortField = null;
+        let sortOrder = null;
+        if (sortCriteria === "nameASC") {
+            sortField = "name";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "nameDESC") {
+            sortField = "name";
+            sortOrder = "DESC";
+        }
+        if (sortCriteria === "timeASC") {
+            sortField = "time";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "timeDESC") {
+            sortField = "time";
+            sortOrder = "DESC";
+        }
+
+        const queryParams = {
+            bookName,
+            category,
+            status,
+            sortField,
+            sortOrder,
+        };
+        if (!status) {
+            delete queryParams.status;
+        }
+        if (!category) {
+            delete queryParams.category;
+        }
+        if (!bookName) {
+            delete queryParams.bookName;
+        }
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await axios.get(`api/book/find?${queryString}`);
         if (response.status === true) {
             props.setListBook(response.data);
             return;
@@ -90,7 +144,6 @@ const Filter = (props) => {
             return;
         }
     };
-
     return (
         <>
             <div className="filter-container">
@@ -127,7 +180,7 @@ const Filter = (props) => {
                         }}
                         options={listCategory.map((item) => {
                             return {
-                                value: item.categoryName,
+                                value: item._id,
                                 label: item.categoryName,
                             };
                         })}
@@ -165,30 +218,31 @@ const Filter = (props) => {
                         size="large"
                         allowClear
                         showSearch
-                        value={sortField}
+                        value={sortCriteria}
                         name="sort nè"
                         placeholder="Select field"
                         optionFilterProp="children"
                         onChange={(value) => {
-                            setSortField(value);
+                            setSortCriteria(value);
                         }}
                         options={[
                             {
-                                value: "name",
-                                label: "Name",
+                                value: "nameDESC",
+                                label: "Name A to Z",
                             },
                             {
-                                value: "time",
-                                label: "Time",
+                                value: "nameASC",
+                                label: "Name Z to A",
+                            },
+                            {
+                                value: "timeASC",
+                                label: "Oldest",
+                            },
+                            {
+                                value: "timeDESC",
+                                label: "Newest",
                             },
                         ]}
-                    />
-                    <FaArrowDown
-                        className={`arrow ${isAsc ? "rotated" : ""}`}
-                        onClick={(event) => {
-                            handleChangeOrder();
-                            handleSearchBooks(event);
-                        }}
                     />
                 </div>
                 <div className="item-container">

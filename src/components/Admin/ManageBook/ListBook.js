@@ -14,40 +14,11 @@ const ListBook = (props) => {
     const [bookName, setBookName] = useState("");
     const [category, setCategory] = useState(null);
     const [status, setStatus] = useState(null);
-    const [sortField, setSortField] = useState(null);
-    const [isAsc, setIsAsc] = useState(true);
-
-    useEffect(() => {
-        if (bookName === "") {
-            async function fetchListBook() {
-                let sortOrder;
-                if (isAsc) sortOrder = "ASC";
-                else sortOrder = "DESC";
-                const queryParams = {
-                    bookName,
-                    category,
-                    status,
-                    sortField,
-                    sortOrder,
-                };
-                const queryString = new URLSearchParams(queryParams).toString();
-                const response = await axios.get(
-                    `api/book/find?${queryString}`
-                );
-                if (response.status === true) {
-                    setListBook(response.data);
-                    return;
-                } else {
-                    return;
-                }
-            }
-            fetchListBook();
-        }
-    }, [bookName]);
+    const [sortCriteria, setSortCriteria] = useState(null);
 
     useEffect(() => {
         async function fetchListBook() {
-            const responseBook = await axios.get("api/book/getAll");
+            const responseBook = await axios.get("api/book/find");
             if (responseBook.status === true) {
                 setListBook(responseBook.data);
             } else {
@@ -62,15 +33,11 @@ const ListBook = (props) => {
         }
         fetchListBook();
     }, []);
-
-    const handleChangeOrder = () => {
-        setIsAsc(!isAsc);
-    };
     const handleClearFilter = async () => {
         setBookName("");
         setCategory(null);
         setStatus(null);
-        setSortField(null);
+        setSortCriteria(null);
         const response = await axios.get(`api/book/find`);
         if (response.status === true) {
             setListBook(response.data);
@@ -79,15 +46,43 @@ const ListBook = (props) => {
             return;
         }
     };
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [bookName]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [category]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [status]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [sortCriteria]);
     const handleSelectBookId = (id) => {
         props.handleShowDetailBook();
         props.setIdDetailBook(id);
     };
     const handleSearchBooks = async (event) => {
         event.preventDefault();
-        let sortOrder;
-        if (isAsc) sortOrder = "ASC";
-        else sortOrder = "DESC";
+        let sortField = null;
+        let sortOrder = null;
+        if (sortCriteria === "nameASC") {
+            sortField = "name";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "nameDESC") {
+            sortField = "name";
+            sortOrder = "DESC";
+        }
+        if (sortCriteria === "timeASC") {
+            sortField = "time";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "timeDESC") {
+            sortField = "time";
+            sortOrder = "DESC";
+        }
+
         const queryParams = {
             bookName,
             category,
@@ -95,6 +90,60 @@ const ListBook = (props) => {
             sortField,
             sortOrder,
         };
+        if (!status) {
+            delete queryParams.status;
+        }
+        if (!category) {
+            delete queryParams.category;
+        }
+        if (!bookName) {
+            delete queryParams.bookName;
+        }
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await axios.get(`api/book/find?${queryString}`);
+        if (response.status === true) {
+            setListBook(response.data);
+            return;
+        } else {
+            return;
+        }
+    };
+    const handleSearchBooksNotPrevent = async () => {
+        let sortField = null;
+        let sortOrder = null;
+        if (sortCriteria === "nameASC") {
+            sortField = "name";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "nameDESC") {
+            sortField = "name";
+            sortOrder = "DESC";
+        }
+        if (sortCriteria === "timeASC") {
+            sortField = "time";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "timeDESC") {
+            sortField = "time";
+            sortOrder = "DESC";
+        }
+
+        const queryParams = {
+            bookName,
+            category,
+            status,
+            sortField,
+            sortOrder,
+        };
+        if (!status) {
+            delete queryParams.status;
+        }
+        if (!category) {
+            delete queryParams.category;
+        }
+        if (!bookName) {
+            delete queryParams.bookName;
+        }
         const queryString = new URLSearchParams(queryParams).toString();
         const response = await axios.get(`api/book/find?${queryString}`);
         if (response.status === true) {
@@ -139,7 +188,7 @@ const ListBook = (props) => {
                         }}
                         options={listCategory.map((item) => {
                             return {
-                                value: item.categoryName,
+                                value: item._id,
                                 label: item.categoryName,
                             };
                         })}
@@ -172,37 +221,37 @@ const ListBook = (props) => {
                         size="large"
                         allowClear
                         showSearch
-                        value={sortField}
+                        value={sortCriteria}
                         name="sort nè"
                         placeholder="Select sort"
                         optionFilterProp="children"
                         onChange={(value) => {
-                            setSortField(value);
+                            setSortCriteria(value);
                         }}
                         options={[
                             {
-                                value: "name",
-                                label: "Name",
+                                value: "nameDESC",
+                                label: "Name A to Z",
                             },
                             {
-                                value: "time",
-                                label: "Time",
+                                value: "nameASC",
+                                label: "Name Z to A",
+                            },
+                            {
+                                value: "timeASC",
+                                label: "Oldest",
+                            },
+                            {
+                                value: "timeDESC",
+                                label: "Newest",
                             },
                         ]}
-                    />
-                    <FaArrowDown
-                        className={`arrow ${isAsc ? "rotated" : ""}`}
-                        onClick={(event) => {
-                            handleChangeOrder();
-                            handleSearchBooks(event);
-                        }}
                     />
                     <MdFilterAltOff
                         className="remove-filter-icon"
                         onClick={handleClearFilter}
                     />
                 </div>
-
                 <span
                     className="btn btn-primary"
                     onClick={props.handleShowCreateBook}
@@ -247,7 +296,7 @@ const ListBook = (props) => {
                     align="left"
                     render={(record) => (
                         <span className="detail-account">
-                            {record.quantity}
+                            {record.quantitySystem}
                         </span>
                     )}
                 />

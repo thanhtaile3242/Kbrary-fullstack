@@ -1,9 +1,9 @@
 import Filter from "../../components/Filter/Filter.js";
-import DisplayBooks from "../../components/Display/DisplayBooks.js";
+import DisplayBooksUser from "../../components/Display/UserRole/DisplayBooksUser.js";
 import "./BookPage.scss";
 import { useState, useEffect } from "react";
 import axios from "../../components/utils/axiosCustomize.js";
-import UserBorrow from "../UserRole/UserBorrow.js";
+import DetailPendingRequest from "../UserRole/DetailPendingRequest.js";
 
 const BookPageUser = () => {
     const [listBook, setListBook] = useState([]);
@@ -26,7 +26,7 @@ const BookPageUser = () => {
                 <Filter setListBook={setListBook} />
 
                 <div className="manage-main">
-                    <DisplayBooks
+                    <DisplayBooksUser
                         listBook={listBook}
                         listBorrowBook={listBorrowBook}
                         setListBorrowBook={setListBorrowBook}

@@ -1,0 +1,246 @@
+import {
+    MDBBtn,
+    MDBCard,
+    MDBCardBody,
+    MDBCardImage,
+    MDBCol,
+    MDBContainer,
+    MDBIcon,
+    MDBInput,
+    MDBRow,
+    MDBTypography,
+} from "mdb-react-ui-kit";
+import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
+import React from "react";
+import { MdLibraryBooks } from "react-icons/md";
+import { FaPlus, FaMinus } from "react-icons/fa";
+import { useNavigate, Link } from "react-router-dom";
+import "../SCSS/ListBorrow.scss";
+import { FaClipboardList } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import axios from "../../utils/axiosCustomize.js";
+const ListBorrow = (props) => {
+    const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
+        useOutletContext();
+    const navigate = useNavigate();
+    const listBorrowBook = props.listBorrowBook;
+    const [total, setTotal] = useState(null);
+    const handleIncreaseBook = (item) => {
+        const idItem = item._id;
+        listBorrowBook.forEach((book) => {
+            if (book._id === idItem) {
+                book.quantityBorrow++;
+            }
+        });
+        props.setListBorrowBook([...listBorrowBook]);
+    };
+    const handleDescreaseBook = (item) => {
+        const idItem = item._id;
+        listBorrowBook.forEach((book) => {
+            if (book._id === idItem) {
+                book.quantityBorrow--;
+            }
+        });
+
+        listBorrowBook.forEach((book, index) => {
+            if (book.quantityBorrow == 0) {
+                listBorrowBook.splice(index, 1);
+            }
+        });
+
+        props.setListBorrowBook([...listBorrowBook]);
+    };
+    const handleDeleteBook = (item) => {
+        const idItem = item._id;
+        const listBorrowBookNew = listBorrowBook.filter(
+            (item) => item._id !== idItem
+        );
+        props.setListBorrowBook(listBorrowBookNew);
+    };
+
+    useEffect(() => {
+        let count = null;
+        listBorrowBook.forEach((item) => {
+            count += item.quantityBorrow;
+        });
+        setTotal(count);
+    });
+    //
+    const handleCreatePendingRequest = async () => {
+        const listBorrowBooks = listBorrowBook.map((item) => {
+            const objectBook = {
+                bookId: item._id,
+                quantityBorrow: item.quantityBorrow,
+            };
+            return objectBook;
+        });
+        const pendingRequest = {
+            userId: userInfo?.userId,
+            listBorrowBooks: listBorrowBooks,
+            status: "PENDING",
+        };
+        const response = await axios.post(
+            `api/userRequest/create`,
+            pendingRequest
+        );
+        if (response.status === true) {
+            navigate("/borrowPending");
+        } else {
+            return;
+        }
+    };
+    return (
+        <>
+            <MDBContainer className="py-5 h-100">
+                <MDBRow className="justify-content-center align-items-center h-100">
+                    <MDBCol>
+                        <MDBCard>
+                            <MDBCardBody className="p-4">
+                                <MDBRow>
+                                    <MDBCol lg="7">
+                                        <MDBTypography
+                                            style={{ marginBottom: "15px" }}
+                                            className="book-cart-title"
+                                            tag="h5"
+                                            onClick={() => {
+                                                navigate("/borrowPending");
+                                            }}
+                                        >
+                                            <FaClipboardList
+                                                style={{
+                                                    fontSize: "30px",
+                                                    color: "black",
+                                                    marginRight: "10px",
+                                                }}
+                                            />
+                                            Book cart
+                                        </MDBTypography>
+
+                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <p className="mb-0">
+                                                You have {total} books in your
+                                                cart
+                                            </p>
+                                        </div>
+                                        <div
+                                            style={{
+                                                height: "365px",
+                                                overflowX: "hidden",
+                                                overflowY: "scroll",
+                                            }}
+                                        >
+                                            {listBorrowBook.map((item) => {
+                                                return (
+                                                    <MDBCard className="mb-2">
+                                                        <MDBCardBody>
+                                                            <div className="d-flex justify-content-between">
+                                                                <div>
+                                                                    <img
+                                                                        src={`http://localhost:8802/${item.imageName}`}
+                                                                        alt=""
+                                                                        style={{
+                                                                            width: "65px",
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                                <div
+                                                                    style={{
+                                                                        width: "170px",
+                                                                        whiteSpace:
+                                                                            "nowrap",
+                                                                        overflow:
+                                                                            "hidden",
+                                                                        textOverflow:
+                                                                            "ellipsis",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        item.bookName
+                                                                    }
+                                                                </div>
+                                                                <div
+                                                                    style={{
+                                                                        alignItems:
+                                                                            "center",
+                                                                        display:
+                                                                            "flex",
+                                                                        gap: "10px",
+                                                                    }}
+                                                                >
+                                                                    <FaMinus
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            fontSize:
+                                                                                "14px",
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            handleDescreaseBook(
+                                                                                item
+                                                                            );
+                                                                        }}
+                                                                    />
+                                                                    <span
+                                                                        style={{
+                                                                            fontSize:
+                                                                                "23px",
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            item.quantityBorrow
+                                                                        }
+                                                                    </span>
+
+                                                                    <FaPlus
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            fontSize:
+                                                                                "14px",
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            handleIncreaseBook(
+                                                                                item
+                                                                            );
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <MDBIcon
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            fontSize:
+                                                                                "18px",
+                                                                        }}
+                                                                        fas
+                                                                        icon="trash-alt"
+                                                                        onClick={() => {
+                                                                            handleDeleteBook(
+                                                                                item
+                                                                            );
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </MDBCardBody>
+                                                    </MDBCard>
+                                                );
+                                            })}
+                                        </div>
+                                        <span
+                                            className="btn-borrow"
+                                            onClick={handleCreatePendingRequest}
+                                        >
+                                            Detail
+                                        </span>
+                                    </MDBCol>
+                                </MDBRow>
+                            </MDBCardBody>
+                        </MDBCard>
+                    </MDBCol>
+                </MDBRow>
+            </MDBContainer>
+        </>
+    );
+};
+
+export default ListBorrow;
