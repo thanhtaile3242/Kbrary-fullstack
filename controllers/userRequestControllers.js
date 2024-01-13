@@ -86,8 +86,9 @@ export const getDetailRequestController = async (req, res) => {
 //
 export const getPendingRequestController = async (req, res) => {
     try {
+        const userId = req.params.id;
         const result = await userRequest
-            .findOne({ status: "PENDING" })
+            .find({ userId: userId, status: "PENDING" })
             .populate({
                 path: "userId",
                 select: "username -_id",
@@ -105,13 +106,90 @@ export const getPendingRequestController = async (req, res) => {
         if (result) {
             return res.status(200).json({
                 status: true,
-                message: "Get detail pending request uccessfully",
+                message: "Get detail pending request succcessfully",
                 data: result,
             });
         } else {
             return res.status(400).json({
-                status: true,
+                status: false,
                 message: "Request not found",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const updatePendingRequestController = async (req, res) => {
+    try {
+        const requestId = req.body.requestId;
+        const newListBorrow = req.body.listBorrowBooks;
+        const result1 = await userRequest.findByIdAndUpdate(
+            { _id: requestId },
+            { $set: { listBorrowBooks: [] } }
+        );
+        if (result1) {
+            const result2 = await userRequest.findByIdAndUpdate(
+                { _id: requestId },
+
+                { $set: { listBorrowBooks: newListBorrow } },
+                { new: true }
+            );
+            if (result2) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Update pending request succcessfully",
+                    data: result2,
+                });
+            } else {
+                return res.status(500).json({
+                    status: false,
+                    message: "Can not update pending request",
+                });
+            }
+        } else {
+            return res.status(500).json({
+                status: false,
+                message: "Can not update pending request",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};
+//
+export const updatePendingRequestWithUserID = async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const newListBorrow = req.body.listBorrowBooks;
+        const result1 = await userRequest.findOneAndUpdate(
+            { userId: userId },
+            { $set: { listBorrowBooks: [] } }
+        );
+        if (result1) {
+            const result2 = await userRequest.findOneAndUpdate(
+                { userId: userId },
+                { $set: { listBorrowBooks: newListBorrow } },
+                { new: true }
+            );
+            if (result2) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Update pending request succcessfully",
+                    data: result2,
+                });
+            } else {
+                return res.status(500).json({
+                    status: false,
+                    message: "Can not update pending request",
+                });
+            }
+        } else {
+            return res.status(500).json({
+                status: false,
+                message: "Can not update pending request",
             });
         }
     } catch (error) {
