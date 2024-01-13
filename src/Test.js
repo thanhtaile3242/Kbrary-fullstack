@@ -1,31 +1,14 @@
-const listBook = [
-    {
-        bookId: {
-            _id: "659f440cc38825012c4c7d91",
-            bookName: "Kanji Look and Learn",
-            category: {
-                _id: "659f43f5c38825012c4c7d8d",
-                categoryName: "language",
-            },
-            imageName: "string",
-        },
-        quantityBorrow: 3,
-    },
-    {
-        bookId: {
-            _id: "659f440cc38825012c4c7d33",
-            bookName: "Java",
-            category: {
-                _id: "659f43f5c38825012c4c7d8d",
-                categoryName: "programming",
-            },
-            imageName: "string",
-        },
-        quantityBorrow: 5,
-    },
-];
+// Connection URI
 
-listBook.forEach((book) => {
-    book.bookId = book.bookId._id;
-});
-console.log(listBook);
+// Sample date string in "dd/mm/yyyy" format
+const dateString = "13/01/2024";
+
+// Convert the date string to a JavaScript Date object
+const dateArray = dateString.split("/");
+const day = parseInt(dateArray[0], 10);
+const month = parseInt(dateArray[1], 10) - 1; // Months are zero-based in JavaScript Dates
+const year = parseInt(dateArray[2], 10);
+
+const dateObject = new Date(year, month, day);
+
+console.log(dateObject);

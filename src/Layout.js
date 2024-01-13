@@ -10,6 +10,7 @@ import UserInfo from "./pages/UserRole/UserPage.js";
 import BookPageAdmin from "./pages/BookPageAdmin/BookPageAdmin.js";
 import BookPageUser from "./pages/BookPageUser/BookPageUser.js";
 import DetailPendingRequest from "./pages/UserRole/DetailPendingRequest.js";
+import CongratsPage from "./pages/UserRole/CongratsPage.js";
 const Layout = () => {
     return (
         <>
@@ -28,6 +29,7 @@ const Layout = () => {
                         path="borrowPending"
                         element={<DetailPendingRequest />}
                     />
+                    <Route path="congratsPage" element={<CongratsPage />} />
                 </Route>
 
                 <Route path="signup" element={<MainSignUp />} />

@@ -10,11 +10,14 @@ import {
     MDBRow,
     MDBTypography,
 } from "mdb-react-ui-kit";
+
 import React from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { FaListCheck } from "react-icons/fa6";
 import { FloatButton } from "antd";
 import { DatePicker, Space } from "antd";
 import moment from "moment";
+import { Tooltip } from "antd";
 import "./SCSS/DetailRequest.scss";
 import { useNavigate, Link } from "react-router-dom";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
@@ -26,15 +29,28 @@ const disabledDate = (current) => {
     return current && current < moment().endOf("day");
 };
 
+const convertDateType = (dateString) => {
+    const [day, month, year] = dateString.split("-");
+    const dateObject = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    return dateObject;
+};
+
 const UserBorrow = (props) => {
-    let listPending = useRef();
-    const navigate = useNavigate();
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
-    const [pendingRequest, setPendingRequest] = useState(null);
-    const [listBorrowBooks, setListBorrowBooks] = useState([]);
+    let listPending = useRef();
+    const navigate = useNavigate();
     const [isSelectDate, setIsSelectDate] = useState(false);
     const [total, setTotal] = useState(null);
+    //
+    const userId = userInfo.userId;
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [fullname, setFullname] = useState("");
+    const [dateBorrow, setDateBorrow] = useState(null);
+    const [note, setNote] = useState("");
+    const [listBorrowBooks, setListBorrowBooks] = useState([]);
+    //
+
     useEffect(() => {
         const listSave = JSON.parse(
             localStorage.getItem("pending-list-kbrary")
@@ -52,10 +68,17 @@ const UserBorrow = (props) => {
     }, []);
     useEffect(() => {
         listPending.current = listBorrowBooks;
+        let count = null;
+        listBorrowBooks.forEach((item) => {
+            count += item.quantityBorrow;
+        });
+        setNumberBorrowBook(count);
+        setTotal(count);
     });
-    const onChange = (date, dateString) => {
+    const onChangeDate = (date, dateString) => {
         setIsSelectDate(!isSelectDate);
-        console.log(date, dateString);
+        const dateObject = convertDateType(dateString);
+        setDateBorrow(dateObject);
     };
     const handleIncreaseBook = (item) => {
         const idItem = item.bookId._id;
@@ -90,28 +113,47 @@ const UserBorrow = (props) => {
         );
         setListBorrowBooks(listBorrowBookNew);
     };
-    const handleUpdateWithUserId = async () => {
-        const modifiedListBorrow = [...listBorrowBooks];
-        modifiedListBorrow.forEach((book) => {
-            book.bookId = book.bookId._id;
-        });
-        const data = {
-            userId: userInfo.userId,
-            listBorrowBooks: modifiedListBorrow,
-        };
-        const response = await axios.put(
-            `api/userRequest/pending/updateWithUserId`,
-            data
-        );
-        navigate("/bookUser");
+    // const handleUpdateWithUserId = async () => {
+    //     const modifiedListBorrow = [...listBorrowBooks];
+    //     modifiedListBorrow.forEach((book) => {
+    //         book.bookId = book.bookId._id;
+    //     });
+    //     const data = {
+    //         userId: userInfo.userId,
+    //         listBorrowBooks: modifiedListBorrow,
+    //     };
+    //     const response = await axios.put(
+    //         `api/userRequest/pending/updateWithUserId`,
+    //         data
+    //     );
+    //     navigate("/bookUser");
+    // };
+    const handleCreateRequest = async () => {
+        // Validate
+        if (fullname && dateBorrow && phoneNumber && note && listBorrowBooks) {
+            const data = {
+                userId: userId,
+                userFullname: fullname,
+                dateBorrow: dateBorrow,
+                phoneNumber: phoneNumber,
+                note: note,
+                listBorrowBooks: listBorrowBooks,
+                status: "INPROGRESS",
+            };
+            const response = await axios.post("api/userRequest/create", data);
+            if (response.status == true) {
+                toast.success(response.message);
+                navigate("/congratsPage");
+            } else {
+                toast.error("Can not create request!");
+                return;
+            }
+        } else {
+            toast.error("Fulfill your form!");
+        }
     };
-    useEffect(() => {
-        let count = null;
-        listBorrowBooks.forEach((item) => {
-            count += item.quantityBorrow;
-        });
-        setNumberBorrowBook(count);
-    });
+
+    //
 
     return (
         <>
@@ -124,7 +166,9 @@ const UserBorrow = (props) => {
                                     <MDBCol lg="8">
                                         <MDBTypography
                                             tag="h5"
-                                            onClick={handleUpdateWithUserId}
+                                            onClick={() => {
+                                                navigate("/bookUser");
+                                            }}
                                             style={{
                                                 alignItems: "center",
                                                 cursor: "pointer",
@@ -299,10 +343,10 @@ const UserBorrow = (props) => {
                                                     class="form-control"
                                                     id="floatingInput"
                                                     placeholder="name@example.com"
-                                                    value="thanhtaile3242@gmail.com"
+                                                    value={userInfo.email}
                                                 />
                                                 <label for="floatingInput">
-                                                    Email address
+                                                    Email
                                                 </label>
                                             </div>
                                             <div class="form-floating mb-4">
@@ -311,6 +355,12 @@ const UserBorrow = (props) => {
                                                     class="form-control"
                                                     id="floatingInput"
                                                     placeholder="name@example.com"
+                                                    value={fullname}
+                                                    onChange={(event) => {
+                                                        setFullname(
+                                                            event.target.value
+                                                        );
+                                                    }}
                                                 />
                                                 <label for="floatingInput">
                                                     Fullname
@@ -331,12 +381,13 @@ const UserBorrow = (props) => {
                                                             border: "1px solid #dee2e6",
                                                         }}
                                                         format={"DD-MM-YYYY"}
-                                                        onChange={onChange}
+                                                        onChange={onChangeDate}
                                                         disabledDate={
                                                             disabledDate
                                                         }
                                                         allowClear
                                                     />
+
                                                     <label
                                                         className={
                                                             isSelectDate
@@ -347,12 +398,20 @@ const UserBorrow = (props) => {
                                                         Select date
                                                     </label>
                                                 </div>
+
                                                 <div class="form-floating mb-3">
                                                     <input
                                                         type="text"
                                                         class="form-control"
                                                         id="floatingInput"
                                                         placeholder="name@example.com"
+                                                        value={phoneNumber}
+                                                        onChange={(event) => {
+                                                            setPhoneNumber(
+                                                                event.target
+                                                                    .value
+                                                            );
+                                                        }}
                                                     />
                                                     <label for="floatingInput">
                                                         Phone number
@@ -368,6 +427,12 @@ const UserBorrow = (props) => {
                                                         height: "110px",
                                                         resize: "none",
                                                     }}
+                                                    value={note}
+                                                    onChange={(event) => {
+                                                        setNote(
+                                                            event.target.value
+                                                        );
+                                                    }}
                                                 />
                                                 <label for="floatingTextarea2">
                                                     Note
@@ -375,13 +440,18 @@ const UserBorrow = (props) => {
                                             </div>
                                             <div className="mb-2">
                                                 <span
-                                                    style={{ fontSize: "17" }}
+                                                    style={{
+                                                        fontSize: "17",
+                                                    }}
                                                 >
                                                     Total books: {total}
                                                 </span>
                                             </div>
                                             <div>
                                                 <span
+                                                    onClick={
+                                                        handleCreateRequest
+                                                    }
                                                     className="btn"
                                                     style={{
                                                         marginTop: "5px",
