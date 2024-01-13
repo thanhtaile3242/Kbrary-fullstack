@@ -10,9 +10,7 @@ import { useEffect, useState } from "react";
 import HeaderAdmin from "./components/HeaderAdmin/HeaderAdmin.js";
 import HeaderUser from "./components/HeaderUser/HeaderUser.js";
 function App() {
-    //
     const [numberBorrowBook, setNumberBorrowBook] = useState(null);
-    //
     const [userInfo, setUserInfo] = useState({
         userId: "",
         email: "",

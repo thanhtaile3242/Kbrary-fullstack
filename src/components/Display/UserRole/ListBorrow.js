@@ -29,7 +29,7 @@ const ListBorrow = (props) => {
         useOutletContext();
     const navigate = useNavigate();
     const listBorrowBook = props.listBorrowBook;
-    const idPendingRequest = props.idPendingRequest;
+
     const [total, setTotal] = useState(null);
     const handleIncreaseBook = (item) => {
         const idItem = item.bookId._id;
@@ -63,71 +63,24 @@ const ListBorrow = (props) => {
         );
         props.setListBorrowBook(listBorrowBookNew);
     };
-
     useEffect(() => {
         let count = null;
         listBorrowBook.forEach((item) => {
             count += item.quantityBorrow;
         });
-        setTotal(count);
+        setNumberBorrowBook(count);
     });
-    useEffect(() => {
-        listCurrent.current = listBorrowBook;
-        console.log("check list: ", listCurrent.current);
-        console.log("check id user: ", userInfo.userId);
-    });
-    useEffect(() => {
-        return async () => {
-            const modifiedListBorrow = [...listCurrent.current];
-            modifiedListBorrow.forEach((book) => {
-                book.bookId = book.bookId._id;
-            });
-            const data = {
-                userId: userInfo.userId,
-                listBorrowBooks: modifiedListBorrow,
-            };
-            const response = await axios.put(
-                `api/userRequest/pending/updateWithUserId`,
-                data
-            );
-        };
-    }, []);
-
-    const handleCreatePendingRequest = async () => {
-        const listBorrowBooks = listBorrowBook.map((item) => {
-            const objectBook = {
-                bookId: item.bookId._id,
-                quantityBorrow: item.quantityBorrow,
-            };
-            return objectBook;
-        });
-        const pendingRequest = {
-            userId: userInfo?.userId,
-            listBorrowBooks: listBorrowBooks,
-            status: "PENDING",
-        };
-        const response = await axios.post(
-            `api/userRequest/create`,
-            pendingRequest
-        );
-        if (response.status === true) {
-            toast.success("Create request success");
-            navigate("/borrowPending");
-        } else {
-            return;
-        }
-    };
     const handleUpdatePendingRequest = async () => {
         const modifiedListBorrow = [...listBorrowBook];
         modifiedListBorrow.forEach((book) => {
             book.bookId = book.bookId._id;
         });
         const data = {
-            requestId: idPendingRequest,
+            userId: userInfo.userId,
             listBorrowBooks: modifiedListBorrow,
         };
         const response = await axios.put(
-            `api/userRequest/pending/update`,
+            `api/userRequest/pending/updateWithUserId`,
             data
         );
         if (response.status == true) {
@@ -136,6 +89,14 @@ const ListBorrow = (props) => {
         } else {
             return;
         }
+    };
+
+    const handleSavePendingInLS = () => {
+        localStorage.setItem(
+            "pending-list-kbrary",
+            JSON.stringify(listBorrowBook)
+        );
+        navigate("/borrowPending");
     };
 
     return (
@@ -177,7 +138,7 @@ const ListBorrow = (props) => {
                                                 overflowY: "scroll",
                                             }}
                                         >
-                                            {listBorrowBook.map((item) => {
+                                            {listBorrowBook?.map((item) => {
                                                 return (
                                                     <MDBCard className="mb-2">
                                                         <MDBCardBody>
@@ -277,7 +238,7 @@ const ListBorrow = (props) => {
                                         </div>
                                         <span
                                             className="btn-borrow"
-                                            onClick={handleUpdatePendingRequest}
+                                            onClick={handleSavePendingInLS}
                                         >
                                             Detail
                                         </span>

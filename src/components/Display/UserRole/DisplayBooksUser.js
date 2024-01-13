@@ -13,69 +13,7 @@ const DisplayBooks = (props) => {
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
     const listBook = props.listBook;
-    // const [listBorrowBook, setListBorrowBook] = useState([]);
-    // const [idPendingRequest, setIdPendingRequest] = useState("");
-    let listCurrentBook = useRef([]);
     const listBorrowBook = props.listBorrowBook;
-    const idPendingRequest = props.idPendingRequest;
-    // useEffect(() => {
-    //     async function fetchPendingRequest() {
-    //         const response = await axios.get(
-    //             `api/userRequest/pending/${userInfo?.userId}`
-    //         );
-
-    //         if (response.status == true) {
-    //             if (response.data.length == 1) {
-    //                 response.data[0].listBorrowBooks.forEach((item) => {
-    //                     delete item._id;
-    //                 });
-
-    //                 setIdPendingRequest(response.data[0]._id);
-    //                 setListBorrowBook(response.data[0].listBorrowBooks);
-    //                 listCurrentBook.current = response.data[0].listBorrowBooks;
-    //                 return;
-    //             } else {
-    //                 const pendingRequest = {
-    //                     userId: userInfo?.userId,
-    //                     listBorrowBooks: [],
-    //                     status: "PENDING",
-    //                 };
-    //                 const response = await axios.post(
-    //                     `api/userRequest/create`,
-    //                     pendingRequest
-    //                 );
-    //                 if (response.status == true) {
-    //                     setIdPendingRequest(response.data._id);
-    //                 }
-    //                 return;
-    //             }
-    //         } else {
-    //             return;
-    //         }
-    //     }
-    //     fetchPendingRequest();
-    // }, []);
-
-    // useEffect(() => {
-    //     return () => {
-    //         async function updatePending() {
-    //             const modifiedListBorrow = [...listCurrentBook.current];
-    //             modifiedListBorrow.forEach((book) => {
-    //                 book.bookId = book.bookId._id;
-    //             });
-    //             const data = {
-    //                 userId: userInfo.userId,
-    //                 listBorrowBooks: modifiedListBorrow,
-    //             };
-    //             const response = await axios.put(
-    //                 `api/userRequest/pending/updateWithUserId`,
-    //                 data
-    //             );
-    //         }
-    //         updatePending();
-    //     };
-    // }, []);
-
     const handleAddBook = async (book) => {
         const idBook = book._id;
         const isExist = listBorrowBook.find(
@@ -164,7 +102,6 @@ const DisplayBooks = (props) => {
             </div>
             <div className="list-borrow-container">
                 <ListBorrow
-                    idPendingRequest={idPendingRequest}
                     listBorrowBook={listBorrowBook}
                     setListBorrowBook={props.setListBorrowBook}
                 />

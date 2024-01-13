@@ -13,9 +13,11 @@ import { FaUserAlt } from "react-icons/fa";
 import { IoNotifications } from "react-icons/io5";
 import { FloatButton } from "antd";
 import { FaListCheck } from "react-icons/fa6";
-
+import { useOutletContext } from "react-router-dom";
 const HeaderUser = (props) => {
     const navigate = useNavigate();
+    // const [avatar, setAvatar, role, userInfo] = useOutletContext();
+
     const [isShowHideUserInfo, setIsShowHideUserInfo] = useState(false);
     // Select menu
     const [isSelectedHome, setIsSelectedHome] = useState(false);
@@ -99,21 +101,28 @@ const HeaderUser = (props) => {
                                 icon={<IoNotifications />}
                             />
                         </div>
-                        <div
-                            className="account circle"
-                            onClick={() => {
-                                setIsShowHideUserInfo(!isShowHideUserInfo);
-                            }}
-                        >
+                        <div className="account circle">
                             {props.avatar ? (
                                 <img
                                     style={{ height: "60px", width: "60px" }}
                                     src={`http://localhost:8802/${props.avatar}`}
                                     alt=""
+                                    onClick={() => {
+                                        setIsShowHideUserInfo(
+                                            !isShowHideUserInfo
+                                        );
+                                    }}
                                 />
                             ) : (
-                                <FaUserAlt />
+                                <FaUserAlt
+                                    onClick={() => {
+                                        setIsShowHideUserInfo(
+                                            !isShowHideUserInfo
+                                        );
+                                    }}
+                                />
                             )}
+
                             {isShowHideUserInfo && (
                                 <ul class="account__list">
                                     <li>
@@ -136,7 +145,7 @@ const HeaderUser = (props) => {
                             )}
                             <FloatButton
                                 tooltip={<div>Detail borrow</div>}
-                                badge={{ count: 1 }}
+                                badge={{ count: props.numberBorrowBook }}
                                 className="icon-noti detail-borrow"
                                 icon={<FaClipboardList />}
                                 onClick={() => {

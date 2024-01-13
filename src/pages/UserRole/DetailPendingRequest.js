@@ -27,6 +27,7 @@ const disabledDate = (current) => {
 };
 
 const UserBorrow = (props) => {
+    let listPending = useRef();
     const navigate = useNavigate();
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
@@ -35,43 +36,41 @@ const UserBorrow = (props) => {
     const [isSelectDate, setIsSelectDate] = useState(false);
     const [total, setTotal] = useState(null);
     useEffect(() => {
-        async function fetchPendingRequest() {
-            const response = await axios.get(
-                `api/userRequest/pending/${userInfo.userId}`
-            );
-            if (response?.status === true) {
-                if (response.data.length == 1) {
-                    setPendingRequest(response?.data[0]);
-                    setListBorrowBooks(response?.data[0]?.listBorrowBooks);
-                    return;
-                } else {
-                    return;
-                }
-            } else {
-                return;
-            }
+        const listSave = JSON.parse(
+            localStorage.getItem("pending-list-kbrary")
+        );
+        if (listSave) {
+            setListBorrowBooks(listSave);
+        } else {
         }
-        fetchPendingRequest();
+        return () => {
+            localStorage.setItem(
+                "pending-list-kbrary",
+                JSON.stringify(listPending.current)
+            );
+        };
     }, []);
-    // console.log("check list: ", listBorrowBooks);
-
+    useEffect(() => {
+        listPending.current = listBorrowBooks;
+    });
     const onChange = (date, dateString) => {
         setIsSelectDate(!isSelectDate);
         console.log(date, dateString);
     };
     const handleIncreaseBook = (item) => {
-        const idItem = item._id;
+        const idItem = item.bookId._id;
+
         listBorrowBooks.forEach((book) => {
-            if (book._id === idItem) {
+            if (book.bookId._id === idItem) {
                 book.quantityBorrow++;
             }
         });
         setListBorrowBooks([...listBorrowBooks]);
     };
     const handleDescreaseBook = (item) => {
-        const idItem = item._id;
+        const idItem = item.bookId._id;
         listBorrowBooks.forEach((book) => {
-            if (book._id === idItem) {
+            if (book.bookId._id === idItem) {
                 book.quantityBorrow--;
             }
         });
@@ -85,9 +84,9 @@ const UserBorrow = (props) => {
         setListBorrowBooks([...listBorrowBooks]);
     };
     const handleDeleteBook = (item) => {
-        const idItem = item._id;
+        const idItem = item.bookId._id;
         const listBorrowBookNew = listBorrowBooks.filter(
-            (item) => item._id !== idItem
+            (item) => item.bookId._id !== idItem
         );
         setListBorrowBooks(listBorrowBookNew);
     };
@@ -111,30 +110,9 @@ const UserBorrow = (props) => {
         listBorrowBooks.forEach((item) => {
             count += item.quantityBorrow;
         });
-        setTotal(count);
+        setNumberBorrowBook(count);
     });
-    // let listCurrent = useRef(listBorrowBooks);
-    // useEffect(() => {
-    //     listCurrent.current = listBorrowBooks;
-    //     console.log("check list: ", listCurrent.current);
-    //     console.log("check id user: ", userInfo.userId);
-    // });
-    // useEffect(() => {
-    //     return async () => {
-    //         const modifiedListBorrow = [...listCurrent.current];
-    //         modifiedListBorrow.forEach((book) => {
-    //             book.bookId = book.bookId._id;
-    //         });
-    //         const data = {
-    //             userId: userInfo.userId,
-    //             listBorrowBooks: modifiedListBorrow,
-    //         };
-    //         const response = await axios.put(
-    //             `api/userRequest/pending/updateWithUserId`,
-    //             data
-    //         );
-    //     };
-    // }, []);
+
     return (
         <>
             <div>
@@ -169,7 +147,7 @@ const UserBorrow = (props) => {
                                                 paddingTop: "10px",
                                             }}
                                         >
-                                            {listBorrowBooks?.map((book) => {
+                                            {listBorrowBooks.map((book) => {
                                                 return (
                                                     <MDBCard className="mb-3">
                                                         <div

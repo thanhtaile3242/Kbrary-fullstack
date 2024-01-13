@@ -11,53 +11,37 @@ const BookPageUser = () => {
         useOutletContext();
     const [listBook, setListBook] = useState([]);
     const [listBorrowBook, setListBorrowBook] = useState([]);
-    const [idPendingRequest, setIdPendingRequest] = useState("");
-    let listCurrentBook = useRef([]);
+    let listPending = useRef();
     useEffect(() => {
         async function fetchData() {
             const responseBook = await axios.get("api/book/find");
             if (responseBook.status === true) {
                 setListBook(responseBook.data);
-                const response = await axios.get(
-                    `api/userRequest/pending/${userInfo?.userId}`
-                );
-                if (response.status == true) {
-                    if (response.data.length == 1) {
-                        response.data[0].listBorrowBooks.forEach((item) => {
-                            delete item._id;
-                        });
-                        setIdPendingRequest(response.data[0]._id);
-                        setListBorrowBook(response.data[0].listBorrowBooks);
-                        listCurrentBook.current =
-                            response.data[0].listBorrowBooks;
-                        return;
-                    } else {
-                        const pendingRequest = {
-                            userId: userInfo?.userId,
-                            listBorrowBooks: [],
-                            status: "PENDING",
-                        };
-                        const response = await axios.post(
-                            `api/userRequest/create`,
-                            pendingRequest
-                        );
-                        if (response.status == true) {
-                            setIdPendingRequest(response.data._id);
-                        }
-                        return;
-                    }
-                } else {
-                    return;
-                }
+            } else {
+                return;
+            }
+            const listSave = JSON.parse(
+                localStorage.getItem("pending-list-kbrary")
+            );
+            if (listSave) {
+                setListBorrowBook(listSave);
+                return;
             } else {
                 return;
             }
         }
         fetchData();
+
+        return () => {
+            localStorage.setItem(
+                "pending-list-kbrary",
+                JSON.stringify(listPending.current)
+            );
+        };
     }, []);
     useEffect(() => {
-        listCurrentBook.current = listBorrowBook;
-    }, [listBorrowBook]);
+        listPending.current = listBorrowBook;
+    });
     return (
         <>
             <div className="manage-container">
@@ -68,7 +52,6 @@ const BookPageUser = () => {
                         listBook={listBook}
                         listBorrowBook={listBorrowBook}
                         setListBorrowBook={setListBorrowBook}
-                        idPendingRequest={idPendingRequest}
                     />
                 </div>
             </div>
