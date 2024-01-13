@@ -4,7 +4,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 import ListBorrow from "./ListBorrow.js";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MDBListGroup, MDBListGroupItem } from "mdb-react-ui-kit";
 import { MDBIcon } from "mdb-react-ui-kit";
 import axios from "../../utils/axiosCustomize.js";
@@ -13,41 +13,68 @@ const DisplayBooks = (props) => {
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
     const listBook = props.listBook;
-    const [listBorrowBook, setListBorrowBook] = useState([]);
-    const [idPendingRequest, setIdPendingRequest] = useState("");
+    // const [listBorrowBook, setListBorrowBook] = useState([]);
+    // const [idPendingRequest, setIdPendingRequest] = useState("");
+    let listCurrentBook = useRef([]);
+    const listBorrowBook = props.listBorrowBook;
+    const idPendingRequest = props.idPendingRequest;
+    // useEffect(() => {
+    //     async function fetchPendingRequest() {
+    //         const response = await axios.get(
+    //             `api/userRequest/pending/${userInfo?.userId}`
+    //         );
 
-    useEffect(() => {
-        async function fetchPendingRequest() {
-            const response = await axios.get(
-                `api/userRequest/pending/${userInfo?.userId}`
-            );
+    //         if (response.status == true) {
+    //             if (response.data.length == 1) {
+    //                 response.data[0].listBorrowBooks.forEach((item) => {
+    //                     delete item._id;
+    //                 });
 
-            if (response.status == true) {
-                if (response.data.length == 1) {
-                    response.data[0].listBorrowBooks.forEach((item) => {
-                        delete item._id;
-                    });
+    //                 setIdPendingRequest(response.data[0]._id);
+    //                 setListBorrowBook(response.data[0].listBorrowBooks);
+    //                 listCurrentBook.current = response.data[0].listBorrowBooks;
+    //                 return;
+    //             } else {
+    //                 const pendingRequest = {
+    //                     userId: userInfo?.userId,
+    //                     listBorrowBooks: [],
+    //                     status: "PENDING",
+    //                 };
+    //                 const response = await axios.post(
+    //                     `api/userRequest/create`,
+    //                     pendingRequest
+    //                 );
+    //                 if (response.status == true) {
+    //                     setIdPendingRequest(response.data._id);
+    //                 }
+    //                 return;
+    //             }
+    //         } else {
+    //             return;
+    //         }
+    //     }
+    //     fetchPendingRequest();
+    // }, []);
 
-                    setIdPendingRequest(response.data[0]._id);
-                    setListBorrowBook(response.data[0].listBorrowBooks);
-                } else {
-                    const pendingRequest = {
-                        userId: userInfo?.userId,
-                        listBorrowBooks: [],
-                        status: "PENDING",
-                    };
-                    const response = await axios.post(
-                        `api/userRequest/create`,
-                        pendingRequest
-                    );
-                    return;
-                }
-            } else {
-                return;
-            }
-        }
-        fetchPendingRequest();
-    }, []);
+    // useEffect(() => {
+    //     return () => {
+    //         async function updatePending() {
+    //             const modifiedListBorrow = [...listCurrentBook.current];
+    //             modifiedListBorrow.forEach((book) => {
+    //                 book.bookId = book.bookId._id;
+    //             });
+    //             const data = {
+    //                 userId: userInfo.userId,
+    //                 listBorrowBooks: modifiedListBorrow,
+    //             };
+    //             const response = await axios.put(
+    //                 `api/userRequest/pending/updateWithUserId`,
+    //                 data
+    //             );
+    //         }
+    //         updatePending();
+    //     };
+    // }, []);
 
     const handleAddBook = async (book) => {
         const idBook = book._id;
@@ -64,17 +91,16 @@ const DisplayBooks = (props) => {
                 },
                 quantityBorrow: 1,
             };
-            setListBorrowBook([...listBorrowBook, newBook]);
+            props.setListBorrowBook([...listBorrowBook, newBook]);
         } else {
             listBorrowBook.forEach((book) => {
                 if (book.bookId._id === idBook) {
                     book.quantityBorrow++;
                 }
             });
-            setListBorrowBook([...listBorrowBook]);
+            props.setListBorrowBook([...listBorrowBook]);
         }
     };
-
     useEffect(() => {
         let total = null;
         listBorrowBook.forEach((item) => {
@@ -140,7 +166,7 @@ const DisplayBooks = (props) => {
                 <ListBorrow
                     idPendingRequest={idPendingRequest}
                     listBorrowBook={listBorrowBook}
-                    setListBorrowBook={setListBorrowBook}
+                    setListBorrowBook={props.setListBorrowBook}
                 />
             </div>
         </>

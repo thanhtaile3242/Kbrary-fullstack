@@ -38,3 +38,24 @@ h5 {
 .hidden {
     display: none;
 }
+
+.detail-borrow2 {
+    cursor: pointer;
+    position: absolute;
+    right: 140px !important;
+    top: 100px;
+    z-index: 9999;
+    width: 55px;
+    height: 55px;
+    .ant-scroll-number {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    &:hover {
+        color: #79bfea;
+    }
+}

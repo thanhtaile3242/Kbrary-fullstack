@@ -12,16 +12,19 @@ import {
 } from "mdb-react-ui-kit";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import React from "react";
+import { FaListCheck } from "react-icons/fa6";
+import { FloatButton } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import { MdLibraryBooks } from "react-icons/md";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import "../SCSS/ListBorrow.scss";
 import { FaClipboardList } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import axios from "../../utils/axiosCustomize.js";
 const ListBorrow = (props) => {
+    let listCurrent = useRef(props.listBorrowBook);
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
     const navigate = useNavigate();
@@ -68,30 +71,28 @@ const ListBorrow = (props) => {
         });
         setTotal(count);
     });
+    useEffect(() => {
+        listCurrent.current = listBorrowBook;
+        console.log("check list: ", listCurrent.current);
+        console.log("check id user: ", userInfo.userId);
+    });
+    useEffect(() => {
+        return async () => {
+            const modifiedListBorrow = [...listCurrent.current];
+            modifiedListBorrow.forEach((book) => {
+                book.bookId = book.bookId._id;
+            });
+            const data = {
+                userId: userInfo.userId,
+                listBorrowBooks: modifiedListBorrow,
+            };
+            const response = await axios.put(
+                `api/userRequest/pending/updateWithUserId`,
+                data
+            );
+        };
+    }, []);
 
-    // useEffect(() => {
-    //     if (!idPendingRequest) {
-    //         async function createPendingRequest() {
-    //             const listBorrowBooks = listBorrowBook.map((item) => {
-    //                 const objectBook = {
-    //                     bookId: item.bookId._id,
-    //                     quantityBorrow: item.quantityBorrow,
-    //                 };
-    //                 return objectBook;
-    //             });
-    //             const pendingRequest = {
-    //                 userId: userInfo?.userId,
-    //                 listBorrowBooks: listBorrowBooks,
-    //                 status: "PENDING",
-    //             };
-    //             const response = await axios.post(
-    //                 `api/userRequest/create`,
-    //                 pendingRequest
-    //             );
-    //         }
-    //         createPendingRequest();
-    //     }
-    // }, []);
     const handleCreatePendingRequest = async () => {
         const listBorrowBooks = listBorrowBook.map((item) => {
             const objectBook = {
@@ -130,43 +131,12 @@ const ListBorrow = (props) => {
             data
         );
         if (response.status == true) {
-            toast.success("Update request success");
             navigate("/borrowPending");
             return;
         } else {
-            toast.error("Can not update request");
             return;
         }
     };
-
-    // useEffect(() => {
-    //     async function updateBook() {
-    //         const modifiedListBorrow = [...listBorrowBook];
-    //         modifiedListBorrow.forEach((book) => {
-    //             book.bookId = book.bookId._id;
-    //         });
-    //         const data = {
-    //             requestId: idPendingRequest,
-    //             listBorrowBooks: modifiedListBorrow,
-    //         };
-    //         await axios.put(`api/userRequest/pending/update`, data);
-
-    //         // const response = await axios.get(
-    //         //     `api/userRequest/pending/${userInfo?.userId}`
-    //         // );
-
-    //         // if (response.status == true) {
-    //         //     if (response.data.length == 1) {
-    //         //         response.data[0].listBorrowBooks.forEach((item) => {
-    //         //             delete item._id;
-    //         //         });
-
-    //         //         props.setListBorrowBook(response.data[0].listBorrowBooks);
-    //         //     }
-    //         // }
-    //     }
-    //     updateBook();
-    // }, [props.listBorrowBook]);
 
     return (
         <>
@@ -181,25 +151,24 @@ const ListBorrow = (props) => {
                                             style={{ marginBottom: "15px" }}
                                             className="book-cart-title"
                                             tag="h5"
-                                            onClick={() => {
-                                                navigate("/borrowPending");
-                                            }}
-                                        >
-                                            <FaClipboardList
-                                                style={{
-                                                    fontSize: "30px",
-                                                    color: "black",
-                                                    marginRight: "10px",
-                                                }}
-                                            />
-                                            Book cart
-                                        </MDBTypography>
+                                        ></MDBTypography>
 
                                         <div className="d-flex justify-content-between align-items-center mb-2">
                                             <p className="mb-0">
                                                 You have {total} books in your
                                                 cart
                                             </p>
+                                            {/* <FloatButton
+                                                tooltip={
+                                                    <div>Detail borrow</div>
+                                                }
+                                                badge={{ count: total }}
+                                                className="icon-noti detail-borrow"
+                                                icon={<FaClipboardList />}
+                                                onClick={
+                                                    handleUpdatePendingRequest
+                                                }
+                                            /> */}
                                         </div>
                                         <div
                                             style={{

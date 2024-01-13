@@ -11,12 +11,15 @@ import {
     MDBTypography,
 } from "mdb-react-ui-kit";
 import React from "react";
+import { FaListCheck } from "react-icons/fa6";
+import { FloatButton } from "antd";
 import { DatePicker, Space } from "antd";
 import moment from "moment";
 import "./SCSS/DetailRequest.scss";
+import { useNavigate, Link } from "react-router-dom";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "../../components/utils/axiosCustomize.js";
 import { useOutletContext } from "react-router-dom";
 const disabledDate = (current) => {
@@ -24,11 +27,13 @@ const disabledDate = (current) => {
 };
 
 const UserBorrow = (props) => {
+    const navigate = useNavigate();
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
     const [pendingRequest, setPendingRequest] = useState(null);
     const [listBorrowBooks, setListBorrowBooks] = useState([]);
     const [isSelectDate, setIsSelectDate] = useState(false);
+    const [total, setTotal] = useState(null);
     useEffect(() => {
         async function fetchPendingRequest() {
             const response = await axios.get(
@@ -86,6 +91,50 @@ const UserBorrow = (props) => {
         );
         setListBorrowBooks(listBorrowBookNew);
     };
+    const handleUpdateWithUserId = async () => {
+        const modifiedListBorrow = [...listBorrowBooks];
+        modifiedListBorrow.forEach((book) => {
+            book.bookId = book.bookId._id;
+        });
+        const data = {
+            userId: userInfo.userId,
+            listBorrowBooks: modifiedListBorrow,
+        };
+        const response = await axios.put(
+            `api/userRequest/pending/updateWithUserId`,
+            data
+        );
+        navigate("/bookUser");
+    };
+    useEffect(() => {
+        let count = null;
+        listBorrowBooks.forEach((item) => {
+            count += item.quantityBorrow;
+        });
+        setTotal(count);
+    });
+    // let listCurrent = useRef(listBorrowBooks);
+    // useEffect(() => {
+    //     listCurrent.current = listBorrowBooks;
+    //     console.log("check list: ", listCurrent.current);
+    //     console.log("check id user: ", userInfo.userId);
+    // });
+    // useEffect(() => {
+    //     return async () => {
+    //         const modifiedListBorrow = [...listCurrent.current];
+    //         modifiedListBorrow.forEach((book) => {
+    //             book.bookId = book.bookId._id;
+    //         });
+    //         const data = {
+    //             userId: userInfo.userId,
+    //             listBorrowBooks: modifiedListBorrow,
+    //         };
+    //         const response = await axios.put(
+    //             `api/userRequest/pending/updateWithUserId`,
+    //             data
+    //         );
+    //     };
+    // }, []);
     return (
         <>
             <div>
@@ -95,7 +144,14 @@ const UserBorrow = (props) => {
                             <MDBCardBody className="p-4">
                                 <MDBRow>
                                     <MDBCol lg="8">
-                                        <MDBTypography tag="h5">
+                                        <MDBTypography
+                                            tag="h5"
+                                            onClick={handleUpdateWithUserId}
+                                            style={{
+                                                alignItems: "center",
+                                                cursor: "pointer",
+                                            }}
+                                        >
                                             <MDBIcon
                                                 fas
                                                 icon="long-arrow-alt-left me-2"
@@ -331,13 +387,20 @@ const UserBorrow = (props) => {
                                                     placeholder="Leave a comment here"
                                                     id="floatingTextarea2"
                                                     style={{
-                                                        height: "160px",
+                                                        height: "110px",
                                                         resize: "none",
                                                     }}
                                                 />
                                                 <label for="floatingTextarea2">
                                                     Note
                                                 </label>
+                                            </div>
+                                            <div className="mb-2">
+                                                <span
+                                                    style={{ fontSize: "17" }}
+                                                >
+                                                    Total books: {total}
+                                                </span>
                                             </div>
                                             <div>
                                                 <span

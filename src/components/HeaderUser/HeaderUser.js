@@ -7,6 +7,7 @@ import { Menu } from "antd";
 import { useState, useEffect } from "react";
 import Logo from "../../assets/logo.svg";
 import "./HeaderUser.scss";
+import { FaClipboardList } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { IoNotifications } from "react-icons/io5";
@@ -133,20 +134,16 @@ const HeaderUser = (props) => {
                                     </li>
                                 </ul>
                             )}
+                            <FloatButton
+                                tooltip={<div>Detail borrow</div>}
+                                badge={{ count: 1 }}
+                                className="icon-noti detail-borrow"
+                                icon={<FaClipboardList />}
+                                onClick={() => {
+                                    navigate("/borrowPending");
+                                }}
+                            />
                         </div>
-
-                        <FloatButton
-                            tooltip={<div>Detail borrow</div>}
-                            badge={{ count: props.numberBorrowBook }}
-                            className="icon-noti detail-borrow"
-                            icon={<FaListCheck />}
-                            onClick={() => {
-                                setIsSelectedBook(false);
-                                setIsSelectedHome(false);
-                                setIsSelectedUser(false);
-                                navigate("/borrowPending");
-                            }}
-                        />
                     </div>
                 ) : (
                     <div className="auth-container-before">
