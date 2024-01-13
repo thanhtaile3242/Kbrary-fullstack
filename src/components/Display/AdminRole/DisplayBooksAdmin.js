@@ -8,7 +8,7 @@ import { MDBIcon } from "mdb-react-ui-kit";
 import axios from "../../utils/axiosCustomize.js";
 const DisplayBooks = (props) => {
     const listBook = props.listBook;
-    const listBorrowBook = props.listBorrowBook;
+    // const listBorrowBook = props.listBorrowBook;
 
     return (
         <>

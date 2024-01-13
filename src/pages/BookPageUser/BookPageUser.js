@@ -7,7 +7,7 @@ import DetailPendingRequest from "../UserRole/DetailPendingRequest.js";
 
 const BookPageUser = () => {
     const [listBook, setListBook] = useState([]);
-    const [listBorrowBook, setListBorrowBook] = useState([]);
+
     useEffect(() => {
         async function fetchData() {
             const responseBook = await axios.get("api/book/find");
@@ -28,8 +28,8 @@ const BookPageUser = () => {
                 <div className="manage-main">
                     <DisplayBooksUser
                         listBook={listBook}
-                        listBorrowBook={listBorrowBook}
-                        setListBorrowBook={setListBorrowBook}
+                        // listBorrowBook={listBorrowBook}
+                        // setListBorrowBook={setListBorrowBook}
                     />
                 </div>
             </div>

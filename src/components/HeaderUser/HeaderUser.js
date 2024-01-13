@@ -38,6 +38,7 @@ const HeaderUser = (props) => {
         setIsSelectedHome(false);
         navigate("/profile");
     };
+
     return (
         <>
             <div className="header-container">
@@ -140,6 +141,9 @@ const HeaderUser = (props) => {
                             className="icon-noti detail-borrow"
                             icon={<FaListCheck />}
                             onClick={() => {
+                                setIsSelectedBook(false);
+                                setIsSelectedHome(false);
+                                setIsSelectedUser(false);
                                 navigate("/borrowPending");
                             }}
                         />

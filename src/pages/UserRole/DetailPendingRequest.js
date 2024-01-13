@@ -18,21 +18,30 @@ import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import axios from "../../components/utils/axiosCustomize.js";
-
+import { useOutletContext } from "react-router-dom";
 const disabledDate = (current) => {
     return current && current < moment().endOf("day");
 };
 
 const UserBorrow = (props) => {
+    const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
+        useOutletContext();
     const [pendingRequest, setPendingRequest] = useState(null);
     const [listBorrowBooks, setListBorrowBooks] = useState([]);
     const [isSelectDate, setIsSelectDate] = useState(false);
     useEffect(() => {
         async function fetchPendingRequest() {
-            const response = await axios.get("api/userRequest/pending");
+            const response = await axios.get(
+                `api/userRequest/pending/${userInfo.userId}`
+            );
             if (response?.status === true) {
-                setPendingRequest(response?.data);
-                setListBorrowBooks(response?.data?.listBorrowBooks);
+                if (response.data.length == 1) {
+                    setPendingRequest(response?.data[0]);
+                    setListBorrowBooks(response?.data[0]?.listBorrowBooks);
+                    return;
+                } else {
+                    return;
+                }
             } else {
                 return;
             }

@@ -12,6 +12,7 @@ import {
 } from "mdb-react-ui-kit";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import React from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { MdLibraryBooks } from "react-icons/md";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
@@ -25,20 +26,21 @@ const ListBorrow = (props) => {
         useOutletContext();
     const navigate = useNavigate();
     const listBorrowBook = props.listBorrowBook;
+    const idPendingRequest = props.idPendingRequest;
     const [total, setTotal] = useState(null);
     const handleIncreaseBook = (item) => {
-        const idItem = item._id;
+        const idItem = item.bookId._id;
         listBorrowBook.forEach((book) => {
-            if (book._id === idItem) {
+            if (book.bookId._id === idItem) {
                 book.quantityBorrow++;
             }
         });
         props.setListBorrowBook([...listBorrowBook]);
     };
     const handleDescreaseBook = (item) => {
-        const idItem = item._id;
+        const idItem = item.bookId._id;
         listBorrowBook.forEach((book) => {
-            if (book._id === idItem) {
+            if (book.bookId._id === idItem) {
                 book.quantityBorrow--;
             }
         });
@@ -52,9 +54,9 @@ const ListBorrow = (props) => {
         props.setListBorrowBook([...listBorrowBook]);
     };
     const handleDeleteBook = (item) => {
-        const idItem = item._id;
+        const idItem = item.bookId._id;
         const listBorrowBookNew = listBorrowBook.filter(
-            (item) => item._id !== idItem
+            (item) => item.bookId._id !== idItem
         );
         props.setListBorrowBook(listBorrowBookNew);
     };
@@ -66,11 +68,34 @@ const ListBorrow = (props) => {
         });
         setTotal(count);
     });
-    //
+
+    // useEffect(() => {
+    //     if (!idPendingRequest) {
+    //         async function createPendingRequest() {
+    //             const listBorrowBooks = listBorrowBook.map((item) => {
+    //                 const objectBook = {
+    //                     bookId: item.bookId._id,
+    //                     quantityBorrow: item.quantityBorrow,
+    //                 };
+    //                 return objectBook;
+    //             });
+    //             const pendingRequest = {
+    //                 userId: userInfo?.userId,
+    //                 listBorrowBooks: listBorrowBooks,
+    //                 status: "PENDING",
+    //             };
+    //             const response = await axios.post(
+    //                 `api/userRequest/create`,
+    //                 pendingRequest
+    //             );
+    //         }
+    //         createPendingRequest();
+    //     }
+    // }, []);
     const handleCreatePendingRequest = async () => {
         const listBorrowBooks = listBorrowBook.map((item) => {
             const objectBook = {
-                bookId: item._id,
+                bookId: item.bookId._id,
                 quantityBorrow: item.quantityBorrow,
             };
             return objectBook;
@@ -85,11 +110,64 @@ const ListBorrow = (props) => {
             pendingRequest
         );
         if (response.status === true) {
+            toast.success("Create request success");
             navigate("/borrowPending");
         } else {
             return;
         }
     };
+    const handleUpdatePendingRequest = async () => {
+        const modifiedListBorrow = [...listBorrowBook];
+        modifiedListBorrow.forEach((book) => {
+            book.bookId = book.bookId._id;
+        });
+        const data = {
+            requestId: idPendingRequest,
+            listBorrowBooks: modifiedListBorrow,
+        };
+        const response = await axios.put(
+            `api/userRequest/pending/update`,
+            data
+        );
+        if (response.status == true) {
+            toast.success("Update request success");
+            navigate("/borrowPending");
+            return;
+        } else {
+            toast.error("Can not update request");
+            return;
+        }
+    };
+
+    // useEffect(() => {
+    //     async function updateBook() {
+    //         const modifiedListBorrow = [...listBorrowBook];
+    //         modifiedListBorrow.forEach((book) => {
+    //             book.bookId = book.bookId._id;
+    //         });
+    //         const data = {
+    //             requestId: idPendingRequest,
+    //             listBorrowBooks: modifiedListBorrow,
+    //         };
+    //         await axios.put(`api/userRequest/pending/update`, data);
+
+    //         // const response = await axios.get(
+    //         //     `api/userRequest/pending/${userInfo?.userId}`
+    //         // );
+
+    //         // if (response.status == true) {
+    //         //     if (response.data.length == 1) {
+    //         //         response.data[0].listBorrowBooks.forEach((item) => {
+    //         //             delete item._id;
+    //         //         });
+
+    //         //         props.setListBorrowBook(response.data[0].listBorrowBooks);
+    //         //     }
+    //         // }
+    //     }
+    //     updateBook();
+    // }, [props.listBorrowBook]);
+
     return (
         <>
             <MDBContainer className="py-5 h-100">
@@ -137,7 +215,7 @@ const ListBorrow = (props) => {
                                                             <div className="d-flex justify-content-between">
                                                                 <div>
                                                                     <img
-                                                                        src={`http://localhost:8802/${item.imageName}`}
+                                                                        src={`http://localhost:8802/${item.bookId.imageName}`}
                                                                         alt=""
                                                                         style={{
                                                                             width: "65px",
@@ -156,7 +234,9 @@ const ListBorrow = (props) => {
                                                                     }}
                                                                 >
                                                                     {
-                                                                        item.bookName
+                                                                        item
+                                                                            .bookId
+                                                                            .bookName
                                                                     }
                                                                 </div>
                                                                 <div
@@ -228,7 +308,7 @@ const ListBorrow = (props) => {
                                         </div>
                                         <span
                                             className="btn-borrow"
-                                            onClick={handleCreatePendingRequest}
+                                            onClick={handleUpdatePendingRequest}
                                         >
                                             Detail
                                         </span>

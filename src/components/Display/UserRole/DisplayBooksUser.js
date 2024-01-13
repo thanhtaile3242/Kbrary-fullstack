@@ -13,22 +13,65 @@ const DisplayBooks = (props) => {
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
     const listBook = props.listBook;
-    const listBorrowBook = props.listBorrowBook;
-    const handleAddBook = (book) => {
+    const [listBorrowBook, setListBorrowBook] = useState([]);
+    const [idPendingRequest, setIdPendingRequest] = useState("");
+
+    useEffect(() => {
+        async function fetchPendingRequest() {
+            const response = await axios.get(
+                `api/userRequest/pending/${userInfo?.userId}`
+            );
+
+            if (response.status == true) {
+                if (response.data.length == 1) {
+                    response.data[0].listBorrowBooks.forEach((item) => {
+                        delete item._id;
+                    });
+
+                    setIdPendingRequest(response.data[0]._id);
+                    setListBorrowBook(response.data[0].listBorrowBooks);
+                } else {
+                    const pendingRequest = {
+                        userId: userInfo?.userId,
+                        listBorrowBooks: [],
+                        status: "PENDING",
+                    };
+                    const response = await axios.post(
+                        `api/userRequest/create`,
+                        pendingRequest
+                    );
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+        fetchPendingRequest();
+    }, []);
+
+    const handleAddBook = async (book) => {
         const idBook = book._id;
-        const isExist = listBorrowBook.find((book) => book._id === idBook);
+        const isExist = listBorrowBook.find(
+            (book) => book.bookId._id === idBook
+        );
         if (!isExist) {
-            const newBook = { ...book, quantityBorrow: 1 };
-            props.setListBorrowBook([...listBorrowBook, newBook]);
-            return;
+            const newBook = {
+                bookId: {
+                    _id: book._id,
+                    bookName: book.bookName,
+                    category: book.category,
+                    imageName: book.imageName,
+                },
+                quantityBorrow: 1,
+            };
+            setListBorrowBook([...listBorrowBook, newBook]);
         } else {
             listBorrowBook.forEach((book) => {
-                if (book._id === idBook) {
+                if (book.bookId._id === idBook) {
                     book.quantityBorrow++;
                 }
             });
-            props.setListBorrowBook([...listBorrowBook]);
-            return;
+            setListBorrowBook([...listBorrowBook]);
         }
     };
 
@@ -95,8 +138,9 @@ const DisplayBooks = (props) => {
             </div>
             <div className="list-borrow-container">
                 <ListBorrow
-                    listBorrowBook={props.listBorrowBook}
-                    setListBorrowBook={props.setListBorrowBook}
+                    idPendingRequest={idPendingRequest}
+                    listBorrowBook={listBorrowBook}
+                    setListBorrowBook={setListBorrowBook}
                 />
             </div>
         </>
