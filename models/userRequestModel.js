@@ -9,6 +9,16 @@ const userRequestSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
+        userFullname: { type: String, required: true },
+        dateBorrow: {
+            type: Date,
+            required: true,
+        },
+        phoneNumber: {
+            type: String,
+            required: true,
+        },
+        note: { type: String, required: true },
         listBorrowBooks: [
             {
                 bookId: {

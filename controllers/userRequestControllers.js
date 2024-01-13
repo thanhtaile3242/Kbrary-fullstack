@@ -5,10 +5,14 @@ export const createUserRequestController = async (req, res) => {
     try {
         const schema = Joi.object({
             userId: Joi.string().required(),
+            userFullname: Joi.string().required(),
+            dateBorrow: Joi.date().required(),
+            phoneNumber: Joi.string().required(),
+            note: Joi.string().required(),
             listBorrowBooks: Joi.array()
                 .items(
                     Joi.object({
-                        bookId: Joi.string().required(),
+                        bookId: Joi.object(),
                         quantityBorrow: Joi.number()
                             .integer()
                             .min(1)
@@ -24,7 +28,16 @@ export const createUserRequestController = async (req, res) => {
         if (error) {
             return res.status(500).json({ status: false, message: error });
         } else {
-            const newRequest = req.body;
+            const listBorrowBooks = req.body.listBorrowBooks;
+            listBorrowBooks.forEach((book) => {
+                book.bookId = book.bookId._id;
+            });
+
+            const newRequest = {
+                ...req.body,
+                listBorrowBooks: listBorrowBooks,
+            };
+
             const result = await userRequest.create(newRequest);
             if (result) {
                 return res.status(200).json({
@@ -34,7 +47,7 @@ export const createUserRequestController = async (req, res) => {
                 });
             } else {
                 return res.status(400).json({
-                    status: true,
+                    status: false,
                     message: "Can not create a user request",
                 });
             }
