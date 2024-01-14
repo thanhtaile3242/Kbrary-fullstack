@@ -210,3 +210,53 @@ export const updatePendingRequestWithUserID = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
+//
+export const findRequestControllerUser = async (req, res) => {
+    try {
+        const { status, sortField, sortOrder, userId } = req.query;
+
+        let order;
+        if (sortOrder === "ASC") order = 1;
+        else order = -1;
+
+        let validStatus = req.query.status;
+        if (req.query.status === "null") {
+            validStatus = null;
+        }
+
+        const criteria = {
+            status,
+            userId,
+        };
+        if (!userId) {
+            delete criteria.userId;
+        }
+        if (!validStatus) {
+            delete criteria.status;
+        }
+
+        const result = await userRequest
+            .find(criteria)
+            .sort({ createdAt: order });
+
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Find requests successfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Can not find books",
+                data: result,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};

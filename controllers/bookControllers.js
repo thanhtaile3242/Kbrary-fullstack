@@ -353,3 +353,40 @@ export const deleteBookController = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
+
+export const detailBookControllerUser = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            id: Joi.string().required(),
+        });
+        const { error } = schema.validate(req.pramas, {
+            abortEarly: false,
+        });
+        if (error) {
+            return res.status(500).json({ status: false, message: error });
+        } else {
+            const { id } = req.params;
+            const result = await Book.findById(id)
+                .select("bookName category status description imageName author")
+                .populate({
+                    path: "category",
+                    select: "categoryName",
+                });
+            if (result) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Get detail book successfully",
+                    data: result,
+                });
+            } else {
+                return res.status(400).json({
+                    status: true,
+                    message: "Book not found",
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
+    }
+};

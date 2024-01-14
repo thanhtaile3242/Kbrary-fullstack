@@ -10,6 +10,7 @@ import {
     updateBookImageController,
     updateBookController,
     deleteBookController,
+    detailBookControllerUser,
 } from "../controllers/bookControllers.js";
 // Create a new book (Role: Admin)
 router.post(
@@ -33,4 +34,6 @@ router.put(
 );
 // Delete book
 router.delete("/delete/:id", deleteBookController);
+// Detail book
+router.get("/detailBookUser/:id", detailBookControllerUser);
 export default router;

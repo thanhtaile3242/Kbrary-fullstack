@@ -35,7 +35,7 @@ const userRequestSchema = new mongoose.Schema(
         status: {
             type: String,
             required: true,
-            enum: ["PENDING", "INPROGRESS", "FAIL", "SUCCESS"],
+            enum: ["DONE", "INPROGRESS"],
         },
     },
     {
