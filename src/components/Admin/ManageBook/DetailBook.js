@@ -229,12 +229,14 @@ const DetailBook = (props) => {
                     </div>
                     <div className="save-book-btn">
                         <span
+                            style={{ fontWeight: "bold", marginLeft: "0" }}
                             className="btn btn-secondary"
                             onClick={props.handleShowListBook}
                         >
                             Back
                         </span>
                         <span
+                            style={{ fontWeight: "bold" }}
                             className="btn btn-primary"
                             onClick={handleUpdateBook}
                         >
@@ -265,6 +267,7 @@ const DetailBook = (props) => {
                             />
                         </div>
                         <span
+                            style={{ fontWeight: "bold" }}
                             className="btn btn-primary"
                             onClick={() => {
                                 setShowImageEdit(true);

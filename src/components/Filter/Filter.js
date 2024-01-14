@@ -51,7 +51,6 @@ const Filter = (props) => {
     useEffect(() => {
         handleSearchBooksNotPrevent();
     }, [sortCriteria]);
-    //
 
     const handleSearchBooks = async (event) => {
         event.preventDefault();

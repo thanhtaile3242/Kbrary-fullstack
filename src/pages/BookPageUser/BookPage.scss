@@ -8,3 +8,44 @@
     display: grid;
     grid-template-columns: 65% 1fr 10fr;
 }
+.detail-book-user {
+    background-color: #f5f5fa;
+    min-height: "100vh";
+    padding: 30px 100px 0;
+}
+//
+.detail-book-container {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    padding-top: 50px;
+    .book-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 40px;
+        img {
+            width: 400px !important;
+        }
+    }
+    .book-content {
+        padding: 55px 100px 0 20px !important;
+        .two-items-row-1 {
+            display: grid;
+            grid-template-columns: 70% 25%;
+            gap: 5%;
+        }
+        .two-items-row-2 {
+            display: grid;
+            grid-template-columns: 45% 45%;
+            gap: 10%;
+        }
+        .description-text {
+            height: 150px !important;
+        }
+        .save-book-btn {
+            .btn-back {
+                margin: 0 !important;
+            }
+        }
+    }
+}

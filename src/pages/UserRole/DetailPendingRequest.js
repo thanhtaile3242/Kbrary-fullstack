@@ -143,6 +143,7 @@ const UserBorrow = (props) => {
             const response = await axios.post("api/userRequest/create", data);
             if (response.status == true) {
                 toast.success(response.message);
+                setNumberBorrowBook(null);
                 navigate("/congratsPage");
             } else {
                 toast.error("Can not create request!");
@@ -163,7 +164,7 @@ const UserBorrow = (props) => {
                         <MDBCard style={{ height: "600px", marginTop: "30px" }}>
                             <MDBCardBody className="p-4">
                                 <MDBRow>
-                                    <MDBCol lg="8">
+                                    <MDBCol lg="6">
                                         <MDBTypography
                                             tag="h5"
                                             onClick={() => {
@@ -184,7 +185,7 @@ const UserBorrow = (props) => {
                                             style={{
                                                 paddingRight: "28px",
                                                 paddingLeft: "10px",
-                                                height: "560px",
+                                                height: "490px",
                                                 maxWidth: "100%",
                                                 overflowX: "hidden",
                                                 overflow: "auto",
@@ -330,6 +331,145 @@ const UserBorrow = (props) => {
                                     </MDBCol>
 
                                     <MDBCol lg="4">
+                                        <div
+                                            className="user-infor-container"
+                                            style={{
+                                                paddingTop: "45px",
+                                            }}
+                                        >
+                                            <div class="form-floating mb-4">
+                                                <input
+                                                    disabled
+                                                    type="email"
+                                                    class="form-control"
+                                                    id="floatingInput"
+                                                    placeholder="name@example.com"
+                                                    value={userInfo.email}
+                                                />
+                                                <label for="floatingInput">
+                                                    Email
+                                                </label>
+                                            </div>
+                                            <div class="form-floating mb-4">
+                                                <input
+                                                    type="text"
+                                                    class="form-control"
+                                                    id="floatingInput"
+                                                    placeholder="name@example.com"
+                                                    value={fullname}
+                                                    onChange={(event) => {
+                                                        setFullname(
+                                                            event.target.value
+                                                        );
+                                                    }}
+                                                />
+                                                <label for="floatingInput">
+                                                    Fullname
+                                                </label>
+                                            </div>
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    gap: "20px",
+                                                }}
+                                            >
+                                                <div class="form-floating mb-3">
+                                                    <DatePicker
+                                                        style={{
+                                                            height: "100%",
+                                                            backgroundColor:
+                                                                "white",
+                                                            border: "1px solid #dee2e6",
+                                                        }}
+                                                        format={"DD-MM-YYYY"}
+                                                        onChange={onChangeDate}
+                                                        disabledDate={
+                                                            disabledDate
+                                                        }
+                                                        allowClear
+                                                    />
+
+                                                    <label
+                                                        className={
+                                                            isSelectDate
+                                                                ? "hidden"
+                                                                : ""
+                                                        }
+                                                    >
+                                                        Select date
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-floating mb-3">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="floatingInput"
+                                                        placeholder="name@example.com"
+                                                        value={phoneNumber}
+                                                        onChange={(event) => {
+                                                            setPhoneNumber(
+                                                                event.target
+                                                                    .value
+                                                            );
+                                                        }}
+                                                    />
+                                                    <label for="floatingInput">
+                                                        Phone number
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <textarea
+                                                    class="form-control"
+                                                    placeholder="Leave a comment here"
+                                                    id="floatingTextarea2"
+                                                    style={{
+                                                        height: "110px",
+                                                        resize: "none",
+                                                    }}
+                                                    value={note}
+                                                    onChange={(event) => {
+                                                        setNote(
+                                                            event.target.value
+                                                        );
+                                                    }}
+                                                />
+                                                <label for="floatingTextarea2">
+                                                    Note
+                                                </label>
+                                            </div>
+                                            <div className="mb-2">
+                                                <span
+                                                    style={{
+                                                        fontSize: "17",
+                                                    }}
+                                                >
+                                                    Total books: {total}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span
+                                                    onClick={
+                                                        handleCreateRequest
+                                                    }
+                                                    className="btn"
+                                                    style={{
+                                                        marginTop: "5px",
+                                                        fontSize: "18px",
+                                                        width: "100%",
+                                                        marginLeft: "0",
+                                                        color: "white",
+                                                        backgroundColor:
+                                                            "#004380",
+                                                    }}
+                                                >
+                                                    CHECK OUT
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </MDBCol>
+                                    <MDBCol lg="2">
                                         <div
                                             className="user-infor-container"
                                             style={{

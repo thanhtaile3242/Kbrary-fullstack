@@ -200,6 +200,7 @@ const DetailAdmin = (props) => {
                     }}
                 />
                 <span
+                    style={{ fontWeight: "bold" }}
                     className="btn btn-secondary btn-close-user"
                     onClick={() => {
                         props.setShowDetailAdmin(false);
@@ -209,6 +210,7 @@ const DetailAdmin = (props) => {
                     Back
                 </span>
                 <span
+                    style={{ fontWeight: "bold" }}
                     className="btn btn-primary btn-update"
                     onClick={() => {
                         handleUpdateAdmin();
@@ -221,7 +223,9 @@ const DetailAdmin = (props) => {
                 <Form>
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridEmail">
-                            <Form.Label>Username</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Username
+                            </Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="username"
@@ -234,7 +238,9 @@ const DetailAdmin = (props) => {
                         </Form.Group>
 
                         <Form.Group as={Col} controlId="formGridPassword">
-                            <Form.Label>Role</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Role
+                            </Form.Label>
                             <Form.Select
                                 name="role"
                                 value={adminInfor?.role}
@@ -255,7 +261,9 @@ const DetailAdmin = (props) => {
 
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridState">
-                            <Form.Label>Email</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Email
+                            </Form.Label>
                             <Form.Control
                                 name="email"
                                 type="email"

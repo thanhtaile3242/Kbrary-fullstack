@@ -62,6 +62,7 @@ const ListAdmin = (props) => {
                     </form>
                 </div>
                 <span
+                    style={{ fontWeight: "bold" }}
                     className="btn btn-primary"
                     onClick={() => {
                         props.setShowCreateAdmin(true);

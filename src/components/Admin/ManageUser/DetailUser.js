@@ -197,6 +197,7 @@ const DetailUser = (props) => {
                     }}
                 />
                 <span
+                    style={{ fontWeight: "bold" }}
                     className="btn btn-secondary btn-close-user"
                     onClick={() => {
                         props.setShowDetailUser(false);
@@ -206,6 +207,7 @@ const DetailUser = (props) => {
                     Back
                 </span>
                 <span
+                    style={{ fontWeight: "bold" }}
                     className="btn btn-primary btn-update"
                     onClick={() => {
                         handleUpdateUser();
@@ -218,7 +220,9 @@ const DetailUser = (props) => {
                 <Form>
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridEmail">
-                            <Form.Label>Username</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Username
+                            </Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="username"
@@ -231,7 +235,9 @@ const DetailUser = (props) => {
                         </Form.Group>
 
                         <Form.Group as={Col} controlId="formGridPassword">
-                            <Form.Label>Role</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Role
+                            </Form.Label>
                             <Form.Select
                                 name="role"
                                 value={userInfor?.role}
@@ -252,7 +258,9 @@ const DetailUser = (props) => {
 
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridState">
-                            <Form.Label>Email</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Email
+                            </Form.Label>
                             <Form.Control
                                 name="email"
                                 type="email"
@@ -278,7 +286,9 @@ const DetailUser = (props) => {
                 </div>
             </div>
             <div className="list-requests">
-                <label className="title">List of requests</label>
+                <label className="title" style={{ fontWeight: "bold" }}>
+                    List of requests
+                </label>
                 <Table
                     columns={columns}
                     dataSource={data}

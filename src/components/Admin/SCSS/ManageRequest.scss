@@ -1,0 +1,17 @@
+.manage-request-container {
+    padding: 10px 30px 0 20px;
+    .tab-container {
+        display: flex;
+        justify-content: space-between;
+
+        .sort-by {
+            .sort-by-span {
+                font-size: 18px;
+                font-weight: 500;
+            }
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    }
+}

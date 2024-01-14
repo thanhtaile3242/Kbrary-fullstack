@@ -62,6 +62,7 @@ const ListUser = (props) => {
                     </form>
                 </div>
                 <span
+                    style={{ fontWeight: "bold" }}
                     className="btn btn-primary"
                     onClick={() => {
                         props.setShowCreateUser(true);

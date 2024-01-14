@@ -88,6 +88,7 @@ const CreateBook = (props) => {
                     <div className="two-items-row-1">
                         <div class="form-floating mb-3">
                             <input
+                                style={{ fontWeight: "bold" }}
                                 type="text"
                                 class="form-control"
                                 id="floatingInput"
@@ -96,10 +97,16 @@ const CreateBook = (props) => {
                                     setBookName(event.target.value);
                                 }}
                             />
-                            <label for="floatingInput">Book name</label>
+                            <label
+                                for="floatingInput"
+                                style={{ fontWeight: "bold" }}
+                            >
+                                Book name
+                            </label>
                         </div>
                         <div class="form-floating mb-3">
                             <select
+                                style={{ fontWeight: "bold" }}
                                 class="form-select"
                                 id="floatingSelect"
                                 onChange={(event) => {
@@ -110,12 +117,18 @@ const CreateBook = (props) => {
                                 <option value="AVAILABLE">Available</option>
                                 <option value="OUTOFSTOCK">Out of Stock</option>
                             </select>
-                            <label for="floatingSelect">Status</label>
+                            <label
+                                for="floatingSelect"
+                                style={{ fontWeight: "bold" }}
+                            >
+                                Status
+                            </label>
                         </div>
                     </div>
                     <div className="two-items-row-2 mb-4 three-item">
                         <div class="form-floating">
                             <input
+                                style={{ fontWeight: "bold" }}
                                 type="text"
                                 class="form-control"
                                 id="floatingPassword"
@@ -124,10 +137,16 @@ const CreateBook = (props) => {
                                     setAuthor(event.target.value);
                                 }}
                             />
-                            <label for="floatingPassword">Author</label>
+                            <label
+                                for="floatingPassword"
+                                style={{ fontWeight: "bold" }}
+                            >
+                                Author
+                            </label>
                         </div>
                         <div class="form-floating">
                             <input
+                                style={{ fontWeight: "bold" }}
                                 type="number"
                                 class="form-control"
                                 id="floatingPassword"
@@ -137,10 +156,16 @@ const CreateBook = (props) => {
                                     setQuantitySystem(event.target.value);
                                 }}
                             />
-                            <label for="floatingPassword">Quantity</label>
+                            <label
+                                for="floatingPassword"
+                                style={{ fontWeight: "bold" }}
+                            >
+                                Quantity
+                            </label>
                         </div>
                         <div class="form-floating category-list">
                             <select
+                                style={{ fontWeight: "bold" }}
                                 class="form-select "
                                 id="floatingSelect"
                                 onChange={(event) => {
@@ -156,7 +181,12 @@ const CreateBook = (props) => {
                                     );
                                 })}
                             </select>
-                            <label for="floatingPassword">Category</label>
+                            <label
+                                for="floatingPassword"
+                                style={{ fontWeight: "bold" }}
+                            >
+                                Category
+                            </label>
                             <IoIosAddCircle
                                 className="icon"
                                 onClick={() => {
@@ -168,6 +198,7 @@ const CreateBook = (props) => {
                     <div className="description-container mb-3">
                         <div class="form-floating">
                             <textarea
+                                style={{ fontWeight: "bold" }}
                                 class="form-control description-text"
                                 placeholder="Leave a comment here"
                                 id="floatingTextarea2"
@@ -175,11 +206,17 @@ const CreateBook = (props) => {
                                     setDescription(event.target.value);
                                 }}
                             />
-                            <label for="floatingTextarea2">Description</label>
+                            <label
+                                for="floatingTextarea2"
+                                style={{ fontWeight: "bold" }}
+                            >
+                                Description
+                            </label>
                         </div>
                     </div>
                     <div className="save-book-btn">
                         <span
+                            style={{ fontWeight: "bold", marginLeft: "0px" }}
                             className="btn btn-secondary"
                             onClick={props.handleShowListBook}
                         >
@@ -187,6 +224,7 @@ const CreateBook = (props) => {
                         </span>
 
                         <span
+                            style={{ fontWeight: "bold" }}
                             className="btn btn-primary"
                             onClick={handleCreateBook}
                         >
@@ -216,6 +254,7 @@ const CreateBook = (props) => {
                             />
                         </div>
                         <span
+                            style={{ fontWeight: "bold" }}
                             className="btn btn-primary"
                             onClick={() => {
                                 setShowImageEdit(true);

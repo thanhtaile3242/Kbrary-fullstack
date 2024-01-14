@@ -42,6 +42,7 @@ const ManageBooks = () => {
                         {
                             title: (
                                 <span
+                                    style={{ fontWeight: "bold" }}
                                     onClick={handleShowListBook}
                                     className="list-book-icon"
                                 >
@@ -50,7 +51,11 @@ const ManageBooks = () => {
                             ),
                         },
                         {
-                            title: <span>Detail</span>,
+                            title: (
+                                <span style={{ fontWeight: "bold" }}>
+                                    Detail
+                                </span>
+                            ),
                         },
                     ]}
                 />

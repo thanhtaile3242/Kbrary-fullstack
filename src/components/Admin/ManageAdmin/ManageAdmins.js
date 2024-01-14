@@ -23,6 +23,7 @@ const ManageAdmins = () => {
                             title: (
                                 <>
                                     <span
+                                        style={{ fontWeight: "bold" }}
                                         className="list-user-breadcrumb"
                                         onClick={() => {
                                             setShowListAdmins(true);
@@ -35,7 +36,11 @@ const ManageAdmins = () => {
                             ),
                         },
                         {
-                            title: "Detail",
+                            title: (
+                                <span style={{ fontWeight: "bold" }}>
+                                    Detail
+                                </span>
+                            ),
                         },
                     ]}
                 />

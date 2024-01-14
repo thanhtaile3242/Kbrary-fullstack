@@ -253,6 +253,7 @@ const ListBook = (props) => {
                     />
                 </div>
                 <span
+                    style={{ fontWeight: "bold" }}
                     className="btn btn-primary"
                     onClick={props.handleShowCreateBook}
                 >

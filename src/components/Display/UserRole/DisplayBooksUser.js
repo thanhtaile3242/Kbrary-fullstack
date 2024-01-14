@@ -46,6 +46,11 @@ const DisplayBooks = (props) => {
         });
         setNumberBorrowBook(total);
     });
+    const handleChooseDetailBook = (book) => {
+        const bookId = book._id;
+        props.setIdDetailBook(bookId);
+        props.handleShowDetailBook();
+    };
 
     return (
         <>
@@ -70,14 +75,25 @@ const DisplayBooks = (props) => {
                                         {item.category.categoryName}
                                     </span>
                                     <div className="btn-container">
-                                        <span className="btn btn-warning btn-more">
+                                        <span
+                                            className="btn btn-warning btn-more"
+                                            onClick={() => {
+                                                handleChooseDetailBook(item);
+                                            }}
+                                        >
                                             More
                                         </span>
 
                                         <span
                                             className="btn btn-borrow"
                                             onClick={() => {
-                                                handleAddBook(item);
+                                                if (
+                                                    item.status === "AVAILABLE"
+                                                ) {
+                                                    handleAddBook(item);
+                                                } else {
+                                                    return;
+                                                }
                                             }}
                                         >
                                             Borrow

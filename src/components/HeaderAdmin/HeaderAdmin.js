@@ -120,7 +120,10 @@ const Header = (props) => {
                             )}
 
                             {isShowHideUserInfo && (
-                                <ul class="account__list">
+                                <ul
+                                    class="account__list"
+                                    style={{ left: "90px", top: "110%" }}
+                                >
                                     <li>
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         <span>Profile</span>

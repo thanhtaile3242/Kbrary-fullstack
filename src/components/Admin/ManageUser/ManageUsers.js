@@ -16,43 +16,6 @@ const ManageUsers = () => {
     const [showDetailUser, setShowDetailUser] = useState(false);
     const [idDetailUser, setIdDetailUser] = useState("");
 
-    // const handleShowList = (value) => {
-    //     if (value == "USER") {
-    //         setShowListUsers(true);
-    //         setShowListAdmins(false);
-    //         return;
-    //     }
-    //     if (value == "ADMIN") {
-    //         setShowListAdmins(true);
-    //         setShowListUsers(false);
-    //         return;
-    //     }
-    // };
-
-    // Search
-
-    // Handle Function
-
-    // const [filterKeyword, setFilterKeyword] = useState("");
-
-    // const handleFilter = async (event) => {
-    //     const response = await axios.get(`api/user/getAll`);
-    //     let listFilter = [];
-    //     let filterKeyword = event.target.value;
-    //     if (filterKeyword === "USER") {
-    //         listFilter = response.data.filter((item) => {
-    //             return item.role === "USER";
-    //         });
-    //         setListUser(listFilter);
-    //     }
-    //     if (filterKeyword === "ADMIN") {
-    //         listFilter = response.data.filter((item) => {
-    //             return item.role === "ADMIN";
-    //         });
-    //         setListUser(listFilter);
-    //     }
-    // };
-
     return (
         <>
             <div className="breadcrumb-container">
@@ -63,6 +26,7 @@ const ManageUsers = () => {
                             title: (
                                 <>
                                     <span
+                                        style={{ fontWeight: "bold" }}
                                         className="list-user-breadcrumb"
                                         onClick={() => {
                                             setShowListUsers(true);
@@ -75,7 +39,11 @@ const ManageUsers = () => {
                             ),
                         },
                         {
-                            title: "Detail",
+                            title: (
+                                <span style={{ fontWeight: "bold" }}>
+                                    Detail
+                                </span>
+                            ),
                         },
                     ]}
                 />
