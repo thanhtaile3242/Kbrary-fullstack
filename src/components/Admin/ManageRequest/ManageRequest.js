@@ -4,8 +4,8 @@ import { Select } from "antd";
 import { useEffect, useState } from "react";
 import "../SCSS/ManageRequest.scss";
 import axios from "../../utils/axiosCustomize.js";
+import DetailRequest from "./DetailRequest.js";
 const { Column } = Table;
-
 const list = [
     {
         key: "1",
@@ -87,7 +87,7 @@ const ManageRequest = (props) => {
     return (
         <>
             <div className="manage-request-container">
-                <div className="tab-container">
+                {/* <div className="tab-container">
                     <Tabs
                         style={{ fontWeight: "bold" }}
                         onChange={handleFilterRequest}
@@ -123,8 +123,8 @@ const ManageRequest = (props) => {
                             />
                         </div>
                     </div>
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                     <Table
                         dataSource={listRequest}
                         pagination={{
@@ -208,6 +208,9 @@ const ManageRequest = (props) => {
                             align="left"
                         />
                     </Table>
+                </div> */}
+                <div>
+                    <DetailRequest />
                 </div>
             </div>
         </>

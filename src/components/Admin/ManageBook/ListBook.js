@@ -18,9 +18,10 @@ const ListBook = (props) => {
 
     useEffect(() => {
         async function fetchListBook() {
-            const responseBook = await axios.get("api/book/find");
-            if (responseBook.status === true) {
-                setListBook(responseBook.data);
+            const responseBook = await axios.get("api/book/findAdmin");
+            if (responseBook.status == true) {
+                console.log("check: ", responseBook?.data);
+                setListBook([...responseBook?.data]);
             } else {
                 return;
             }
@@ -38,7 +39,7 @@ const ListBook = (props) => {
         setCategory(null);
         setStatus(null);
         setSortCriteria(null);
-        const response = await axios.get(`api/book/find`);
+        const response = await axios.get(`api/book/findAdmin`);
         if (response.status === true) {
             setListBook(response.data);
             return;
@@ -46,9 +47,9 @@ const ListBook = (props) => {
             return;
         }
     };
-    useEffect(() => {
-        handleSearchBooksNotPrevent();
-    }, [bookName]);
+    // useEffect(() => {
+    //     handleSearchBooksNotPrevent();
+    // }, [bookName]);
     useEffect(() => {
         handleSearchBooksNotPrevent();
     }, [category]);
@@ -100,7 +101,7 @@ const ListBook = (props) => {
             delete queryParams.bookName;
         }
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await axios.get(`api/book/find?${queryString}`);
+        const response = await axios.get(`api/book/findAdmin?${queryString}`);
         if (response.status === true) {
             setListBook(response.data);
             return;
@@ -145,7 +146,7 @@ const ListBook = (props) => {
             delete queryParams.bookName;
         }
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await axios.get(`api/book/find?${queryString}`);
+        const response = await axios.get(`api/book/findAdmin?${queryString}`);
         if (response.status === true) {
             setListBook(response.data);
             return;
@@ -253,7 +254,7 @@ const ListBook = (props) => {
                     />
                 </div>
                 <span
-                    style={{ fontWeight: "bold" }}
+                    style={{ fontWeight: "bold", color: "white" }}
                     className="btn btn-primary"
                     onClick={props.handleShowCreateBook}
                 >
@@ -263,7 +264,7 @@ const ListBook = (props) => {
             <Table
                 dataSource={listBook}
                 pagination={{
-                    pageSize: 8,
+                    pageSize: 11,
                 }}
             >
                 <Column

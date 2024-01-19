@@ -11,6 +11,7 @@ import BookPageAdmin from "./pages/BookPageAdmin/BookPageAdmin.js";
 import BookPageUser from "./pages/BookPageUser/BookPageUser.js";
 import DetailPendingRequest from "./pages/UserRole/DetailPendingRequest.js";
 import CongratsPage from "./pages/UserRole/CongratsPage.js";
+import DetailRequest from "./components/Admin/ManageRequest/DetailRequest.js";
 const Layout = () => {
     return (
         <>
@@ -19,6 +20,10 @@ const Layout = () => {
                     <Route index element={<HomePage />} />
                     <Route path="admin" element={<Admin />} />
                     <Route path="bookAdmin" element={<BookPageAdmin />} />
+                    {/* <Route
+                        path="admin/request/:id"
+                        element={<DetailRequest />}
+                    /> */}
                 </Route>
 
                 <Route path="/" element={<App />}>

@@ -84,7 +84,7 @@ const DetailBook = (props) => {
             description &&
             author
         ) {
-            const data = {
+            let data = {
                 id: props.idDetailBook,
                 bookName: bookName,
                 status: status,
@@ -93,6 +93,9 @@ const DetailBook = (props) => {
                 description: description,
                 quantitySystem: quantitySystem.toString(),
             };
+            if (status === "OUTOFSTOCK" || quantitySystem === "0") {
+                data = { ...data, status: "OUTOFSTOCK", quantitySystem: "0" };
+            }
 
             const response = await axios.put("api/book/update", data);
             if (response.status === true) {

@@ -61,11 +61,16 @@ const CreateBook = (props) => {
             const data = new FormData();
             data.append("bookName", bookName);
             data.append("category", selectedCategory);
-            data.append("quantitySystem", +quantitySystem);
-            data.append("status", status);
             data.append("author", author);
             data.append("description", description);
             data.append("imageBook", bookImageFile);
+            if (status == "OUTOFSTOCK" || quantitySystem == "0") {
+                data.append("status", "OUTOFSTOCK");
+                data.append("quantitySystem", +"0");
+            } else {
+                data.append("status", status);
+                data.append("quantitySystem", +quantitySystem);
+            }
 
             const response = await axios.post("api/book/create", data);
             if (response.status === true) {
