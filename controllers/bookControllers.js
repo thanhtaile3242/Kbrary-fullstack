@@ -87,7 +87,104 @@ export const getAllBooksController = async (req, res) => {
     }
 };
 //
-export const findBooksController = async (req, res) => {
+export const findBooksControllerDisplay = async (req, res) => {
+    try {
+        const { bookName, category, status, sortField, sortOrder } = req.query;
+
+        let order;
+        if (sortOrder === "ASC") order = 1;
+        else order = -1;
+
+        let validSortField = req.query.sortField;
+        if (req.query.sortField === "null") {
+            validSortField = null;
+        }
+
+        const validBookName = Boolean(req.query.bookName);
+        let validCategory = req.query.category;
+        if (req.query.category === "null") {
+            validCategory = null;
+        }
+        let validStatus = req.query.status;
+        if (req.query.status === "null") {
+            validStatus = null;
+        }
+
+        let keyword = "";
+        if (validBookName) {
+            keyword = bookName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        const criteria = {
+            searchBook: { $regex: new RegExp(keyword, "i") },
+            status,
+            category,
+            quantitySystem: { $ne: 0 },
+            status: "AVAILABLE",
+        };
+
+        if (!validBookName) {
+            delete criteria.searchBook;
+        }
+        if (!validStatus) {
+            delete criteria.status;
+        }
+        if (!validCategory) {
+            delete criteria.category;
+        }
+
+        let result;
+
+        if (sortField === "name") {
+            result = await Book.find(criteria)
+                .populate({
+                    path: "category",
+                    select: "categoryName",
+                })
+                .sort({
+                    searchBook: order,
+                });
+        }
+        if (sortField === "time") {
+            result = await Book.find(criteria)
+                .populate({
+                    path: "category",
+                    select: "categoryName",
+                })
+                .sort({
+                    updatedAt: order,
+                });
+        }
+        if (!validSortField) {
+            result = await Book.find(criteria).populate({
+                path: "category",
+                select: "categoryName",
+            });
+        }
+
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Find books successfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Can not find books",
+                data: result,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+//
+export const findBooksControllerAdmin = async (req, res) => {
     try {
         const { bookName, category, status, sortField, sortOrder } = req.query;
 

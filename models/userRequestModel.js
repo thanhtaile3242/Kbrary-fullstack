@@ -9,16 +9,22 @@ const userRequestSchema = new mongoose.Schema(
             ref: "user",
             required: true,
         },
-        userFullname: { type: String, required: true },
-        dateBorrow: {
-            type: Date,
-            required: true,
+        requestInfor: {
+            userFullname: { type: String, required: true },
+            dateBorrow: {
+                type: Date,
+                required: true,
+            },
+            duration: {
+                type: Number,
+                required: true,
+            },
+            phoneNumber: {
+                type: String,
+                required: true,
+            },
+            note: { type: String, required: true },
         },
-        phoneNumber: {
-            type: String,
-            required: true,
-        },
-        note: { type: String, required: true },
         listBorrowBooks: [
             {
                 bookId: {
@@ -30,8 +36,30 @@ const userRequestSchema = new mongoose.Schema(
                     type: Number,
                     required: true,
                 },
+                quantityAllow: {
+                    type: Number,
+                    default: null,
+                    required: false,
+                },
             },
         ],
+        responseInfor: {
+            allowDate: {
+                type: Date,
+                default: null,
+                required: false,
+            },
+            allowNote: {
+                type: String,
+                default: null,
+                required: false,
+            },
+            allowDuration: {
+                type: Number,
+                default: null,
+                required: false,
+            },
+        },
         status: {
             type: String,
             required: true,

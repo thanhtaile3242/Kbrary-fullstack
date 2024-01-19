@@ -7,6 +7,7 @@ import {
     updatePendingRequestController,
     updatePendingRequestWithUserID,
     findRequestControllerUser,
+    updateRequestControllerAdmin,
 } from "../controllers/userRequestControllers.js";
 // Create a request of user
 router.post("/create", createUserRequestController);
@@ -15,10 +16,12 @@ router.get("/detailRequest/:id", getDetailRequestController);
 // Get pending request
 router.get("/pending/:id", getPendingRequestController);
 // Delete a category
-router.put("/pending/update", updatePendingRequestController);
+// router.put("/pending/update", updatePendingRequestController);
 //
 router.put("/pending/updateWithUserId", updatePendingRequestWithUserID);
-
+//
 router.get("/find", findRequestControllerUser);
+//
+router.put("/update", updateRequestControllerAdmin);
 
 export default router;

@@ -5,12 +5,13 @@ import { uploadBookImage } from "../middlewares/bookMiddleware.js";
 import {
     createBookController,
     getAllBooksController,
-    findBooksController,
+    findBooksControllerDisplay,
     detailBookController,
     updateBookImageController,
     updateBookController,
     deleteBookController,
     detailBookControllerUser,
+    findBooksControllerAdmin,
 } from "../controllers/bookControllers.js";
 // Create a new book (Role: Admin)
 router.post(
@@ -21,7 +22,9 @@ router.post(
 // Get all books
 router.get("/getAll", getAllBooksController);
 // Find books
-router.get("/find", findBooksController);
+router.get("/find", findBooksControllerDisplay);
+// Find books (admin role)
+router.get("/findAdmin", findBooksControllerAdmin);
 // Detail book
 router.get("/detailBook/:id", detailBookController);
 // Update book

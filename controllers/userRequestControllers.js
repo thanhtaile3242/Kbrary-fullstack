@@ -3,26 +3,26 @@ import Joi from "joi";
 //
 export const createUserRequestController = async (req, res) => {
     try {
-        const schema = Joi.object({
-            userId: Joi.string().required(),
+        const userInformationSchema = Joi.object({
             userFullname: Joi.string().required(),
             dateBorrow: Joi.date().required(),
+            duration: Joi.number().required(),
             phoneNumber: Joi.string().required(),
             note: Joi.string().required(),
-            listBorrowBooks: Joi.array()
-                .items(
-                    Joi.object({
-                        bookId: Joi.object(),
-                        quantityBorrow: Joi.number()
-                            .integer()
-                            .min(1)
-                            .required(),
-                    })
-                )
-                .required(),
-            status: Joi.string().required(),
         });
-        const { error } = schema.validate(req.body, {
+
+        const bookSchema = Joi.object({
+            bookId: Joi.object().required(), // Assuming bookId is a string, you can adjust as needed
+            quantityBorrow: Joi.number().required(),
+        });
+
+        const userRequestSchema = Joi.object({
+            userId: Joi.string().required(), // Assuming userId is a string, you can adjust as needed
+            requestInfor: userInformationSchema.required(),
+            listBorrowBooks: Joi.array().items(bookSchema).required(),
+            status: Joi.string().valid("DONE", "INPROGRESS").required(),
+        });
+        const { error } = userRequestSchema.validate(req.body, {
             abortEarly: false,
         });
         if (error) {
@@ -72,10 +72,15 @@ export const getDetailRequestController = async (req, res) => {
             const id = req.params.id;
             const result = await userRequest
                 .findById(id)
-                .populate("userId", "username")
+                .populate("userId", "email")
                 .populate({
                     path: "listBorrowBooks.bookId",
-                    select: "bookName quantitySystem",
+                    populate: {
+                        path: "category",
+                        model: "category",
+                        select: "categoryName -_id",
+                    },
+                    select: "bookName category imageName quantitySystem",
                 });
 
             if (result) {
@@ -210,7 +215,7 @@ export const updatePendingRequestWithUserID = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
-//
+// (OK)
 export const findRequestControllerUser = async (req, res) => {
     try {
         const { status, sortField, sortOrder, userId } = req.query;
@@ -250,6 +255,58 @@ export const findRequestControllerUser = async (req, res) => {
                 status: false,
                 message: "Can not find books",
                 data: result,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+// Update request (OK)
+export const updateRequestControllerAdmin = async (req, res) => {
+    try {
+        const requestId = req.body._id;
+        const newListBorrowBooks = req.body.listBorrowBooks;
+        const responseInfor = req.body.responseInfor;
+        const status = req.body.status;
+        const result1 = await userRequest.findByIdAndUpdate(
+            { _id: requestId },
+            {
+                $set: { listBorrowBooks: [] },
+            },
+            { new: true }
+        );
+        if (result1) {
+            const result2 = await userRequest.findByIdAndUpdate(
+                { _id: requestId },
+                {
+                    $set: {
+                        responseInfor: responseInfor,
+                        listBorrowBooks: newListBorrowBooks,
+                        status: status,
+                    },
+                },
+                { new: true }
+            );
+            if (result2) {
+                return res.status(200).json({
+                    status: true,
+                    message: "Update request succcessfully",
+                    data: result2,
+                });
+            } else {
+                return res.status(500).json({
+                    status: false,
+                    message: "Can not update pending request",
+                });
+            }
+        } else {
+            return res.status(500).json({
+                status: false,
+                message: "Can not update request",
             });
         }
     } catch (error) {
