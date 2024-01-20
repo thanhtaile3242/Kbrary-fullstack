@@ -41,6 +41,11 @@ const userRequestSchema = new mongoose.Schema(
                     default: null,
                     required: false,
                 },
+                detalQuantity: {
+                    type: Number,
+                    default: null,
+                    required: false,
+                },
             },
         ],
         responseInfor: {
@@ -64,6 +69,11 @@ const userRequestSchema = new mongoose.Schema(
             type: String,
             required: true,
             enum: ["DONE", "INPROGRESS"],
+        },
+        isProgressing: {
+            type: Boolean,
+            default: false,
+            required: false,
         },
     },
     {

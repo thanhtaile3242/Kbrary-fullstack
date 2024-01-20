@@ -1,5 +1,7 @@
 import userRequest from "../models/userRequestModel.js";
+import Book from "../models/bookModel.js";
 import Joi from "joi";
+import { ObjectId } from "mongodb";
 //
 export const createUserRequestController = async (req, res) => {
     try {
@@ -215,8 +217,9 @@ export const updatePendingRequestWithUserID = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
+
 // (OK)
-export const findRequestControllerUser = async (req, res) => {
+export const findRequestController = async (req, res) => {
     try {
         const { status, sortField, sortOrder, userId } = req.query;
 
@@ -242,6 +245,10 @@ export const findRequestControllerUser = async (req, res) => {
 
         const result = await userRequest
             .find(criteria)
+            .populate({
+                path: "userId",
+                select: "username -_id",
+            })
             .sort({ createdAt: order });
 
         if (result) {
@@ -268,34 +275,59 @@ export const findRequestControllerUser = async (req, res) => {
 // Update request (OK)
 export const updateRequestControllerAdmin = async (req, res) => {
     try {
+        // Update quantitySystem for each book
+        const listBorrowBooks = req.body.listBorrowBooks;
+        for (const book of listBorrowBooks) {
+            const bookId = book.bookId._id;
+            const detailQuantity = book.detalQuantity;
+            try {
+                const result1 = await Book.findOneAndUpdate(
+                    { _id: bookId },
+                    {
+                        $set: {
+                            quantitySystem: detailQuantity,
+                        },
+                    },
+                    { new: true }
+                );
+            } catch (error) {
+                console.log(error);
+                return res.status(400).json({
+                    status: false,
+                    message: error.message,
+                });
+            }
+        }
         const requestId = req.body._id;
-        const newListBorrowBooks = req.body.listBorrowBooks;
-        const responseInfor = req.body.responseInfor;
         const status = req.body.status;
-        const result1 = await userRequest.findByIdAndUpdate(
+        const result2 = await userRequest.findByIdAndUpdate(
             { _id: requestId },
             {
                 $set: { listBorrowBooks: [] },
             },
             { new: true }
         );
-        if (result1) {
-            const result2 = await userRequest.findByIdAndUpdate(
+        if (result2) {
+            const result3 = await userRequest.findByIdAndUpdate(
                 { _id: requestId },
                 {
                     $set: {
-                        responseInfor: responseInfor,
-                        listBorrowBooks: newListBorrowBooks,
+                        responseInfor: {
+                            allowDate: req.body.dateAllow,
+                            allowDuration: req.body.durationAllow,
+                            allowNote: req.body.noteAllow,
+                        },
+                        listBorrowBooks: listBorrowBooks,
                         status: status,
                     },
                 },
                 { new: true }
             );
-            if (result2) {
+            if (result3) {
                 return res.status(200).json({
                     status: true,
                     message: "Update request succcessfully",
-                    data: result2,
+                    data: result3,
                 });
             } else {
                 return res.status(500).json({
@@ -315,5 +347,34 @@ export const updateRequestControllerAdmin = async (req, res) => {
             status: false,
             message: error.message,
         });
+    }
+};
+// Update progress
+export const updateProgressController = async (req, res) => {
+    const { idRequest, isProgressing } = req.body;
+    try {
+        const result = await userRequest.findByIdAndUpdate(
+            { _id: idRequest },
+            {
+                $set: {
+                    isProgressing: isProgressing,
+                },
+            }
+        );
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Get detail request uccessfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: true,
+                message: "Request not found",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ status: false, message: error.message });
     }
 };

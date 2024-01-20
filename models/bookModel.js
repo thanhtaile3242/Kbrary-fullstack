@@ -43,9 +43,15 @@ const bookSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
-// bookSchema.index({ bookName: "text" });
-
 bookSchema.plugin(uniqueValidator);
+bookSchema.pre("findOneAndUpdate", async function (next) {
+    const { quantitySystem } = this._update.$set;
+    if (quantitySystem !== undefined && quantitySystem === 0) {
+        this._update.$set = this._update.$set || {};
+        this._update.$set.status = "OUTOFSTOCK";
+    }
+    next();
+});
 const Book = mongoose.model("book", bookSchema);
 
 export default Book;

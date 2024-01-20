@@ -20,6 +20,8 @@ app.use("/api/user", userRoute);
 app.use("/api/book", bookRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/userRequest", userRequestRoute);
+// Trigger
+
 (async () => {
     try {
         await connection();
