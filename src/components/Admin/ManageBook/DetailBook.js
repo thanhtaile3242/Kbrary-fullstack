@@ -125,12 +125,6 @@ const DetailBook = (props) => {
     return (
         <>
             <div className="create-book-container">
-                <DeleteOutlined
-                    className="delete-icon-detail"
-                    onClick={() => {
-                        setShow(true);
-                    }}
-                />
                 <div className="book-content">
                     <div className="two-items-row-1">
                         <div class="form-floating mb-3">
@@ -287,43 +281,6 @@ const DetailBook = (props) => {
                 showAddCategory={showAddCategory}
                 setShowAddCategory={setShowAddCategory}
             />
-            <div className="modal-delete">
-                {/* Modal delete */}
-                <Modal
-                    className="delete-modal"
-                    style={{ top: "200px" }}
-                    backdrop="static"
-                    show={show}
-                    onHide={() => {
-                        setShow(false);
-                    }}
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Confirm delete the book</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body style={{ fontWeight: "300" }}>
-                        Having book name:&nbsp;<b>{bookName}</b>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <span
-                            className="btn btn-secondary"
-                            onClick={() => {
-                                setShow(false);
-                            }}
-                        >
-                            Close
-                        </span>
-                        <span
-                            className="btn btn-primary"
-                            onClick={() => {
-                                handleDeleteBook();
-                            }}
-                        >
-                            Confirm
-                        </span>
-                    </Modal.Footer>
-                </Modal>
-            </div>
         </>
     );
 };

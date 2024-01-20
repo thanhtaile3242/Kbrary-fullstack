@@ -11,13 +11,16 @@ import {
     MDBTypography,
 } from "mdb-react-ui-kit";
 import React from "react";
+import Modal from "react-bootstrap/Modal";
+import ShortUniqueId from "short-unique-id";
+import { v4 as uuidv4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
 import { FaListCheck } from "react-icons/fa6";
 import { FloatButton } from "antd";
 import { DatePicker, Space } from "antd";
 import moment from "moment";
 import { Tooltip } from "antd";
-import style from "../SCSS/DetailRequest.module.scss";
+import style from "../../Admin/SCSS/DetailRequest.module.scss";
 import { useNavigate, Link } from "react-router-dom";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { FaPlus, FaMinus } from "react-icons/fa";
@@ -49,74 +52,137 @@ const converDate = (dateString) => {
 
 const DetailRequest = (props) => {
     const navigate = useNavigate();
+    const { handleShowListRequest, idDetailRequest } = props;
     const [objectDetail, setObjectDetail] = useState(null);
     const [status, setStatus] = useState(null);
     const [isSelectDate, setIsSelectDate] = useState(false);
     const [dateAllow, setDateAllow] = useState(null);
     const [durationAllow, setDurationAllow] = useState(null);
     const [noteAllow, setNoteAllow] = useState("");
+    const [outofstock, setOutOfStock] = useState(false);
+    const [show, setShow] = useState(false);
     //
-
     useEffect(() => {
         async function fetchData() {
             try {
                 const response = await axios.get(
-                    "api/userRequest/detailRequest/65a9d9e735b25ba530f56945"
+                    `api/userRequest/detailRequest/${idDetailRequest}`
                 );
-                setObjectDetail(response.data);
-                setStatus(response.data.status);
+                for (const book of response?.data?.listBorrowBooks) {
+                    if (book?.bookId?.quantitySystem != 0) {
+                        setOutOfStock(false);
+                        break;
+                    }
+                    setOutOfStock(true);
+                }
+                setShow(response?.data?.isProgressing);
+                setObjectDetail(response?.data);
+                setStatus(response?.data?.status);
+                setDurationAllow(response?.data?.responseInfor?.allowDuration);
+                setNoteAllow(response?.data?.responseInfor?.allowNote);
+                if (response?.data?.responseInfor?.allowDate) {
+                    setIsSelectDate(!isSelectDate);
+                    setDateAllow(
+                        moment(response?.data?.responseInfor?.allowDate)
+                    );
+                }
+                // await axios.put("api/userRequest/updateProgress", {
+                //     idRequest: idDetailRequest,
+                //     isProgressing: true,
+                // });
             } catch (error) {
                 return;
             }
         }
         fetchData();
+
+        // return async () => {
+        //     if (show == true) {
+        //         console.log("ABB");
+        //         await axios.put("api/userRequest/updateProgress", {
+        //             idRequest: idDetailRequest,
+        //             isProgressing: false,
+        //         });
+        //     } else {
+        //         console.log("AA");
+        //         await axios.put("api/userRequest/updateProgress", {
+        //             idRequest: idDetailRequest,
+        //             isProgressing: true,
+        //         });
+        //     }
+        // };
+
+        // async () => {
+        //     await axios.put("api/userRequest/updateProgress", {
+        //         idRequest: idDetailRequest,
+        //         isProgressing: false,
+        //     });
+        // };
     }, []);
 
     const handleChangeQuantity = (bookId, value) => {
         objectDetail?.listBorrowBooks.forEach((book) => {
-            if (!book.quantityAllow) {
-                book.quantityAllow = 0;
-            }
             if (book._id == bookId) {
                 book.quantityAllow = Number(value);
+                book.detalQuantity =
+                    book.bookId?.quantitySystem - book.quantityAllow;
+                setObjectDetail({ ...objectDetail });
             }
         });
     };
 
     const onChangeDate = (date, dateString) => {
         setIsSelectDate(!isSelectDate);
-        const dateObject = convertDateType(dateString);
-        setDateAllow(dateObject);
+        setDateAllow(date);
     };
 
     const handleUpdateRequest = async () => {
-        let hasNullQuantityAllow = false;
-        for (const book of objectDetail?.listBorrowBooks || []) {
-            if (!book.quantityAllow || book.quantityAllow <= 0) {
+        if (status === "INPROGRESS") {
+            for (const book of objectDetail?.listBorrowBooks) {
+                if (!book?.bookId || !book?.bookId?.quantitySystem) {
+                    book.bookId.quantitySystem = 0;
+                    book.quantityAllow = 0;
+                    book.detalQuantity = 0;
+                }
+            }
+            let hasNullQuantityAllow = false;
+            for (const book of objectDetail?.listBorrowBooks || []) {
+                if (book?.bookId?.quantitySystem != 0) {
+                    if (
+                        !book?.quantityAllow ||
+                        book?.quantityAllow <= 0 ||
+                        book?.quantityAllow > book?.bookId?.quantitySystem
+                    ) {
+                        toast.error("Fulfill required");
+                        hasNullQuantityAllow = true;
+                        break;
+                    }
+                }
+            }
+            if (hasNullQuantityAllow) {
+                return;
+            }
+
+            if (dateAllow && durationAllow && noteAllow) {
+                const data = {
+                    ...objectDetail,
+                    ...{
+                        dateAllow: dateAllow,
+                        durationAllow: durationAllow,
+                        noteAllow: noteAllow,
+                    },
+                    status: "DONE",
+                };
+                const response = await axios.put(
+                    "api/userRequest/update",
+                    data
+                );
+                if (response.status == true) {
+                    toast.success("OK");
+                }
+            } else {
                 toast.error("Fulfill required");
-                hasNullQuantityAllow = true;
-                break;
             }
-        }
-        if (hasNullQuantityAllow) {
-            return;
-        }
-        if (dateAllow && durationAllow && noteAllow) {
-            const data = {
-                ...objectDetail,
-                ...{
-                    dateAllow: dateAllow,
-                    durationAllow: durationAllow,
-                    noteAllow: noteAllow,
-                },
-                status: status,
-            };
-            const response = await axios.put("api/userRequest/update", data);
-            if (response.status == true) {
-                toast.success("OK");
-            }
-        } else {
-            toast.error("Fulfill required");
         }
     };
 
@@ -134,10 +200,15 @@ const DetailRequest = (props) => {
                                         paddingRight: "28px",
                                     }}
                                 >
-                                    <span className="btn btn-secondary">
+                                    <span
+                                        style={{ fontWeight: "bold" }}
+                                        className="btn btn-secondary"
+                                        onClick={handleShowListRequest}
+                                    >
                                         Back
                                     </span>
                                     <select
+                                        disabled
                                         value={status}
                                         style={{
                                             fontWeight: "bold",
@@ -232,7 +303,7 @@ const DetailRequest = (props) => {
                                                                 "center",
                                                             display: "flex",
                                                             justifyContent:
-                                                                "space-between",
+                                                                "space-evenly",
                                                         }}
                                                     >
                                                         <div
@@ -268,7 +339,7 @@ const DetailRequest = (props) => {
                                                                 }}
                                                             >
                                                                 {
-                                                                    book.quantityBorrow
+                                                                    book?.quantityBorrow
                                                                 }
                                                             </span>
                                                         </div>
@@ -281,37 +352,7 @@ const DetailRequest = (props) => {
                                                                 display: "flex",
                                                                 gap: "15px",
                                                             }}
-                                                        >
-                                                            <span
-                                                                style={{
-                                                                    padding:
-                                                                        "5px 8px",
-                                                                    backgroundColor:
-                                                                        "#eaecef",
-                                                                    borderRadius:
-                                                                        "15px",
-                                                                    fontWeight:
-                                                                        "600",
-                                                                }}
-                                                            >
-                                                                System quantity
-                                                            </span>
-                                                            <span
-                                                                style={{
-                                                                    textAlign:
-                                                                        "center",
-                                                                    fontSize:
-                                                                        "20px",
-                                                                    fontWeight:
-                                                                        "600",
-                                                                }}
-                                                            >
-                                                                {
-                                                                    book.bookId
-                                                                        .quantitySystem
-                                                                }
-                                                            </span>
-                                                        </div>
+                                                        ></div>
                                                         <div
                                                             style={{
                                                                 padding:
@@ -337,21 +378,20 @@ const DetailRequest = (props) => {
                                                                 Allow quantity
                                                             </span>
                                                             <input
-                                                                disabled={
-                                                                    book.bookId
-                                                                        .quantitySystem ===
-                                                                    0
-                                                                }
+                                                                disabled
                                                                 onChange={(
                                                                     event
                                                                 ) => {
                                                                     handleChangeQuantity(
-                                                                        book._id,
+                                                                        book?._id,
                                                                         event
                                                                             .target
                                                                             .value
                                                                     );
                                                                 }}
+                                                                value={
+                                                                    book.quantityAllow
+                                                                }
                                                                 className="form-control"
                                                                 type="number"
                                                                 style={{
@@ -405,7 +445,6 @@ const DetailRequest = (props) => {
                                                 Fullname
                                             </label>
                                         </div>
-
                                         <div class="form-floating mb-4">
                                             <input
                                                 disabled
@@ -441,7 +480,6 @@ const DetailRequest = (props) => {
                                             />
                                             <label>Borrow date</label>
                                         </div>
-
                                         <div class="form-floating mb-3">
                                             <input
                                                 disabled
@@ -481,57 +519,50 @@ const DetailRequest = (props) => {
                                         <h5 style={{ fontWeight: "600" }}>
                                             Response information
                                         </h5>
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                gap: "20px",
-                                            }}
-                                        >
-                                            <div class="form-floating mb-3">
-                                                <DatePicker
-                                                    style={{
-                                                        height: "100%",
-                                                        backgroundColor:
-                                                            "white",
-                                                        border: "1px solid #dee2e6",
-                                                    }}
-                                                    format={"DD-MM-YYYY"}
-                                                    onChange={onChangeDate}
-                                                    disabledDate={disabledDate}
-                                                    allowClear
-                                                />
+                                        {!outofstock && (
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    gap: "20px",
+                                                }}
+                                            >
+                                                <div class="form-floating mb-3">
+                                                    <input
+                                                        disabled
+                                                        type="text"
+                                                        class="form-control"
+                                                        value={converDate(
+                                                            dateAllow
+                                                        )}
+                                                    />
 
-                                                <label
-                                                    className={
-                                                        isSelectDate
-                                                            ? "hidden"
-                                                            : ""
-                                                    }
-                                                >
-                                                    Select date allow
-                                                </label>
-                                            </div>
+                                                    <label>Date allow</label>
+                                                </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input
-                                                    type="number"
-                                                    class="form-control"
-                                                    id="floatingInput"
-                                                    placeholder="name@example.com"
-                                                    value={durationAllow}
-                                                    onChange={(event) => {
-                                                        setDurationAllow(
-                                                            event.target.value
-                                                        );
-                                                    }}
-                                                />
-                                                <label for="floatingInput">
-                                                    Duration allow
-                                                </label>
+                                                <div class="form-floating mb-3">
+                                                    <input
+                                                        disabled
+                                                        type="number"
+                                                        class="form-control"
+                                                        id="floatingInput"
+                                                        placeholder="name@example.com"
+                                                        value={durationAllow}
+                                                        onChange={(event) => {
+                                                            setDurationAllow(
+                                                                event.target
+                                                                    .value
+                                                            );
+                                                        }}
+                                                    />
+                                                    <label for="floatingInput">
+                                                        Duration allow
+                                                    </label>
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                         <div class="form-floating mb-3">
                                             <textarea
+                                                disabled
                                                 class="form-control"
                                                 placeholder="Leave a comment here"
                                                 id="floatingTextarea2"
@@ -550,31 +581,33 @@ const DetailRequest = (props) => {
                                                 Note
                                             </label>
                                         </div>
-                                        <div>
-                                            <span
-                                                className="btn"
-                                                style={{
-                                                    width: "100%",
-                                                    cursor: "pointer",
-                                                    padding: "8px",
-                                                    margin: "0",
-                                                    backgroundColor: "#019cda",
-                                                    fontWeight: "600",
-                                                    color: "white",
-                                                }}
-                                                onClick={() => {
-                                                    handleUpdateRequest();
-                                                }}
-                                            >
-                                                Complete request
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                             </MDBCol>
                         </MDBRow>
                     </MDBCardBody>
                 </MDBCard>
+            </div>
+            <div className="modal-delete">
+                {/* Modal delete */}
+                <Modal style={{ top: "200px" }} backdrop="static" show={show}>
+                    <Modal.Header>
+                        <Modal.Title>Notification!!!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{ fontWeight: "300" }}>
+                        This request is updating by user, come back later!
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <span
+                            className="btn btn-secondary"
+                            onClick={() => {
+                                handleShowListRequest();
+                            }}
+                        >
+                            Close
+                        </span>
+                    </Modal.Footer>
+                </Modal>
             </div>
         </>
     );

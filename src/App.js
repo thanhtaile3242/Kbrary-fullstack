@@ -4,7 +4,6 @@ import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import HomePage from "./pages/HomePage/HomePage.js";
 import { Outlet } from "react-router-dom";
-
 import Footer from "./components/Footer/Footer.js";
 import { useEffect, useState } from "react";
 import HeaderAdmin from "./components/HeaderAdmin/HeaderAdmin.js";

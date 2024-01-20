@@ -2,10 +2,11 @@ import { Space, Table, Tag } from "antd";
 import { Tabs } from "antd";
 import { Select } from "antd";
 import { useEffect, useState } from "react";
-import "../SCSS/ManageRequest.scss";
+import "./RequestUser.scss";
+import { useOutletContext } from "react-router-dom";
 import axios from "../../utils/axiosCustomize.js";
-
 const { Column } = Table;
+
 const list = [
     {
         key: "1",
@@ -17,6 +18,8 @@ const list = [
     },
 ];
 const ListRequest = (props) => {
+    const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
+        useOutletContext();
     const { handleShowDetailRequest, setIdDetailRequest } = props;
     const [listRequest, setListRequest] = useState([]);
     const [filterField, setFilterField] = useState(null);
@@ -24,6 +27,7 @@ const ListRequest = (props) => {
     useEffect(() => {
         async function fetchListRequest() {
             const queryParams = {
+                userId: userInfo.userId,
                 status: "INPROGRESS",
             };
             const queryString = new URLSearchParams(queryParams).toString();
@@ -53,7 +57,7 @@ const ListRequest = (props) => {
             status = "DONE";
             setFilterField("DONE");
         }
-        const queryParams = { status };
+        const queryParams = { status, userId: userInfo.userId };
         const queryString = new URLSearchParams(queryParams).toString();
         const response = await axios.get(`api/userRequest/find?${queryString}`);
         if (response.status == true) {
@@ -70,7 +74,11 @@ const ListRequest = (props) => {
     };
     const handleSortRequest = async (value) => {
         setSortOrder(value);
-        const queryParams = { status: filterField, sortOrder: value };
+        const queryParams = {
+            status: filterField,
+            sortOrder: value,
+            userId: userInfo.userId,
+        };
         const queryString = new URLSearchParams(queryParams).toString();
         const response = await axios.get(`api/userRequest/find?${queryString}`);
         if (response.status == true) {
@@ -138,23 +146,18 @@ const ListRequest = (props) => {
                         )}
                     />
                     <Column
-                        title="Username"
-                        render={(record) => (
-                            <span className="detail-account">
-                                {record.userId.username}
-                            </span>
-                        )}
-                    />
-                    <Column
                         title="Status"
                         ellipsis="true"
                         render={(record) => {
                             let color = "";
+                            let text = "";
                             if (record.status === "INPROGRESS") {
                                 color = "default";
+                                text = "IN PROGRESS";
                             }
                             if (record.status === "DONE") {
                                 color = "green";
+                                text = "DONE";
                             }
                             return (
                                 <Tag
@@ -165,7 +168,7 @@ const ListRequest = (props) => {
                                         setIdDetailRequest(record._id);
                                     }}
                                 >
-                                    {record.status}
+                                    {text}
                                 </Tag>
                             );
                         }}
@@ -201,5 +204,4 @@ const ListRequest = (props) => {
         </>
     );
 };
-
 export default ListRequest;
