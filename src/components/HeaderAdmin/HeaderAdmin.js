@@ -96,12 +96,12 @@ const Header = (props) => {
                 {props.isLogIn ? (
                     <div className="auth-container-after">
                         <div className="alert circle">
-                            <FloatButton
+                            {/* <FloatButton
                                 tooltip={<div>custom badge color</div>}
                                 badge={{ count: 5, color: "blue" }}
                                 className="icon-noti"
                                 icon={<IoNotifications />}
-                            />
+                            /> */}
                         </div>
                         <div
                             className="account circle"

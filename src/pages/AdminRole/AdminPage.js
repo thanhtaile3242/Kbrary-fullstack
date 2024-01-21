@@ -81,7 +81,7 @@ const Admin = () => {
         }
     };
     return (
-        <Layout style={{ maxHeight: "calc(100vh - 120px)" }}>
+        <Layout style={{ minHeight: "calc(100vh - 120px)" }}>
             <Sider style={{ width: "150px", padding: "30px 0" }}>
                 <Menu
                     style={{ width: "100%" }}

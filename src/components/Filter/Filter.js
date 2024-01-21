@@ -40,7 +40,9 @@ const Filter = (props) => {
         }
     };
     useEffect(() => {
-        handleSearchBooksNotPrevent();
+        if (!bookName) {
+            handleSearchBooksNotPrevent();
+        }
     }, [bookName]);
     useEffect(() => {
         handleSearchBooksNotPrevent();

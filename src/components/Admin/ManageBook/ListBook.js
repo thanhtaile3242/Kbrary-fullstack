@@ -264,7 +264,7 @@ const ListBook = (props) => {
             <Table
                 dataSource={listBook}
                 pagination={{
-                    pageSize: 11,
+                    pageSize: 8,
                 }}
             >
                 <Column

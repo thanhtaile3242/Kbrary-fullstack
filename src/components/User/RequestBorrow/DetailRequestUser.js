@@ -71,6 +71,7 @@ const DetailRequest = (props) => {
     const [noteAllow, setNoteAllow] = useState("");
     const [outofstock, setOutOfStock] = useState(false);
     const [show, setShow] = useState(false);
+    const [show2, setShow2] = useState(false);
     //
     let a = useRef();
 
@@ -155,8 +156,18 @@ const DetailRequest = (props) => {
         setIsSelectDate(true);
         setDateBorrow(date);
     };
-
     const handleUpdateRequest = async () => {
+        let hasNullQuantityAllow = false;
+        for (const book of objectDetail?.listBorrowBooks || []) {
+            if (!book?.quantityBorrow || book?.quantityBorrow <= 0) {
+                toast.error("Fulfill required");
+                hasNullQuantityAllow = true;
+                break;
+            }
+        }
+        if (hasNullQuantityAllow) {
+            return;
+        }
         const idRequest = idDetailRequest;
         const newRequestInfor = {
             userFullname: fullname,
@@ -177,6 +188,22 @@ const DetailRequest = (props) => {
             toast.error("Can not update request");
         }
     };
+    const handleDeleteRequest = async () => {
+        const response = await axios.delete(
+            `api/userRequest/deleteRequest/${idDetailRequest}`
+        );
+        if (response.status == true) {
+            toast.success("Delete request successfully");
+            handleShowListRequest();
+        } else {
+            toast.error("Can not delete request");
+        }
+    };
+    useEffect(() => {
+        if (objectDetail?.listBorrowBooks?.length == 0) {
+            handleDeleteRequest();
+        }
+    }, [objectDetail?.listBorrowBooks]);
     const dynamicJustifyContent =
         status === "DONE" ? "space-between" : "center";
 
@@ -351,6 +378,10 @@ const DetailRequest = (props) => {
                                                                 Request quantity
                                                             </span>
                                                             <input
+                                                                disabled={
+                                                                    status ==
+                                                                    "DONE"
+                                                                }
                                                                 onChange={(
                                                                     event
                                                                 ) => {
@@ -463,7 +494,7 @@ const DetailRequest = (props) => {
                                                 fas
                                                 icon="trash-alt"
                                                 onClick={() => {
-                                                    // handleDeleteBook(book);
+                                                    setShow2(true);
                                                 }}
                                             />
                                         )}
@@ -616,7 +647,7 @@ const DetailRequest = (props) => {
                                             placeholder="Leave a comment here"
                                             id="floatingTextarea2"
                                             style={{
-                                                height: "80px",
+                                                height: "100px",
                                                 resize: "none",
                                             }}
                                             value={note}
@@ -730,8 +761,7 @@ const DetailRequest = (props) => {
                     </MDBCardBody>
                 </MDBCard>
             </div>
-            <div className="modal-delete">
-                {/* Modal delete */}
+            <div className="modal">
                 <Modal style={{ top: "200px" }} backdrop="static" show={show}>
                     <Modal.Header>
                         <Modal.Title>Notification!!!</Modal.Title>
@@ -747,6 +777,26 @@ const DetailRequest = (props) => {
                             }}
                         >
                             Close
+                        </span>
+                    </Modal.Footer>
+                </Modal>
+            </div>
+            <div className="modal">
+                <Modal style={{ top: "200px" }} backdrop="static" show={show2}>
+                    <Modal.Header>
+                        <Modal.Title>Notification!!!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{ fontWeight: "300" }}>
+                        Confirm delete this request
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <span
+                            className="btn btn-secondary"
+                            onClick={() => {
+                                handleDeleteRequest();
+                            }}
+                        >
+                            Confirm
                         </span>
                     </Modal.Footer>
                 </Modal>

@@ -178,7 +178,20 @@ const DetailRequest = (props) => {
                         data
                     );
                     if (response.status == true) {
-                        toast.success("OK");
+                        const response2 = await axios.post(
+                            "/api/userRequest/sendEmailRequest",
+                            {
+                                idRequest: idDetailRequest,
+                                email: objectDetail?.userId?.email,
+                            }
+                        );
+                        if (response2.status == true) {
+                            toast.success("Update successfully");
+                            return;
+                        } else {
+                            toast.error("Can not update");
+                            return;
+                        }
                     }
                 } else {
                     toast.error("Fulfill required");
@@ -199,7 +212,20 @@ const DetailRequest = (props) => {
                         data
                     );
                     if (response.status == true) {
-                        toast.success("OK");
+                        const response2 = await axios.post(
+                            "/api/userRequest/sendEmailRequest",
+                            {
+                                idRequest: idDetailRequest,
+                                email: objectDetail?.userId?.email,
+                            }
+                        );
+                        if (response2.status == true) {
+                            toast.success("Update successfully");
+                            return;
+                        } else {
+                            toast.error("Can not update");
+                            return;
+                        }
                     }
                 } else {
                     toast.error("Fulfill required");
@@ -207,7 +233,7 @@ const DetailRequest = (props) => {
             }
         }
     };
-    console.log("ABC");
+
     return (
         <>
             <div>

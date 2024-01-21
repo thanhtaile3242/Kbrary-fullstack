@@ -121,7 +121,7 @@ const UserBorrow = (props) => {
             dateBorrow &&
             phoneNumber &&
             note &&
-            listBorrowBooks &&
+            listBorrowBooks.length != 0 &&
             duration
         ) {
             const data = {

@@ -7,9 +7,11 @@ import { useState, useEffect } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import "../SCSS/DetailAccount.scss";
 import Modal from "react-bootstrap/Modal";
+
 import { Table, Tag } from "antd";
 import { useOutletContext } from "react-router-dom";
 import userAvatar from "../../../assets/userAvatar.png";
+import DetailRequestAdmin from "../ManageRequest/DetailRequestAdmin.js";
 const columns = [
     {
         title: "No",
@@ -70,6 +72,7 @@ const columns = [
         ),
     },
 ];
+const { Column } = Table;
 const data = [
     {
         no: 1,
@@ -126,17 +129,65 @@ const DetailUser = (props) => {
     const [defaultAvatar, setDefaultAvatar] = useState("");
     const [show, setShow] = useState(false);
     const [userId, setUserId] = useState(props.idDetailUser);
+    const [idDetailRequest, setIdDetailRequest] = useState("");
+    const [listRequest, setListRequest] = useState([]);
     const [userInfor, setUserInfor] = useState({
         email: "",
         username: "",
         role: "",
     });
+    const [showDetailRequest, setShowDetailRequest] = useState(false);
+    const [showListRequest, setShowListRequest] = useState(true);
+
+    //
+    const handleShowListRequest = async () => {
+        setShowDetailRequest(false);
+        setShowListRequest(true);
+        const queryParams = {
+            userId: userId,
+        };
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response2 = await axios.get(
+            `api/userRequest/find?${queryString}`
+        );
+        if (response2.status == true) {
+            const listRequestModified = response2.data;
+            listRequestModified.forEach((item, index) => {
+                item.No = index + 1;
+                item.timeRequest = item.createdAt;
+            });
+            setListRequest([...listRequestModified]);
+        } else {
+            return;
+        }
+    };
+    const handleShowDetailRequest = () => {
+        setShowDetailRequest(true);
+        setShowListRequest(false);
+    };
     // Handle function
     useEffect(() => {
         async function fetchDetailUser() {
             const response = await axios.get(`api/user/detailUser/${userId}`);
             setUserInfor(response.data);
             setDefaultAvatar(response.data.avatarName);
+            const queryParams = {
+                userId: userId,
+            };
+            const queryString = new URLSearchParams(queryParams).toString();
+            const response2 = await axios.get(
+                `api/userRequest/find?${queryString}`
+            );
+            if (response2.status == true) {
+                const listRequestModified = response2.data;
+                listRequestModified.forEach((item, index) => {
+                    item.No = index + 1;
+                    item.timeRequest = item.createdAt;
+                });
+                setListRequest([...listRequestModified]);
+            } else {
+                return;
+            }
         }
         fetchDetailUser();
     }, []);
@@ -190,12 +241,12 @@ const DetailUser = (props) => {
     return (
         <>
             <div className="header-detail-container">
-                <DeleteOutlined
+                {/* <DeleteOutlined
                     className="btn-delete"
                     onClick={() => {
                         setShow(true);
                     }}
-                />
+                /> */}
                 <span
                     style={{ fontWeight: "bold" }}
                     className="btn btn-secondary btn-close-user"
@@ -285,18 +336,96 @@ const DetailUser = (props) => {
                     />
                 </div>
             </div>
-            <div className="list-requests">
-                <label className="title" style={{ fontWeight: "bold" }}>
-                    List of requests
-                </label>
-                <Table
-                    columns={columns}
-                    dataSource={data}
-                    pagination={{
-                        pageSize: 3,
-                    }}
-                />
-            </div>
+            {showListRequest && (
+                <div className="list-requests">
+                    <label className="title" style={{ fontWeight: "bold" }}>
+                        List of requests
+                    </label>
+                    <Table
+                        dataSource={listRequest}
+                        pagination={{
+                            pageSize: 3,
+                        }}
+                    >
+                        <Column
+                            title="No"
+                            key="action"
+                            render={(record) => (
+                                <span className="detail-account">
+                                    {record.No}
+                                </span>
+                            )}
+                        />
+                        <Column
+                            title="Username"
+                            render={(record) => (
+                                <span className="detail-account">
+                                    {record.userId.username}
+                                </span>
+                            )}
+                        />
+                        <Column
+                            title="Status"
+                            ellipsis="true"
+                            render={(record) => {
+                                let color = "";
+                                if (record.status === "INPROGRESS") {
+                                    color = "default";
+                                }
+                                if (record.status === "DONE") {
+                                    color = "green";
+                                }
+                                return (
+                                    <Tag
+                                        color={color}
+                                        className="detail-account"
+                                        onClick={() => {
+                                            handleShowDetailRequest();
+                                            setIdDetailRequest(record._id);
+                                        }}
+                                    >
+                                        {record.status}
+                                    </Tag>
+                                );
+                            }}
+                        />
+                        <Column
+                            title="Date create"
+                            dataIndex="createdAt"
+                            key="createdAt"
+                            render={(record) => {
+                                const date = new Date(record);
+                                const formattedDate = `${date.toLocaleTimeString(
+                                    [],
+                                    {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    }
+                                )} - ${date.toLocaleDateString("en-US", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                })}`;
+                                return (
+                                    <Tag
+                                        color={"gold"}
+                                        className="detail-account"
+                                    >{`${formattedDate}`}</Tag>
+                                );
+                            }}
+                            align="left"
+                        />
+                    </Table>
+                </div>
+            )}
+            {showDetailRequest && (
+                <div style={{ marginTop: "30px" }}>
+                    <DetailRequestAdmin
+                        idDetailRequest={idDetailRequest}
+                        handleShowListRequest={handleShowListRequest}
+                    />
+                </div>
+            )}
             <div className="modal-delete">
                 {/* Modal delete */}
                 <Modal
