@@ -9,6 +9,7 @@ import {
     findRequestController,
     updateRequestControllerAdmin,
     updateProgressController,
+    updateRequestControllerUser,
 } from "../controllers/userRequestControllers.js";
 // Create a request of user
 router.post("/create", createUserRequestController);
@@ -26,4 +27,6 @@ router.get("/find", findRequestController);
 //
 router.put("/update", updateRequestControllerAdmin);
 router.put("/updateProgress", updateProgressController);
+// Update request - Role: user
+router.put("/update/userrole", updateRequestControllerUser);
 export default router;

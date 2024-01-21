@@ -272,7 +272,7 @@ export const findRequestController = async (req, res) => {
         });
     }
 };
-// Update request (OK)
+// Update request (OK) - Admin role
 export const updateRequestControllerAdmin = async (req, res) => {
     try {
         // Update quantitySystem for each book
@@ -376,5 +376,31 @@ export const updateProgressController = async (req, res) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ status: false, message: error.message });
+    }
+};
+// Update request - User role
+export const updateRequestControllerUser = async (req, res) => {
+    const { idRequest, newRequestInfor, newListBook } = req.body;
+    try {
+        await userRequest.findByIdAndUpdate(
+            { _id: idRequest },
+            {
+                $set: {
+                    requestInfor: newRequestInfor,
+                    listBorrowBooks: newListBook,
+                },
+            },
+            { new: true }
+        );
+        return res.status(200).json({
+            status: true,
+            message: "Update request succcessfully",
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
     }
 };
