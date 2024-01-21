@@ -61,7 +61,8 @@ const DetailRequest = (props) => {
     const [noteAllow, setNoteAllow] = useState("");
     const [outofstock, setOutOfStock] = useState(false);
 
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
+    let a = useRef();
     //
     useEffect(() => {
         async function fetchData() {
@@ -69,49 +70,50 @@ const DetailRequest = (props) => {
                 const response = await axios.get(
                     `api/userRequest/detailRequest/${idDetailRequest}`
                 );
-
-                for (const book of response?.data?.listBorrowBooks) {
-                    if (book?.bookId?.quantitySystem != 0) {
-                        setOutOfStock(false);
-                        break;
-                    }
-                    setOutOfStock(true);
-                }
                 setObjectDetail(response?.data);
-                setStatus(response?.data?.status);
+                if (response?.data?.isProgressing == false) {
+                    a.current = true;
 
-                setDurationAllow(response?.data?.responseInfor?.allowDuration);
-                setNoteAllow(response?.data?.responseInfor?.allowNote);
-                if (response?.data?.responseInfor?.allowDate) {
-                    setIsSelectDate(!isSelectDate);
-                    setDateAllow(
-                        moment(response?.data?.responseInfor?.allowDate)
+                    for (const book of response?.data?.listBorrowBooks) {
+                        if (book?.bookId?.quantitySystem != 0) {
+                            setOutOfStock(false);
+                            break;
+                        }
+                        setOutOfStock(true);
+                    }
+                    setStatus(response?.data?.status);
+                    setDurationAllow(
+                        response?.data?.responseInfor?.allowDuration
                     );
+                    setNoteAllow(response?.data?.responseInfor?.allowNote);
+                    if (response?.data?.responseInfor?.allowDate) {
+                        setIsSelectDate(!isSelectDate);
+                        setDateAllow(response?.data?.responseInfor?.allowDate);
+                    }
+
+                    await axios.put("api/userRequest/updateProgress", {
+                        idRequest: idDetailRequest,
+                        isProgressing: true,
+                    });
+                } else {
+                    a.current = false;
+                    setShow(response?.data?.isProgressing);
                 }
-
-                setShow(response?.data?.isProgressing);
-
-                // await axios.put("api/userRequest/updateProgress", {
-                //     idRequest: idDetailRequest,
-                //     isProgressing: true,
-                // });
             } catch (error) {
                 return;
             }
         }
         fetchData();
         return async () => {
-            if (show == true) {
-                console.log("ABB");
+            if (a.current) {
                 await axios.put("api/userRequest/updateProgress", {
                     idRequest: idDetailRequest,
-                    isProgressing: false,
+                    isProgressing: !a.current,
                 });
             } else {
-                console.log("AA");
                 await axios.put("api/userRequest/updateProgress", {
                     idRequest: idDetailRequest,
-                    isProgressing: true,
+                    isProgressing: !a.current,
                 });
             }
         };
@@ -129,7 +131,7 @@ const DetailRequest = (props) => {
     };
 
     const onChangeDate = (date, dateString) => {
-        setIsSelectDate(!isSelectDate);
+        setIsSelectDate(true);
         setDateAllow(date);
     };
 
@@ -205,7 +207,7 @@ const DetailRequest = (props) => {
             }
         }
     };
-
+    console.log("ABC");
     return (
         <>
             <div>
@@ -228,6 +230,11 @@ const DetailRequest = (props) => {
                                         Back
                                     </span>
                                     <select
+                                        disabled={
+                                            status == "INPROGRESS"
+                                                ? true
+                                                : false
+                                        }
                                         value={status}
                                         style={{
                                             fontWeight: "bold",
@@ -259,242 +266,6 @@ const DetailRequest = (props) => {
                                 >
                                     {objectDetail?.listBorrowBooks?.map(
                                         (book) => {
-                                            // if (
-                                            //     !book?.bookId ||
-                                            //     !book?.bookId?.quantitySystem
-                                            // ) {
-                                            //     return (
-                                            //         <MDBCard
-                                            //             className="mb-4"
-                                            //             style={{
-                                            //                 width: "752px",
-                                            //                 height: "176px",
-                                            //                 display: "flex",
-                                            //                 justifyContent:
-                                            //                     "center",
-                                            //                 alignItems:
-                                            //                     "center",
-                                            //             }}
-                                            //         >
-                                            //             <span
-                                            //                 style={{
-                                            //                     fontSize:
-                                            //                         "35px",
-                                            //                     fontWeight:
-                                            //                         "600",
-                                            //                     color: "#019cda",
-                                            //                 }}
-                                            //             >
-                                            //                 Book Not Available
-                                            //             </span>
-                                            //         </MDBCard>
-                                            //     );
-                                            // } else {
-                                            //     return (
-                                            //         <MDBCard className="mb-4">
-                                            //             <div
-                                            //                 style={{
-                                            //                     display: "flex",
-                                            //                     justifyContent:
-                                            //                         "space-between",
-                                            //                     padding:
-                                            //                         "15px 30px 0",
-                                            //                     alignItems:
-                                            //                         "center",
-                                            //                 }}
-                                            //             >
-                                            //                 <div>
-                                            //                     <img
-                                            //                         src={`http://localhost:8802/${book?.bookId?.imageName}`}
-                                            //                         alt=""
-                                            //                         style={{
-                                            //                             width: "65px",
-                                            //                         }}
-                                            //                     />
-                                            //                 </div>
-
-                                            //                 <h5
-                                            //                     style={{
-                                            //                         width: "260px",
-                                            //                         whiteSpace:
-                                            //                             "nowrap",
-                                            //                         overflow:
-                                            //                             "hidden",
-                                            //                         textOverflow:
-                                            //                             "ellipsis",
-                                            //                     }}
-                                            //                 >
-                                            //                     {
-                                            //                         book?.bookId
-                                            //                             ?.bookName
-                                            //                     }
-                                            //                 </h5>
-
-                                            //                 <h6
-                                            //                     style={{
-                                            //                         color: "#004380",
-                                            //                         fontWeight:
-                                            //                             "600",
-                                            //                     }}
-                                            //                 >
-                                            //                     Category:{" "}
-                                            //                     {
-                                            //                         book?.bookId
-                                            //                             ?.category
-                                            //                             ?.categoryName
-                                            //                     }
-                                            //                 </h6>
-                                            //             </div>
-                                            //             <div
-                                            //                 style={{
-                                            //                     padding:
-                                            //                         "10px 30px 15px",
-                                            //                     alignItems:
-                                            //                         "center",
-                                            //                     display: "flex",
-                                            //                     justifyContent:
-                                            //                         "space-between",
-                                            //                 }}
-                                            //             >
-                                            //                 <div
-                                            //                     style={{
-                                            //                         alignItems:
-                                            //                             "center",
-                                            //                         display:
-                                            //                             "flex",
-                                            //                         gap: "15px",
-                                            //                     }}
-                                            //                 >
-                                            //                     <span
-                                            //                         style={{
-                                            //                             padding:
-                                            //                                 "5px 8px",
-                                            //                             backgroundColor:
-                                            //                                 "#79bfea",
-                                            //                             borderRadius:
-                                            //                                 "15px",
-                                            //                             fontWeight:
-                                            //                                 "600",
-                                            //                         }}
-                                            //                     >
-                                            //                         Request
-                                            //                         quantity
-                                            //                     </span>
-                                            //                     <span
-                                            //                         style={{
-                                            //                             textAlign:
-                                            //                                 "center",
-                                            //                             fontSize:
-                                            //                                 "20px",
-                                            //                             fontWeight:
-                                            //                                 "600",
-                                            //                         }}
-                                            //                     >
-                                            //                         {
-                                            //                             book?.quantityBorrow
-                                            //                         }
-                                            //                     </span>
-                                            //                 </div>
-                                            //                 <div
-                                            //                     style={{
-                                            //                         padding:
-                                            //                             "10px 30px 15px",
-                                            //                         alignItems:
-                                            //                             "center",
-                                            //                         display:
-                                            //                             "flex",
-                                            //                         gap: "15px",
-                                            //                     }}
-                                            //                 >
-                                            //                     <span
-                                            //                         style={{
-                                            //                             padding:
-                                            //                                 "5px 8px",
-                                            //                             backgroundColor:
-                                            //                                 "#eaecef",
-                                            //                             borderRadius:
-                                            //                                 "15px",
-                                            //                             fontWeight:
-                                            //                                 "600",
-                                            //                         }}
-                                            //                     >
-                                            //                         System
-                                            //                         quantity
-                                            //                     </span>
-                                            //                     <span
-                                            //                         style={{
-                                            //                             textAlign:
-                                            //                                 "center",
-                                            //                             fontSize:
-                                            //                                 "20px",
-                                            //                             fontWeight:
-                                            //                                 "600",
-                                            //                         }}
-                                            //                     >
-                                            //                         {
-                                            //                             book
-                                            //                                 ?.bookId
-                                            //                                 ?.quantitySystem
-                                            //                         }
-                                            //                     </span>
-                                            //                 </div>
-                                            //                 <div
-                                            //                     style={{
-                                            //                         padding:
-                                            //                             "10px 30px 15px",
-                                            //                         alignItems:
-                                            //                             "center",
-                                            //                         display:
-                                            //                             "flex",
-                                            //                         gap: "15px",
-                                            //                     }}
-                                            //                 >
-                                            //                     <span
-                                            //                         style={{
-                                            //                             padding:
-                                            //                                 "5px 8px",
-                                            //                             backgroundColor:
-                                            //                                 "#ffc109",
-                                            //                             borderRadius:
-                                            //                                 "15px",
-                                            //                             fontWeight:
-                                            //                                 "600",
-                                            //                         }}
-                                            //                     >
-                                            //                         Allow
-                                            //                         quantity
-                                            //                     </span>
-                                            //                     <input
-                                            //                         disabled={
-                                            //                             book
-                                            //                                 ?.bookId
-                                            //                                 ?.quantitySystem ===
-                                            //                             0
-                                            //                         }
-                                            //                         onChange={(
-                                            //                             event
-                                            //                         ) => {
-                                            //                             handleChangeQuantity(
-                                            //                                 book?._id,
-                                            //                                 event
-                                            //                                     .target
-                                            //                                     .value
-                                            //                             );
-                                            //                         }}
-                                            //                         value={
-                                            //                             book.quantityAllow
-                                            //                         }
-                                            //                         className="form-control"
-                                            //                         type="number"
-                                            //                         style={{
-                                            //                             width: "80px",
-                                            //                         }}
-                                            //                     />
-                                            //                 </div>
-                                            //             </div>
-                                            //         </MDBCard>
-                                            //     );
-                                            // }
                                             return (
                                                 <MDBCard className="mb-4">
                                                     <div
@@ -666,7 +437,9 @@ const DetailRequest = (props) => {
                                                                 disabled={
                                                                     book?.bookId
                                                                         ?.quantitySystem ===
-                                                                    0
+                                                                        0 ||
+                                                                    status ==
+                                                                        "DONE"
                                                                 }
                                                                 onChange={(
                                                                     event
@@ -688,6 +461,8 @@ const DetailRequest = (props) => {
                                                                 className="form-control"
                                                                 type="number"
                                                                 style={{
+                                                                    textAlign:
+                                                                        "center",
                                                                     width: "80px",
                                                                 }}
                                                             />
@@ -822,36 +597,90 @@ const DetailRequest = (props) => {
                                                     gap: "20px",
                                                 }}
                                             >
-                                                <div class="form-floating mb-3">
-                                                    <DatePicker
-                                                        style={{
-                                                            height: "100%",
-                                                            backgroundColor:
-                                                                "white",
-                                                            border: "1px solid #dee2e6",
-                                                        }}
-                                                        format={"DD-MM-YYYY"}
-                                                        onChange={onChangeDate}
-                                                        disabledDate={
-                                                            disabledDate
-                                                        }
-                                                        allowClear
-                                                        value={dateAllow}
-                                                    />
-
-                                                    <label
-                                                        className={
-                                                            isSelectDate
-                                                                ? "hidden"
-                                                                : ""
-                                                        }
-                                                    >
-                                                        Select date allow
-                                                    </label>
-                                                </div>
+                                                {status == "DONE" ? (
+                                                    <div class="form-floating mb-3">
+                                                        <input
+                                                            disabled
+                                                            type="text"
+                                                            class="form-control"
+                                                            value={converDate(
+                                                                dateAllow
+                                                            )}
+                                                        />
+                                                        <label>
+                                                            Allow date
+                                                        </label>
+                                                    </div>
+                                                ) : (
+                                                    <div class="form-floating mb-3">
+                                                        <DatePicker
+                                                            style={{
+                                                                height: "100%",
+                                                                backgroundColor:
+                                                                    "white",
+                                                                border: "1px solid #dee2e6",
+                                                            }}
+                                                            format={
+                                                                "DD-MM-YYYY"
+                                                            }
+                                                            onChange={(
+                                                                date,
+                                                                dateString
+                                                            ) => {
+                                                                onChangeDate(
+                                                                    date,
+                                                                    dateString
+                                                                );
+                                                            }}
+                                                            onClick={() => {
+                                                                setIsSelectDate(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            disabledDate={
+                                                                disabledDate
+                                                            }
+                                                            allowClear={false}
+                                                        />
+                                                        <label
+                                                            hidden={
+                                                                isSelectDate ==
+                                                                false
+                                                                    ? false
+                                                                    : true
+                                                            }
+                                                        >
+                                                            Select date allow
+                                                        </label>
+                                                        {/* <label
+                                                            style={{
+                                                                top: "1px",
+                                                                fontWeight:
+                                                                    "bold",
+                                                                fontSize:
+                                                                    "17px",
+                                                            }}
+                                                            hidden={
+                                                                isSelectDate ==
+                                                                false
+                                                                    ? false
+                                                                    : true
+                                                            }
+                                                        >
+                                                            {converDate(
+                                                                objectDetail
+                                                                    ?.requestInfor
+                                                                    ?.dateBorrow
+                                                            )}
+                                                        </label> */}
+                                                    </div>
+                                                )}
 
                                                 <div class="form-floating mb-3">
                                                     <input
+                                                        disabled={
+                                                            status == "DONE"
+                                                        }
                                                         type="number"
                                                         class="form-control"
                                                         id="floatingInput"
@@ -872,6 +701,7 @@ const DetailRequest = (props) => {
                                         )}
                                         <div class="form-floating mb-3">
                                             <textarea
+                                                disabled={status == "DONE"}
                                                 class="form-control"
                                                 placeholder="Leave a comment here"
                                                 id="floatingTextarea2"
@@ -893,6 +723,7 @@ const DetailRequest = (props) => {
 
                                         <div>
                                             <span
+                                                hidden={status == "DONE"}
                                                 className="btn"
                                                 style={{
                                                     width: "100%",

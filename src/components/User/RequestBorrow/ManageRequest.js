@@ -11,6 +11,7 @@ import axios from "../../utils/axiosCustomize.js";
 const ManageRequest = (props) => {
     const [showListRequest, setShowListRequest] = useState(true);
     const [showDetailRequest, setShowDetailRequest] = useState(false);
+
     const [idDetailRequest, setIdDetailRequest] = useState("");
     //
     const handleShowListRequest = () => {

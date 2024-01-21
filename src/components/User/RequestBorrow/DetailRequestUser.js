@@ -52,15 +52,28 @@ const converDate = (dateString) => {
 
 const DetailRequest = (props) => {
     const navigate = useNavigate();
+
+    //
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [fullname, setFullname] = useState("");
+    const [dateBorrow, setDateBorrow] = useState(null);
+    const [duration, setDuration] = useState(null);
+    const [note, setNote] = useState("");
+
+    //
+    const [isSelectDate, setIsSelectDate] = useState(false);
     const { handleShowListRequest, idDetailRequest } = props;
     const [objectDetail, setObjectDetail] = useState(null);
     const [status, setStatus] = useState(null);
-    const [isSelectDate, setIsSelectDate] = useState(false);
+
     const [dateAllow, setDateAllow] = useState(null);
     const [durationAllow, setDurationAllow] = useState(null);
     const [noteAllow, setNoteAllow] = useState("");
     const [outofstock, setOutOfStock] = useState(false);
     const [show, setShow] = useState(false);
+    //
+    let a = useRef();
+
     //
     useEffect(() => {
         async function fetchData() {
@@ -68,123 +81,104 @@ const DetailRequest = (props) => {
                 const response = await axios.get(
                     `api/userRequest/detailRequest/${idDetailRequest}`
                 );
-                for (const book of response?.data?.listBorrowBooks) {
-                    if (book?.bookId?.quantitySystem != 0) {
-                        setOutOfStock(false);
-                        break;
-                    }
-                    setOutOfStock(true);
-                }
-                setShow(response?.data?.isProgressing);
+                setFullname(response?.data?.requestInfor?.userFullname);
+                setPhoneNumber(response?.data?.requestInfor?.phoneNumber);
+                setDuration(response?.data?.requestInfor?.duration);
+                setNote(response?.data?.requestInfor?.note);
+                setDateBorrow(moment(response?.data?.requestInfor?.dateBorrow));
                 setObjectDetail(response?.data);
-                setStatus(response?.data?.status);
-                setDurationAllow(response?.data?.responseInfor?.allowDuration);
-                setNoteAllow(response?.data?.responseInfor?.allowNote);
-                if (response?.data?.responseInfor?.allowDate) {
-                    setIsSelectDate(!isSelectDate);
+                if (response?.data?.isProgressing == false) {
+                    a.current = true;
+
+                    for (const book of response?.data?.listBorrowBooks) {
+                        if (book?.bookId?.quantitySystem != 0) {
+                            setOutOfStock(false);
+                            break;
+                        }
+                        setOutOfStock(true);
+                    }
+                    setStatus(response?.data?.status);
+                    setDurationAllow(
+                        response?.data?.responseInfor?.allowDuration
+                    );
+                    setNoteAllow(response?.data?.responseInfor?.allowNote);
                     setDateAllow(
                         moment(response?.data?.responseInfor?.allowDate)
                     );
+                    await axios.put("api/userRequest/updateProgress", {
+                        idRequest: idDetailRequest,
+                        isProgressing: true,
+                    });
+                } else {
+                    a.current = false;
+                    setShow(response?.data?.isProgressing);
                 }
-                // await axios.put("api/userRequest/updateProgress", {
-                //     idRequest: idDetailRequest,
-                //     isProgressing: true,
-                // });
             } catch (error) {
                 return;
             }
         }
         fetchData();
-
-        // return async () => {
-        //     if (show == true) {
-        //         console.log("ABB");
-        //         await axios.put("api/userRequest/updateProgress", {
-        //             idRequest: idDetailRequest,
-        //             isProgressing: false,
-        //         });
-        //     } else {
-        //         console.log("AA");
-        //         await axios.put("api/userRequest/updateProgress", {
-        //             idRequest: idDetailRequest,
-        //             isProgressing: true,
-        //         });
-        //     }
-        // };
-
-        // async () => {
-        //     await axios.put("api/userRequest/updateProgress", {
-        //         idRequest: idDetailRequest,
-        //         isProgressing: false,
-        //     });
-        // };
+        return async () => {
+            if (a.current) {
+                await axios.put("api/userRequest/updateProgress", {
+                    idRequest: idDetailRequest,
+                    isProgressing: !a.current,
+                });
+            } else {
+                await axios.put("api/userRequest/updateProgress", {
+                    idRequest: idDetailRequest,
+                    isProgressing: !a.current,
+                });
+            }
+        };
     }, []);
 
     const handleChangeQuantity = (bookId, value) => {
         objectDetail?.listBorrowBooks.forEach((book) => {
             if (book._id == bookId) {
-                book.quantityAllow = Number(value);
-                book.detalQuantity =
-                    book.bookId?.quantitySystem - book.quantityAllow;
-                setObjectDetail({ ...objectDetail });
+                book.quantityBorrow = Number(value);
             }
         });
+        setObjectDetail({ ...objectDetail });
     };
+    const handleDeleteBook = (book) => {
+        const newList = objectDetail?.listBorrowBooks.filter(
+            (item) => item._id !== book._id
+        );
 
+        setObjectDetail({
+            ...objectDetail,
+            listBorrowBooks: newList,
+        });
+    };
     const onChangeDate = (date, dateString) => {
-        setIsSelectDate(!isSelectDate);
-        setDateAllow(date);
+        setIsSelectDate(true);
+        setDateBorrow(date);
     };
 
     const handleUpdateRequest = async () => {
-        if (status === "INPROGRESS") {
-            for (const book of objectDetail?.listBorrowBooks) {
-                if (!book?.bookId || !book?.bookId?.quantitySystem) {
-                    book.bookId.quantitySystem = 0;
-                    book.quantityAllow = 0;
-                    book.detalQuantity = 0;
-                }
-            }
-            let hasNullQuantityAllow = false;
-            for (const book of objectDetail?.listBorrowBooks || []) {
-                if (book?.bookId?.quantitySystem != 0) {
-                    if (
-                        !book?.quantityAllow ||
-                        book?.quantityAllow <= 0 ||
-                        book?.quantityAllow > book?.bookId?.quantitySystem
-                    ) {
-                        toast.error("Fulfill required");
-                        hasNullQuantityAllow = true;
-                        break;
-                    }
-                }
-            }
-            if (hasNullQuantityAllow) {
-                return;
-            }
-
-            if (dateAllow && durationAllow && noteAllow) {
-                const data = {
-                    ...objectDetail,
-                    ...{
-                        dateAllow: dateAllow,
-                        durationAllow: durationAllow,
-                        noteAllow: noteAllow,
-                    },
-                    status: "DONE",
-                };
-                const response = await axios.put(
-                    "api/userRequest/update",
-                    data
-                );
-                if (response.status == true) {
-                    toast.success("OK");
-                }
-            } else {
-                toast.error("Fulfill required");
-            }
+        const idRequest = idDetailRequest;
+        const newRequestInfor = {
+            userFullname: fullname,
+            dateBorrow: dateBorrow,
+            duration: duration,
+            phoneNumber: phoneNumber,
+            note: note,
+        };
+        const newListBook = [...objectDetail?.listBorrowBooks];
+        const response = await axios.put("api/userRequest/update/userrole", {
+            idRequest,
+            newRequestInfor,
+            newListBook,
+        });
+        if (response.status) {
+            toast.success("Update request success");
+        } else {
+            toast.error("Can not update request");
         }
     };
+    const dynamicJustifyContent =
+        status === "DONE" ? "space-between" : "center";
 
     return (
         <>
@@ -294,6 +288,32 @@ const DetailRequest = (props) => {
                                                                     ?.categoryName
                                                             }
                                                         </h6>
+                                                        <div
+                                                            style={{
+                                                                marginLeft:
+                                                                    "50px",
+                                                            }}
+                                                        >
+                                                            {status ==
+                                                            "DONE" ? (
+                                                                <></>
+                                                            ) : (
+                                                                <MDBIcon
+                                                                    style={{
+                                                                        cursor: "pointer",
+                                                                        fontSize:
+                                                                            "18px",
+                                                                    }}
+                                                                    fas
+                                                                    icon="trash-alt"
+                                                                    onClick={() => {
+                                                                        handleDeleteBook(
+                                                                            book
+                                                                        );
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </div>
                                                     </div>
                                                     <div
                                                         style={{
@@ -311,7 +331,9 @@ const DetailRequest = (props) => {
                                                                 alignItems:
                                                                     "center",
                                                                 display: "flex",
-                                                                gap: "15px",
+                                                                gap: "20px",
+                                                                justifyContent:
+                                                                    dynamicJustifyContent,
                                                             }}
                                                         >
                                                             <span
@@ -328,57 +350,7 @@ const DetailRequest = (props) => {
                                                             >
                                                                 Request quantity
                                                             </span>
-                                                            <span
-                                                                style={{
-                                                                    textAlign:
-                                                                        "center",
-                                                                    fontSize:
-                                                                        "20px",
-                                                                    fontWeight:
-                                                                        "600",
-                                                                }}
-                                                            >
-                                                                {
-                                                                    book?.quantityBorrow
-                                                                }
-                                                            </span>
-                                                        </div>
-                                                        <div
-                                                            style={{
-                                                                padding:
-                                                                    "10px 30px 15px",
-                                                                alignItems:
-                                                                    "center",
-                                                                display: "flex",
-                                                                gap: "15px",
-                                                            }}
-                                                        ></div>
-                                                        <div
-                                                            style={{
-                                                                padding:
-                                                                    "10px 30px 15px",
-                                                                alignItems:
-                                                                    "center",
-                                                                display: "flex",
-                                                                gap: "15px",
-                                                            }}
-                                                        >
-                                                            <span
-                                                                style={{
-                                                                    padding:
-                                                                        "5px 8px",
-                                                                    backgroundColor:
-                                                                        "#ffc109",
-                                                                    borderRadius:
-                                                                        "15px",
-                                                                    fontWeight:
-                                                                        "600",
-                                                                }}
-                                                            >
-                                                                Allow quantity
-                                                            </span>
                                                             <input
-                                                                disabled
                                                                 onChange={(
                                                                     event
                                                                 ) => {
@@ -390,15 +362,70 @@ const DetailRequest = (props) => {
                                                                     );
                                                                 }}
                                                                 value={
-                                                                    book.quantityAllow
+                                                                    book?.quantityBorrow
                                                                 }
                                                                 className="form-control"
                                                                 type="number"
                                                                 style={{
+                                                                    textAlign:
+                                                                        "center",
                                                                     width: "80px",
                                                                 }}
                                                             />
                                                         </div>
+
+                                                        {status == "DONE" && (
+                                                            <div
+                                                                style={{
+                                                                    padding:
+                                                                        "10px 30px 15px",
+                                                                    alignItems:
+                                                                        "center",
+                                                                    display:
+                                                                        "flex",
+                                                                    gap: "20px",
+                                                                }}
+                                                            >
+                                                                <span
+                                                                    style={{
+                                                                        padding:
+                                                                            "5px 8px",
+                                                                        backgroundColor:
+                                                                            "#ffc109",
+                                                                        borderRadius:
+                                                                            "15px",
+                                                                        fontWeight:
+                                                                            "600",
+                                                                    }}
+                                                                >
+                                                                    Allow
+                                                                    quantity
+                                                                </span>
+                                                                <input
+                                                                    disabled
+                                                                    onChange={(
+                                                                        event
+                                                                    ) => {
+                                                                        handleChangeQuantity(
+                                                                            book?._id,
+                                                                            event
+                                                                                .target
+                                                                                .value
+                                                                        );
+                                                                    }}
+                                                                    value={
+                                                                        book.quantityAllow
+                                                                    }
+                                                                    className="form-control"
+                                                                    type="number"
+                                                                    style={{
+                                                                        width: "80px",
+                                                                        textAlign:
+                                                                            "center",
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </MDBCard>
                                             );
@@ -409,9 +436,38 @@ const DetailRequest = (props) => {
 
                             <MDBCol lg="4">
                                 <div className="user-infor-container">
-                                    <h5 style={{ fontWeight: "600" }}>
-                                        User request information
-                                    </h5>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            paddingBottom: "15px",
+                                        }}
+                                    >
+                                        <h5
+                                            style={{
+                                                fontWeight: "600",
+                                                margin: "0",
+                                            }}
+                                        >
+                                            User request information
+                                        </h5>
+                                        {status == "DONE" ? (
+                                            <></>
+                                        ) : (
+                                            <MDBIcon
+                                                style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "23px",
+                                                }}
+                                                fas
+                                                icon="trash-alt"
+                                                onClick={() => {
+                                                    // handleDeleteBook(book);
+                                                }}
+                                            />
+                                        )}
+                                    </div>
                                     <div class="form-floating mb-4">
                                         <input
                                             disabled
@@ -431,15 +487,17 @@ const DetailRequest = (props) => {
                                     >
                                         <div class="form-floating mb-4">
                                             <input
-                                                disabled
+                                                disabled={status == "DONE"}
                                                 type="text"
                                                 class="form-control"
                                                 id="floatingInput"
                                                 placeholder="name@example.com"
-                                                value={
-                                                    objectDetail?.requestInfor
-                                                        ?.userFullname
-                                                }
+                                                onChange={(event) => {
+                                                    setFullname(
+                                                        event.target.value
+                                                    );
+                                                }}
+                                                value={fullname}
                                             />
                                             <label for="floatingInput">
                                                 Fullname
@@ -447,15 +505,17 @@ const DetailRequest = (props) => {
                                         </div>
                                         <div class="form-floating mb-4">
                                             <input
-                                                disabled
+                                                disabled={status == "DONE"}
                                                 type="text"
                                                 class="form-control"
                                                 id="floatingInput"
                                                 placeholder="name@example.com"
-                                                value={
-                                                    objectDetail?.requestInfor
-                                                        ?.phoneNumber
-                                                }
+                                                value={phoneNumber}
+                                                onChange={(event) => {
+                                                    setPhoneNumber(
+                                                        event.target.value
+                                                    );
+                                                }}
                                             />
                                             <label for="floatingInput">
                                                 Phone number
@@ -468,29 +528,81 @@ const DetailRequest = (props) => {
                                             gap: "20px",
                                         }}
                                     >
+                                        {status == "DONE" ? (
+                                            <div class="form-floating mb-3">
+                                                <input
+                                                    disabled
+                                                    class="form-control"
+                                                    id="floatingInput"
+                                                    placeholder="name@example.com"
+                                                    value={converDate(
+                                                        objectDetail
+                                                            ?.requestInfor
+                                                            ?.dateBorrow
+                                                    )}
+                                                />
+                                                <label for="floatingInput">
+                                                    Date request
+                                                </label>
+                                            </div>
+                                        ) : (
+                                            <div class="form-floating mb-3">
+                                                <DatePicker
+                                                    style={{
+                                                        height: "100%",
+                                                        backgroundColor:
+                                                            "white",
+                                                        border: "1px solid #dee2e6",
+                                                    }}
+                                                    format={"DD-MM-YYYY"}
+                                                    onChange={(
+                                                        date,
+                                                        dateString
+                                                    ) => {
+                                                        onChangeDate(
+                                                            date,
+                                                            dateString
+                                                        );
+                                                    }}
+                                                    onClick={() => {
+                                                        setIsSelectDate(true);
+                                                    }}
+                                                    disabledDate={disabledDate}
+                                                    allowClear={false}
+                                                />
+                                                <label
+                                                    style={{
+                                                        top: "1px",
+                                                        fontWeight: "bold",
+                                                        fontSize: "17px",
+                                                    }}
+                                                    hidden={
+                                                        isSelectDate == false
+                                                            ? false
+                                                            : true
+                                                    }
+                                                >
+                                                    {converDate(
+                                                        objectDetail
+                                                            ?.requestInfor
+                                                            ?.dateBorrow
+                                                    )}
+                                                </label>
+                                            </div>
+                                        )}
                                         <div class="form-floating mb-3">
                                             <input
-                                                disabled
-                                                type="text"
-                                                class="form-control"
-                                                value={converDate(
-                                                    objectDetail?.requestInfor
-                                                        ?.dateBorrow
-                                                )}
-                                            />
-                                            <label>Borrow date</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input
-                                                disabled
+                                                disabled={status == "DONE"}
                                                 type="number"
                                                 class="form-control"
                                                 id="floatingInput"
                                                 placeholder="name@example.com"
-                                                value={
-                                                    objectDetail?.requestInfor
-                                                        ?.duration
-                                                }
+                                                value={duration}
+                                                onChange={(event) => {
+                                                    setDuration(
+                                                        event.target.value
+                                                    );
+                                                }}
                                             />
                                             <label for="floatingInput">
                                                 Duration (days)
@@ -499,7 +611,7 @@ const DetailRequest = (props) => {
                                     </div>
                                     <div class="form-floating mb-3">
                                         <textarea
-                                            disabled
+                                            disabled={status == "DONE"}
                                             class="form-control"
                                             placeholder="Leave a comment here"
                                             id="floatingTextarea2"
@@ -507,81 +619,111 @@ const DetailRequest = (props) => {
                                                 height: "80px",
                                                 resize: "none",
                                             }}
-                                            value={
-                                                objectDetail?.requestInfor?.note
-                                            }
+                                            value={note}
+                                            onChange={(event) => {
+                                                setNote(event.target.value);
+                                            }}
                                         />
                                         <label for="floatingTextarea2">
                                             Note
                                         </label>
                                     </div>
-                                    <div className="mb-2">
-                                        <h5 style={{ fontWeight: "600" }}>
-                                            Response information
-                                        </h5>
-                                        {!outofstock && (
-                                            <div
+
+                                    {status == "DONE" ? (
+                                        <div className="mb-2">
+                                            <h5 style={{ fontWeight: "600" }}>
+                                                Response information
+                                            </h5>
+                                            {!outofstock && (
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        gap: "20px",
+                                                    }}
+                                                >
+                                                    <div class="form-floating mb-3">
+                                                        <input
+                                                            disabled
+                                                            type="text"
+                                                            class="form-control"
+                                                            value={converDate(
+                                                                dateAllow
+                                                            )}
+                                                        />
+
+                                                        <label>
+                                                            Date allow
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="form-floating mb-3">
+                                                        <input
+                                                            disabled
+                                                            type="number"
+                                                            class="form-control"
+                                                            id="floatingInput"
+                                                            placeholder="name@example.com"
+                                                            value={
+                                                                durationAllow
+                                                            }
+                                                            onChange={(
+                                                                event
+                                                            ) => {
+                                                                setDurationAllow(
+                                                                    event.target
+                                                                        .value
+                                                                );
+                                                            }}
+                                                        />
+                                                        <label for="floatingInput">
+                                                            Duration allow
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div class="form-floating mb-3">
+                                                <textarea
+                                                    disabled
+                                                    class="form-control"
+                                                    placeholder="Leave a comment here"
+                                                    id="floatingTextarea2"
+                                                    style={{
+                                                        height: "110px",
+                                                        resize: "none",
+                                                    }}
+                                                    value={noteAllow}
+                                                    onChange={(event) => {
+                                                        setNoteAllow(
+                                                            event.target.value
+                                                        );
+                                                    }}
+                                                />
+                                                <label for="floatingTextarea2">
+                                                    Note
+                                                </label>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <span
+                                                className="btn"
                                                 style={{
-                                                    display: "flex",
-                                                    gap: "20px",
+                                                    width: "100%",
+                                                    cursor: "pointer",
+                                                    padding: "8px",
+                                                    margin: "0",
+                                                    backgroundColor: "#019cda",
+                                                    fontWeight: "600",
+                                                    color: "white",
+                                                }}
+                                                onClick={() => {
+                                                    handleUpdateRequest();
                                                 }}
                                             >
-                                                <div class="form-floating mb-3">
-                                                    <input
-                                                        disabled
-                                                        type="text"
-                                                        class="form-control"
-                                                        value={converDate(
-                                                            dateAllow
-                                                        )}
-                                                    />
-
-                                                    <label>Date allow</label>
-                                                </div>
-
-                                                <div class="form-floating mb-3">
-                                                    <input
-                                                        disabled
-                                                        type="number"
-                                                        class="form-control"
-                                                        id="floatingInput"
-                                                        placeholder="name@example.com"
-                                                        value={durationAllow}
-                                                        onChange={(event) => {
-                                                            setDurationAllow(
-                                                                event.target
-                                                                    .value
-                                                            );
-                                                        }}
-                                                    />
-                                                    <label for="floatingInput">
-                                                        Duration allow
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        )}
-                                        <div class="form-floating mb-3">
-                                            <textarea
-                                                disabled
-                                                class="form-control"
-                                                placeholder="Leave a comment here"
-                                                id="floatingTextarea2"
-                                                style={{
-                                                    height: "110px",
-                                                    resize: "none",
-                                                }}
-                                                value={noteAllow}
-                                                onChange={(event) => {
-                                                    setNoteAllow(
-                                                        event.target.value
-                                                    );
-                                                }}
-                                            />
-                                            <label for="floatingTextarea2">
-                                                Note
-                                            </label>
+                                                Complete request
+                                            </span>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
                             </MDBCol>
                         </MDBRow>
