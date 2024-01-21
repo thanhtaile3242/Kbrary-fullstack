@@ -4,6 +4,7 @@ import multer from "multer";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import sendEmail from "../utils/sendEmail.js";
+
 import Redis from "ioredis";
 import {
     uploadUserImage,
@@ -95,8 +96,8 @@ export const sendOTPEmailController = async (req, res) => {
             if (result) {
                 const { codeVerify } = result;
                 const codeEmail = codeVerify.codeEmail;
-                const html = `Here is your one-time verification code <b>${codeEmail}</b>. Please use this code within the next 5 minutes to verify your email address`;
-                sendEmail(email, html);
+                sendEmail(email, codeEmail);
+
                 return res.status(200).json({
                     status: true,
                     message: "Code verify email is sent !!!",

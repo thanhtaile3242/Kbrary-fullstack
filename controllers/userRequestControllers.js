@@ -1,6 +1,7 @@
 import userRequest from "../models/userRequestModel.js";
 import Book from "../models/bookModel.js";
 import Joi from "joi";
+import sendEmailRequest from "../utils/sendEmailRequest.js";
 import { ObjectId } from "mongodb";
 //
 export const createUserRequestController = async (req, res) => {
@@ -103,122 +104,8 @@ export const getDetailRequestController = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
-//
-export const getPendingRequestController = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const result = await userRequest
-            .find({ userId: userId, status: "PENDING" })
-            .populate({
-                path: "userId",
-                select: "username -_id",
-            })
-            .populate({
-                path: "listBorrowBooks.bookId",
-                populate: {
-                    path: "category",
-                    model: "category",
-                    select: "categoryName",
-                },
-                select: "bookName category imageName",
-            });
 
-        if (result) {
-            return res.status(200).json({
-                status: true,
-                message: "Get detail pending request succcessfully",
-                data: result,
-            });
-        } else {
-            return res.status(400).json({
-                status: false,
-                message: "Request not found",
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ status: false, message: error.message });
-    }
-};
-//
-export const updatePendingRequestController = async (req, res) => {
-    try {
-        const requestId = req.body.requestId;
-        const newListBorrow = req.body.listBorrowBooks;
-        const result1 = await userRequest.findByIdAndUpdate(
-            { _id: requestId },
-            { $set: { listBorrowBooks: [] } }
-        );
-        if (result1) {
-            const result2 = await userRequest.findByIdAndUpdate(
-                { _id: requestId },
-
-                { $set: { listBorrowBooks: newListBorrow } },
-                { new: true }
-            );
-            if (result2) {
-                return res.status(200).json({
-                    status: true,
-                    message: "Update pending request succcessfully",
-                    data: result2,
-                });
-            } else {
-                return res.status(500).json({
-                    status: false,
-                    message: "Can not update pending request",
-                });
-            }
-        } else {
-            return res.status(500).json({
-                status: false,
-                message: "Can not update pending request",
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ status: false, message: error.message });
-    }
-};
-//
-export const updatePendingRequestWithUserID = async (req, res) => {
-    try {
-        const userId = req.body.userId;
-        const newListBorrow = req.body.listBorrowBooks;
-        const result1 = await userRequest.findOneAndUpdate(
-            { userId: userId },
-            { $set: { listBorrowBooks: [] } }
-        );
-        if (result1) {
-            const result2 = await userRequest.findOneAndUpdate(
-                { userId: userId },
-                { $set: { listBorrowBooks: newListBorrow } },
-                { new: true }
-            );
-            if (result2) {
-                return res.status(200).json({
-                    status: true,
-                    message: "Update pending request succcessfully",
-                    data: result2,
-                });
-            } else {
-                return res.status(500).json({
-                    status: false,
-                    message: "Can not update pending request",
-                });
-            }
-        } else {
-            return res.status(500).json({
-                status: false,
-                message: "Can not update pending request",
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ status: false, message: error.message });
-    }
-};
-
-// (OK)
+// Find requests
 export const findRequestController = async (req, res) => {
     try {
         const { status, sortField, sortOrder, userId } = req.query;
@@ -401,6 +288,56 @@ export const updateRequestControllerUser = async (req, res) => {
         return res.status(400).json({
             status: false,
             message: error.message,
+        });
+    }
+};
+// Delete request - User role
+export const deleteRequestController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await userRequest.findByIdAndDelete({ _id: id });
+        return res.status(200).json({
+            status: true,
+            message: "Delete request succcessfully",
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+// Send email controller
+export const sendEmailRequestController = async (req, res) => {
+    try {
+        const { idRequest, email } = req.body;
+        const result = await userRequest.findById({ _id: idRequest });
+        if (result) {
+            const fullname = result.requestInfor.userFullname;
+            const { allowDate, allowDuration, allowNote } =
+                result.responseInfor;
+            const data = {
+                fullname,
+                allowDate,
+                allowDuration,
+                allowNote,
+            };
+            sendEmailRequest(data, email);
+            return res.status(200).json({
+                status: true,
+                message: "Email notification is sent !!!",
+            });
+        }
+        return res.status(500).json({
+            status: false,
+            message: "Request not found",
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            message: "User not found",
         });
     }
 };
