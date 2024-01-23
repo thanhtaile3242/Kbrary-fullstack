@@ -6,35 +6,6 @@ import axios from "../../utils/axiosCustomize.js";
 import { useState, useEffect } from "react";
 import "../../Admin/SCSS/DetailAccount.scss";
 
-import { useOutletContext } from "react-router-dom";
-const dataURLtoFile = (dataurl, filename) => {
-    var arr = dataurl.split(","),
-        mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[arr.length - 1]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-};
-const validateEmail = (email) => {
-    return String(email)
-        .toLowerCase()
-        .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
-};
-const customStyles = {
-    content: {
-        top: "50%",
-        left: "50%",
-        right: "auto",
-        bottom: "auto",
-        marginRight: "-50%",
-        transform: "translate(-50%, -50%)",
-    },
-};
 const DetailAccount = (props) => {
     const [userInfor, setUserInfor] = useState({
         email: "",
@@ -65,7 +36,9 @@ const DetailAccount = (props) => {
                 <Form>
                     <Row className="mb-4">
                         <Form.Group as={Col} controlId="formGridEmail">
-                            <Form.Label>Username</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Username
+                            </Form.Label>
                             <Form.Control
                                 disabled
                                 type="text"
@@ -75,7 +48,9 @@ const DetailAccount = (props) => {
                         </Form.Group>
 
                         <Form.Group as={Col} controlId="formGridPassword">
-                            <Form.Label>Role</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Role
+                            </Form.Label>
                             <Form.Control
                                 disabled
                                 type="text"
@@ -86,7 +61,9 @@ const DetailAccount = (props) => {
                     </Row>
                     <Row className="mb-4">
                         <Form.Group as={Col} controlId="formGridState">
-                            <Form.Label>Email</Form.Label>
+                            <Form.Label style={{ fontWeight: "bold" }}>
+                                Email
+                            </Form.Label>
                             <Form.Control
                                 disabled
                                 name="email"

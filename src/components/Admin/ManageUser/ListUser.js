@@ -1,9 +1,8 @@
 import "../SCSS/ListAccount.scss";
-import { Breadcrumb } from "antd";
 import { FaSearch } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "../../utils/axiosCustomize.js";
-import { Space, Table, Tag } from "antd";
+import { Table, Tag } from "antd";
 const { Column } = Table;
 function filterArray(input, data) {
     const filteredData = data.filter(
@@ -62,7 +61,6 @@ const ListUser = (props) => {
                     </form>
                 </div>
                 <span
-                    style={{ fontWeight: "bold" }}
                     className="btn btn-primary"
                     onClick={() => {
                         props.setShowCreateUser(true);
@@ -120,14 +118,14 @@ const ListUser = (props) => {
                     key="updatedAt"
                     render={(record) => {
                         const date = new Date(record);
-                        const formattedDate = `${date.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })} - ${date.toLocaleDateString("en-US", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                        })}`;
+                        const formattedDate = `${date.toLocaleDateString(
+                            "en-US",
+                            {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                            }
+                        )}`;
                         return (
                             <Tag
                                 color={"gold"}

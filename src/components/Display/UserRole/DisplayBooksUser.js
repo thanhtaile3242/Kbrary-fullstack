@@ -1,13 +1,11 @@
 import "../SCSS/DisplayBooks.scss";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdCloseCircle } from "react-icons/io";
+
 import ListBorrow from "./ListBorrow.js";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import { useState, useEffect, useRef } from "react";
-import { MDBListGroup, MDBListGroupItem } from "mdb-react-ui-kit";
-import { MDBIcon } from "mdb-react-ui-kit";
-import axios from "../../utils/axiosCustomize.js";
+
+import { useEffect } from "react";
+
 import { useOutletContext } from "react-router-dom";
 const DisplayBooks = (props) => {
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =

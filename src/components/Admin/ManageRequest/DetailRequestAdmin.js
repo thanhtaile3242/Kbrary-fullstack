@@ -1,40 +1,15 @@
-import {
-    MDBBtn,
-    MDBCard,
-    MDBCardBody,
-    MDBCardImage,
-    MDBCol,
-    MDBContainer,
-    MDBIcon,
-    MDBInput,
-    MDBRow,
-    MDBTypography,
-} from "mdb-react-ui-kit";
+import { MDBCard, MDBCardBody, MDBCol, MDBRow } from "mdb-react-ui-kit";
 import Modal from "react-bootstrap/Modal";
-import React from "react";
-import ShortUniqueId from "short-unique-id";
-import { v4 as uuidv4 } from "uuid";
-import { ToastContainer, toast } from "react-toastify";
-import { FaListCheck } from "react-icons/fa6";
-import { FloatButton } from "antd";
-import { DatePicker, Space } from "antd";
+import { toast } from "react-toastify";
+import { DatePicker } from "antd";
 import moment from "moment";
-import { Tooltip } from "antd";
-import style from "../SCSS/DetailRequest.module.scss";
-import { useNavigate, Link } from "react-router-dom";
-import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { FaPlus, FaMinus } from "react-icons/fa";
 import { useState, useEffect, useRef } from "react";
 import axios from "../../utils/axiosCustomize.js";
-import { useOutletContext } from "react-router-dom";
+
 const disabledDate = (current) => {
     return current && current < moment().endOf("day");
 };
-const convertDateType = (dateString) => {
-    const [day, month, year] = dateString.split("-");
-    const dateObject = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    return dateObject;
-};
+
 const converDate = (dateString) => {
     const dateObject = new Date(dateString);
 
@@ -51,7 +26,6 @@ const converDate = (dateString) => {
 };
 
 const DetailRequest = (props) => {
-    const navigate = useNavigate();
     const { handleShowListRequest, idDetailRequest } = props;
     const [objectDetail, setObjectDetail] = useState(null);
     const [status, setStatus] = useState(null);

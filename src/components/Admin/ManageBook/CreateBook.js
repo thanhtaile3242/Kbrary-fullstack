@@ -2,15 +2,12 @@ import BookDefault from "../../../assets/bookDefault.png";
 import { useState, useEffect } from "react";
 import ModalImageBook from "./ModalImageBook.js";
 import ModalAddCategory from "./ModalAddCategory.js";
-import Avatar from "react-avatar-edit";
-import { useNavigate, Link } from "react-router-dom";
 import axios from "../../utils/axiosCustomize.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { IoIosAddCircle } from "react-icons/io";
 import "./SCSS/CreateBook.scss";
 
 const CreateBook = (props) => {
-    const navigate = useNavigate();
     // Image Book
     const [showImageEdit, setShowImageEdit] = useState(false);
     // The image file

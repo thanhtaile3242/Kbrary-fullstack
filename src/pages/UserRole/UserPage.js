@@ -2,16 +2,9 @@ import { useState } from "react";
 import ManageAccount from "../../components/User/AccountInfo/ManageAccount.js";
 import ManageRequest from "../../components/User/RequestBorrow/ManageRequest.js";
 import "../AdminRole/Admin.scss";
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    BookFilled,
-    ProfileFilled,
-} from "@ant-design/icons";
+import { UserOutlined, BookFilled } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 const UserPage = () => {
     const [isManageAccount, setIsManageAccount] = useState(true);
     const [isMangeBorrow, setIsMangeBorrow] = useState(false);

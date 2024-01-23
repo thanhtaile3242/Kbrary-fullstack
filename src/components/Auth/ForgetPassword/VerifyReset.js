@@ -1,8 +1,5 @@
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import { useState } from "react";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa6";
 import { IoIosAlert } from "react-icons/io";
 
 const VerifyReset = (props) => {

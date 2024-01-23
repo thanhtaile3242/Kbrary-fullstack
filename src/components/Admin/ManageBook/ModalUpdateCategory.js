@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { Table } from "antd";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
 import axios from "../../utils/axiosCustomize.js";
 import "./SCSS/ModalAddCategory.scss";
-import { FiEdit } from "react-icons/fi";
-const { Column } = Table;
 
 const ModalUpdateCategory = (props) => {
     const [updateCategory, setUpdateCategory] = useState("");

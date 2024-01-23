@@ -1,8 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "../../utils/axiosCustomize.js";
+import { useState } from "react";
 import "./SCSS/ManageBooks.scss";
-import { toast } from "react-toastify";
-import Modal from "react-bootstrap/Modal";
 import { Breadcrumb } from "antd";
 import DetailBook from "./DetailBook.js";
 import ListBook from "./ListBook.js";

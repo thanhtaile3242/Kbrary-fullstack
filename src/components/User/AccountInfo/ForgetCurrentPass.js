@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 // import "../../Auth/MainAuth.scss";
+import style from "../../Auth/SCSS/MainForget.module.scss";
 import "./User.scss";
 import {
     BellOutlined,
@@ -123,12 +124,14 @@ const ForgetCurrentPass = () => {
                     {/* Component */}
                     {statusGetOTP && (
                         <SendOTP
+                            style={style}
                             setEmailSendOTP={setEmailSendOTP}
                             handleSendEmail={handleSendEmail}
                         />
                     )}
                     {statusVerify && (
                         <VerifyReset
+                            style={style}
                             setCodeResetPassword={setCodeResetPassword}
                             handleVerifyReset={handleVerifyReset}
                         />
@@ -136,6 +139,7 @@ const ForgetCurrentPass = () => {
 
                     {statusResetPassword && (
                         <ResetPassword
+                            style={style}
                             setNewPassword={setNewPassword}
                             setConfirmPassword={setConfirmPassword}
                             handleResetPassword={handleResetPassword}

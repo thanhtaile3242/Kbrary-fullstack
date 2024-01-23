@@ -1,14 +1,10 @@
-import Filter from "../../components/Filter/Filter.js";
-import DisplayBooksUser from "../../components/Display/UserRole/DisplayBooksUser.js";
 import "./BookPage.scss";
 import { useState, useEffect, useRef } from "react";
-import { useOutletContext } from "react-router-dom";
 import axios from "../../components/utils/axiosCustomize.js";
-import DetailPendingRequest from "../UserRole/DetailPendingRequest.js";
+import Filter from "../../components/Filter/Filter.js";
 import DetailBookUser from "../../components/Display/UserRole/DetailBookUser";
+import DisplayBooksUser from "../../components/Display/UserRole/DisplayBooksUser.js";
 const BookPageUser = () => {
-    const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
-        useOutletContext();
     const [listBook, setListBook] = useState([]);
     const [listBorrowBook, setListBorrowBook] = useState([]);
     const [idDetailBook, setIdDetailBook] = useState("");

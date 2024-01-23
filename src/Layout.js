@@ -9,7 +9,7 @@ import Admin from "./pages/AdminRole/AdminPage.js";
 import UserInfo from "./pages/UserRole/UserPage.js";
 import BookPageAdmin from "./pages/BookPageAdmin/BookPageAdmin.js";
 import BookPageUser from "./pages/BookPageUser/BookPageUser.js";
-import DetailPendingRequest from "./pages/UserRole/DetailPendingRequest.js";
+import DetailUserBorrow from "./pages/UserRole/DetailUserBorrow.js";
 import CongratsPage from "./pages/UserRole/CongratsPage.js";
 
 // import DetailRequest from "./components/Admin/ManageRequest/DetailRequest.js";
@@ -33,7 +33,7 @@ const Layout = () => {
                     <Route path="bookUser" element={<BookPageUser />} />
                     <Route
                         path="borrowPending"
-                        element={<DetailPendingRequest />}
+                        element={<DetailUserBorrow />}
                     />
                     <Route path="congratsPage" element={<CongratsPage />} />
                 </Route>

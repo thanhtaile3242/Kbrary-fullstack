@@ -51,8 +51,13 @@ const ResetCurrentPass = (props) => {
     return (
         <>
             <div className="reset-container">
-                <FloatingLabel label="Current password" className="mb-4">
+                <FloatingLabel
+                    label="Current password"
+                    className="mb-4"
+                    style={{ fontWeight: "bold" }}
+                >
                     <Form.Control
+                        style={{ fontWeight: "bold" }}
                         type="text"
                         placeholder="Password"
                         onChange={(event) => {
@@ -60,8 +65,13 @@ const ResetCurrentPass = (props) => {
                         }}
                     />
                 </FloatingLabel>
-                <FloatingLabel label="New password" className="mb-4">
+                <FloatingLabel
+                    label="New password"
+                    className="mb-4"
+                    style={{ fontWeight: "bold" }}
+                >
                     <Form.Control
+                        style={{ fontWeight: "bold" }}
                         type="text"
                         placeholder="Password"
                         onChange={(event) => {
@@ -69,9 +79,13 @@ const ResetCurrentPass = (props) => {
                         }}
                     />
                 </FloatingLabel>
-                <FloatingLabel label="Confirm password">
+                <FloatingLabel
+                    label="Confirm password"
+                    style={{ fontWeight: "bold" }}
+                >
                     <Form.Control
                         type="text"
+                        style={{ fontWeight: "bold" }}
                         placeholder="Password"
                         onChange={(event) => {
                             setConfirmPassword(event.target.value);
@@ -81,6 +95,7 @@ const ResetCurrentPass = (props) => {
                 <div className="btn-container">
                     <span
                         className="forget-btn"
+                        style={{ fontWeight: "bold", color: "#79bfea" }}
                         onClick={() => {
                             props.handleShowForget();
                         }}
@@ -88,6 +103,7 @@ const ResetCurrentPass = (props) => {
                         Forget Password?
                     </span>
                     <span
+                        style={{ fontWeight: "bold" }}
                         className="btn btn-warning btn-reset"
                         onClick={hanldResetPass}
                     >

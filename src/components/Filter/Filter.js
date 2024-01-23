@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
 import { FaSearch } from "react-icons/fa";
 import { MdFilterAltOff } from "react-icons/md";
-import { FaArrowDown } from "react-icons/fa";
 import "./Filter.scss";
 import { Select } from "antd";
 import axios from "../utils/axiosCustomize.js";
@@ -13,8 +10,7 @@ const Filter = (props) => {
     const [category, setCategory] = useState(null);
     const [status, setStatus] = useState(null);
     const [sortCriteria, setSortCriteria] = useState(null);
-    // const [sortField, setSortField] = useState(null);
-    // const [isAsc, setIsAsc] = useState(true);
+
     useEffect(() => {
         async function fetchListCategory() {
             const response = await axios.get("api/category/getAll");

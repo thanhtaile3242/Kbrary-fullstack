@@ -1,25 +1,18 @@
 import {
-    MDBBtn,
     MDBCard,
     MDBCardBody,
-    MDBCardImage,
     MDBCol,
     MDBContainer,
     MDBIcon,
-    MDBInput,
     MDBRow,
     MDBTypography,
 } from "mdb-react-ui-kit";
 import React from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { FaListCheck } from "react-icons/fa6";
-import { FloatButton } from "antd";
-import { DatePicker, Space } from "antd";
+import { toast } from "react-toastify";
+import { DatePicker } from "antd";
 import moment from "moment";
-import { Tooltip } from "antd";
 import "./SCSS/DetailRequest.scss";
-import { useNavigate, Link } from "react-router-dom";
-import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { useState, useEffect, useRef } from "react";
 import axios from "../../components/utils/axiosCustomize.js";

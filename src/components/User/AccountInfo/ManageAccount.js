@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Breadcrumb } from "antd";
 import "../../Admin/SCSS/DetailAccount.scss";
 import "./User.scss";
@@ -38,6 +38,7 @@ const ManageAccount = (props) => {
                             title: (
                                 <>
                                     <span
+                                        style={{ fontWeight: "bold" }}
                                         className={
                                             showDetailAccount
                                                 ? "selected-account pointer-account"
@@ -53,6 +54,7 @@ const ManageAccount = (props) => {
                         {
                             title: (
                                 <span
+                                    style={{ fontWeight: "bold" }}
                                     className="list-user-breadcrumb"
                                     onClick={handleShowDetailAccount}
                                     className={

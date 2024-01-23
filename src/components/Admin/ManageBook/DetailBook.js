@@ -1,12 +1,8 @@
-import BookDefault from "../../../assets/bookDefault.png";
 import { useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
 import ModalImageBookDetail from "./ModalImageDetail.js";
 import ModalAddCategory from "./ModalAddCategory.js";
-import Avatar from "react-avatar-edit";
 import axios from "../../utils/axiosCustomize.js";
 import { toast } from "react-toastify";
-import { DeleteOutlined } from "@ant-design/icons";
 import { IoIosAddCircle } from "react-icons/io";
 import "./SCSS/CreateBook.scss";
 
@@ -36,8 +32,7 @@ const DetailBook = (props) => {
     const [description, setDescription] = useState(null);
     // Author
     const [author, setAuthor] = useState("");
-    // Modal delete book
-    const [show, setShow] = useState(false);
+
     // Handle function
     useEffect(() => {
         async function fetchCategory() {
@@ -105,19 +100,6 @@ const DetailBook = (props) => {
             }
         } else {
             toast.error("Fulfill information required");
-            return;
-        }
-    };
-
-    const handleDeleteBook = async () => {
-        const response = await axios.delete(
-            `api/book/delete/${props.idDetailBook}`
-        );
-        if (response.status === true) {
-            toast.success(response.message);
-            props.handleShowListBook(true);
-        } else {
-            toast.error("Invalid information");
             return;
         }
     };

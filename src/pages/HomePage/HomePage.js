@@ -1,18 +1,17 @@
 import Intro from "../../assets/intro.png";
 import "./HomePage.scss";
 import CountUp from "react-countup";
-import { Col, Row, Statistic } from "antd";
+import { Statistic } from "antd";
 import { PiBooksFill } from "react-icons/pi";
 import { MdOutlinePeopleAlt } from "react-icons/md";
 import { MdEventNote } from "react-icons/md";
-import OverLay from "../../assets/Overlay.png";
 import Cate1 from "../../assets/category/1.png";
 import Cate2 from "../../assets/category/2.png";
 import Cate3 from "../../assets/category/3.png";
 import Cate4 from "../../assets/category/4.png";
 import Cate5 from "../../assets/category/5.png";
 import Cate6 from "../../assets/category/6.png";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const formatter = (value) => <CountUp end={value} separator="," />;
 
 const HomePage = (props) => {

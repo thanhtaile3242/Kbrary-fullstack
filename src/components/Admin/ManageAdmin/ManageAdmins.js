@@ -2,11 +2,10 @@ import { Breadcrumb } from "antd";
 import ListAdmin from "./ListAdmin.js";
 import ModalCreateAdmin from "./ModalCreateAdmin.js";
 import DetailAdmin from "./DetailAdmin.js";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 const ManageAdmins = () => {
     // List Admins
     const [showListAdmins, setShowListAdmins] = useState(true);
-    const [listAdmins, setListAdmins] = useState([]);
     // 2. Modal create new user
     const [showCreateAdmin, setShowCreateAdmin] = useState(false);
     //  Detail admin

@@ -4,119 +4,12 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import axios from "../../utils/axiosCustomize.js";
 import { useState, useEffect } from "react";
-import { DeleteOutlined } from "@ant-design/icons";
 import "../SCSS/DetailAccount.scss";
 import Modal from "react-bootstrap/Modal";
-
 import { Table, Tag } from "antd";
-import { useOutletContext } from "react-router-dom";
 import userAvatar from "../../../assets/userAvatar.png";
 import DetailRequestAdmin from "../ManageRequest/DetailRequestAdmin.js";
-const columns = [
-    {
-        title: "No",
-        dataIndex: "no",
-        key: "no",
-    },
-    {
-        title: "Time",
-        dataIndex: "time",
-        key: "time",
-    },
-    {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        render: (_, { status }) => (
-            <>
-                {status.map((item) => {
-                    let color = "";
-                    if (item === "pending") {
-                        color = "geekblue";
-                    }
-                    if (item === "success") {
-                        color = "green";
-                    }
-                    if (item === "fail") {
-                        color = "volcano";
-                    }
-
-                    return (
-                        <Tag color={color} key={status}>
-                            {item.toUpperCase()}
-                        </Tag>
-                    );
-                })}
-            </>
-        ),
-    },
-    {
-        title: "Quantity",
-        key: "quantity",
-        dataIndex: "quantity",
-    },
-    {
-        title: "Action",
-        key: "action",
-        render: (record) => (
-            <span
-                style={{
-                    color: "black",
-                    backgroundColor: "#ffc008",
-                    marginLeft: "10px",
-                }}
-                className="btn"
-            >
-                Detail
-            </span>
-        ),
-    },
-];
 const { Column } = Table;
-const data = [
-    {
-        no: 1,
-        time: "1/2/2024",
-        status: ["success"],
-        quantity: 4,
-    },
-    {
-        no: 2,
-        time: "1/2/2024",
-        status: ["pending"],
-        quantity: 4,
-    },
-    {
-        no: 3,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-    {
-        no: 4,
-        time: "1/2/2024",
-        status: ["success"],
-        quantity: 4,
-    },
-    {
-        no: 5,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-    {
-        no: 6,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-    {
-        no: 7,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-];
 const validateEmail = (email) => {
     return String(email)
         .toLowerCase()
@@ -124,7 +17,6 @@ const validateEmail = (email) => {
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         );
 };
-
 const DetailUser = (props) => {
     const [defaultAvatar, setDefaultAvatar] = useState("");
     const [show, setShow] = useState(false);
@@ -139,7 +31,6 @@ const DetailUser = (props) => {
     const [showDetailRequest, setShowDetailRequest] = useState(false);
     const [showListRequest, setShowListRequest] = useState(true);
 
-    //
     const handleShowListRequest = async () => {
         setShowDetailRequest(false);
         setShowListRequest(true);
@@ -150,7 +41,7 @@ const DetailUser = (props) => {
         const response2 = await axios.get(
             `api/userRequest/find?${queryString}`
         );
-        if (response2.status == true) {
+        if (response2.status === true) {
             const listRequestModified = response2.data;
             listRequestModified.forEach((item, index) => {
                 item.No = index + 1;
@@ -165,7 +56,7 @@ const DetailUser = (props) => {
         setShowDetailRequest(true);
         setShowListRequest(false);
     };
-    // Handle function
+
     useEffect(() => {
         async function fetchDetailUser() {
             const response = await axios.get(`api/user/detailUser/${userId}`);
@@ -178,7 +69,7 @@ const DetailUser = (props) => {
             const response2 = await axios.get(
                 `api/userRequest/find?${queryString}`
             );
-            if (response2.status == true) {
+            if (response2.status === true) {
                 const listRequestModified = response2.data;
                 listRequestModified.forEach((item, index) => {
                     item.No = index + 1;
@@ -190,7 +81,7 @@ const DetailUser = (props) => {
             }
         }
         fetchDetailUser();
-    }, []);
+    }, [userId]);
 
     const handleChangeInfor = (event) => {
         setUserInfor({ ...userInfor, [event.target.name]: event.target.value });
@@ -241,12 +132,6 @@ const DetailUser = (props) => {
     return (
         <>
             <div className="header-detail-container">
-                {/* <DeleteOutlined
-                    className="btn-delete"
-                    onClick={() => {
-                        setShow(true);
-                    }}
-                /> */}
                 <span
                     style={{ fontWeight: "bold" }}
                     className="btn btn-secondary btn-close-user"

@@ -4,16 +4,8 @@ import ManageUsers from "../../components/Admin/ManageUser/ManageUsers.js";
 import ManageAdmins from "../../components/Admin/ManageAdmin/ManageAdmins.js";
 import ManageBooks from "../../components/Admin/ManageBook/ManageBooks.js";
 import ManageRequests from "../../components/Admin/ManageRequest/ManageRequest.js";
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    BookFilled,
-    ProfileFilled,
-    LaptopOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu, Button, theme, SubMenu } from "antd";
+import { UserOutlined, BookFilled } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
 const { Sider, Content } = Layout;
 
 const list = [

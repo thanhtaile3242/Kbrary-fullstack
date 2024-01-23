@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Table } from "antd";
 import ModalUpdateCategory from "./ModalUpdateCategory";
 import Modal from "react-bootstrap/Modal";

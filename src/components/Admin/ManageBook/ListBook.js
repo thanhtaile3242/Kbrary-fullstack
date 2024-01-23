@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "../../utils/axiosCustomize.js";
 import { FaSearch } from "react-icons/fa";
 import { Select } from "antd";
-import { FaArrowDown } from "react-icons/fa";
 import "./SCSS/ListBook.scss";
 import { MdFilterAltOff } from "react-icons/md";
-import { Space, Table, Tag } from "antd";
-const { Column, ColumnGroup } = Table;
+import { Table, Tag } from "antd";
+const { Column } = Table;
 
 const ListBook = (props) => {
     const [listBook, setListBook] = useState([]);
@@ -19,8 +18,7 @@ const ListBook = (props) => {
     useEffect(() => {
         async function fetchListBook() {
             const responseBook = await axios.get("api/book/findAdmin");
-            if (responseBook.status == true) {
-                console.log("check: ", responseBook?.data);
+            if (responseBook.status === true) {
                 setListBook([...responseBook?.data]);
             } else {
                 return;
@@ -34,34 +32,50 @@ const ListBook = (props) => {
         }
         fetchListBook();
     }, []);
-    const handleClearFilter = async () => {
-        setBookName("");
-        setCategory(null);
-        setStatus(null);
-        setSortCriteria(null);
-        const response = await axios.get(`api/book/findAdmin`);
+    const handleSearchBooksNotPrevent = async () => {
+        let sortField = null;
+        let sortOrder = null;
+        if (sortCriteria === "nameASC") {
+            sortField = "name";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "nameDESC") {
+            sortField = "name";
+            sortOrder = "DESC";
+        }
+        if (sortCriteria === "timeASC") {
+            sortField = "time";
+            sortOrder = "ASC";
+        }
+        if (sortCriteria === "timeDESC") {
+            sortField = "time";
+            sortOrder = "DESC";
+        }
+
+        const queryParams = {
+            bookName,
+            category,
+            status,
+            sortField,
+            sortOrder,
+        };
+        if (!status) {
+            delete queryParams.status;
+        }
+        if (!category) {
+            delete queryParams.category;
+        }
+        if (!bookName) {
+            delete queryParams.bookName;
+        }
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await axios.get(`api/book/findAdmin?${queryString}`);
         if (response.status === true) {
             setListBook(response.data);
             return;
         } else {
             return;
         }
-    };
-    // useEffect(() => {
-    //     handleSearchBooksNotPrevent();
-    // }, [bookName]);
-    useEffect(() => {
-        handleSearchBooksNotPrevent();
-    }, [category]);
-    useEffect(() => {
-        handleSearchBooksNotPrevent();
-    }, [status]);
-    useEffect(() => {
-        handleSearchBooksNotPrevent();
-    }, [sortCriteria]);
-    const handleSelectBookId = (id) => {
-        props.handleShowDetailBook();
-        props.setIdDetailBook(id);
     };
     const handleSearchBooks = async (event) => {
         event.preventDefault();
@@ -109,50 +123,31 @@ const ListBook = (props) => {
             return;
         }
     };
-    const handleSearchBooksNotPrevent = async () => {
-        let sortField = null;
-        let sortOrder = null;
-        if (sortCriteria === "nameASC") {
-            sortField = "name";
-            sortOrder = "ASC";
-        }
-        if (sortCriteria === "nameDESC") {
-            sortField = "name";
-            sortOrder = "DESC";
-        }
-        if (sortCriteria === "timeASC") {
-            sortField = "time";
-            sortOrder = "ASC";
-        }
-        if (sortCriteria === "timeDESC") {
-            sortField = "time";
-            sortOrder = "DESC";
-        }
-
-        const queryParams = {
-            bookName,
-            category,
-            status,
-            sortField,
-            sortOrder,
-        };
-        if (!status) {
-            delete queryParams.status;
-        }
-        if (!category) {
-            delete queryParams.category;
-        }
-        if (!bookName) {
-            delete queryParams.bookName;
-        }
-        const queryString = new URLSearchParams(queryParams).toString();
-        const response = await axios.get(`api/book/findAdmin?${queryString}`);
+    const handleClearFilter = async () => {
+        setBookName("");
+        setCategory(null);
+        setStatus(null);
+        setSortCriteria(null);
+        const response = await axios.get(`api/book/findAdmin`);
         if (response.status === true) {
             setListBook(response.data);
             return;
         } else {
             return;
         }
+    };
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [category]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [status]);
+    useEffect(() => {
+        handleSearchBooksNotPrevent();
+    }, [sortCriteria]);
+    const handleSelectBookId = (id) => {
+        props.handleShowDetailBook();
+        props.setIdDetailBook(id);
     };
 
     return (

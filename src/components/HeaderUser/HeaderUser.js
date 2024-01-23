@@ -1,23 +1,14 @@
-import {
-    AppstoreOutlined,
-    MailOutlined,
-    SettingOutlined,
-} from "@ant-design/icons";
-import { Menu } from "antd";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Logo from "../../assets/logo.svg";
 import "./HeaderUser.scss";
 import { FaClipboardList } from "react-icons/fa";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
-import { IoNotifications } from "react-icons/io5";
+
 import { FloatButton } from "antd";
-import { FaListCheck } from "react-icons/fa6";
-import { useOutletContext } from "react-router-dom";
+
 const HeaderUser = (props) => {
     const navigate = useNavigate();
-    // const [avatar, setAvatar, role, userInfo] = useOutletContext();
-
     const [isShowHideUserInfo, setIsShowHideUserInfo] = useState(false);
     // Select menu
     const [isSelectedHome, setIsSelectedHome] = useState(false);

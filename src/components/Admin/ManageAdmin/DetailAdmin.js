@@ -7,113 +7,9 @@ import { useState, useEffect } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import "../SCSS/DetailAccount.scss";
 import Modal from "react-bootstrap/Modal";
-import { Table, Tag } from "antd";
-import { useOutletContext } from "react-router-dom";
-import userAvatar from "../../../assets/userAvatar.png";
-const columns = [
-    {
-        title: "No",
-        dataIndex: "no",
-        key: "no",
-    },
-    {
-        title: "Time",
-        dataIndex: "time",
-        key: "time",
-    },
-    {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        render: (_, { status }) => (
-            <>
-                {status.map((item) => {
-                    let color = "";
-                    if (item === "pending") {
-                        color = "geekblue";
-                    }
-                    if (item === "success") {
-                        color = "green";
-                    }
-                    if (item === "fail") {
-                        color = "volcano";
-                    }
 
-                    return (
-                        <Tag color={color} key={status}>
-                            {item.toUpperCase()}
-                        </Tag>
-                    );
-                })}
-            </>
-        ),
-    },
-    {
-        title: "Quantity",
-        key: "quantity",
-        dataIndex: "quantity",
-    },
-    {
-        title: "Action",
-        key: "action",
-        render: (record) => (
-            <span
-                style={{
-                    color: "black",
-                    backgroundColor: "#ffc008",
-                    marginLeft: "10px",
-                }}
-                className="btn"
-            >
-                Detail
-            </span>
-        ),
-    },
-];
-const data = [
-    {
-        no: 1,
-        time: "1/2/2024",
-        status: ["success"],
-        quantity: 4,
-    },
-    {
-        no: 2,
-        time: "1/2/2024",
-        status: ["pending"],
-        quantity: 4,
-    },
-    {
-        no: 3,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-    {
-        no: 4,
-        time: "1/2/2024",
-        status: ["success"],
-        quantity: 4,
-    },
-    {
-        no: 5,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-    {
-        no: 6,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-    {
-        no: 7,
-        time: "1/2/2024",
-        status: ["fail"],
-        quantity: 4,
-    },
-];
+import userAvatar from "../../../assets/userAvatar.png";
+
 const validateEmail = (email) => {
     return String(email)
         .toLowerCase()
@@ -125,7 +21,7 @@ const validateEmail = (email) => {
 const DetailAdmin = (props) => {
     const [defaultAvatar, setDefaultAvatar] = useState("");
     const [show, setShow] = useState(false);
-    const [adminId, setAdminId] = useState(props.idDetailAdmin);
+    const adminId = props.idDetailAdmin;
     const [adminInfor, setAdminInfor] = useState({
         email: "",
         username: "",
@@ -288,16 +184,7 @@ const DetailAdmin = (props) => {
                     />
                 </div>
             </div>
-            <div className="list-requests">
-                <label className="title">List of requests</label>
-                <Table
-                    columns={columns}
-                    dataSource={data}
-                    pagination={{
-                        pageSize: 3,
-                    }}
-                />
-            </div>
+
             <div className="modal-delete">
                 {/* Modal delete */}
                 <Modal

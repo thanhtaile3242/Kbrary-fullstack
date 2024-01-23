@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "../../utils/axiosCustomize.js";
-import { toast } from "react-toastify";
-import { DeleteOutlined } from "@ant-design/icons";
-import { IoIosAddCircle } from "react-icons/io";
 import "../../Admin/ManageBook/SCSS/CreateBook.scss";
 
 const DetailBookUser = (props) => {

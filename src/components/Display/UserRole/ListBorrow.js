@@ -1,30 +1,19 @@
 import {
-    MDBBtn,
     MDBCard,
     MDBCardBody,
-    MDBCardImage,
     MDBCol,
     MDBContainer,
     MDBIcon,
-    MDBInput,
     MDBRow,
     MDBTypography,
 } from "mdb-react-ui-kit";
-import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import React from "react";
-import { FaListCheck } from "react-icons/fa6";
-import { FloatButton } from "antd";
-import { ToastContainer, toast } from "react-toastify";
-import { MdLibraryBooks } from "react-icons/md";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../SCSS/ListBorrow.scss";
-import { FaClipboardList } from "react-icons/fa";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import axios from "../../utils/axiosCustomize.js";
 const ListBorrow = (props) => {
-    let listCurrent = useRef(props.listBorrowBook);
     const [avatar, setAvatar, role, setNumberBorrowBook, userInfo] =
         useOutletContext();
     const navigate = useNavigate();
@@ -119,17 +108,6 @@ const ListBorrow = (props) => {
                                                 You have {total} books in your
                                                 cart
                                             </p>
-                                            {/* <FloatButton
-                                                tooltip={
-                                                    <div>Detail borrow</div>
-                                                }
-                                                badge={{ count: total }}
-                                                className="icon-noti detail-borrow"
-                                                icon={<FaClipboardList />}
-                                                onClick={
-                                                    handleUpdatePendingRequest
-                                                }
-                                            /> */}
                                         </div>
                                         <div
                                             style={{
