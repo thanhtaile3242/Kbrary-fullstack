@@ -1,11 +1,11 @@
 import { useState } from "react";
-import FormSignIn from "../FormSignIn.js";
+import FormSignIn from "./FormSignIn.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../MainAuth.scss";
+import style from "../SCSS/MainSignIn.module.scss";
 import axios from "../../utils/axiosCustomize.js";
 import { toast } from "react-toastify";
-import HeaderAuth from "../HeaderAuth.js";
-import { useNavigate, Link } from "react-router-dom";
+import HeaderAuth from "../HeaderAuth/HeaderAuth.js";
+import { useNavigate } from "react-router-dom";
 const MainSignIn = () => {
     const navigate = useNavigate();
     // Sign In Component
@@ -38,16 +38,10 @@ const MainSignIn = () => {
         <>
             <div>
                 <HeaderAuth isSignUp={false} />
-                <div className="form-heading">
-                    <h2 style={{ margin: "0" }}>Welcome to Kmin library</h2>
+                <div className={style.form_heading}>
+                    <h2>Welcome to Kmin library</h2>
                 </div>
-                <div className="form-container" style={{ marginTop: "0" }}>
-                    <div
-                        className="step-sign-in"
-                        style={{ margin: "0", color: "white" }}
-                    >
-                        a
-                    </div>
+                <div className={style.form_container}>
                     <FormSignIn
                         signinName={signinName}
                         setSigninName={setSigninName}

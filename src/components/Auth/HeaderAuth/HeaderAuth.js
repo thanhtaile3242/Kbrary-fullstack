@@ -1,6 +1,6 @@
-import Logo from "../../assets/logo.svg";
+import Logo from "../../../assets/logo.svg";
 import { useNavigate, Link } from "react-router-dom";
-import "./HeaderAuth.scss";
+import "../SCSS/HeaderAuth.scss";
 const HeaderAuth = (props) => {
     const navigate = useNavigate();
     return (
@@ -48,8 +48,6 @@ const HeaderAuth = (props) => {
                         </div>
                     )}
                 </>
-
-                {/* <div className="auth-container-after">d</div> */}
             </div>
         </>
     );

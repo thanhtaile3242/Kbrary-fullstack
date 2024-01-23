@@ -3,14 +3,15 @@ import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
-import Spinner from "react-bootstrap/Spinner";
-function ResetPassword(props) {
+
+const ResetPassword = (props) => {
+    const style = props.style;
     return (
         <>
             <FloatingLabel
                 controlId="floatingInput"
                 label="New password"
-                className="mb-4 signin-input"
+                className={style.new_password}
             >
                 <Form.Control
                     type="text"
@@ -36,9 +37,8 @@ function ResetPassword(props) {
                 />
             </FloatingLabel>
 
-            <div className="btn-form">
+            <div className={style.btn_form}>
                 <span
-                    style={{ backgroundColor: "#ffc008", cursor: "pointer" }}
                     onClick={() => {
                         props.handleResetPassword();
                     }}
@@ -48,6 +48,6 @@ function ResetPassword(props) {
             </div>
         </>
     );
-}
+};
 
 export default ResetPassword;

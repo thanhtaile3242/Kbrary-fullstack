@@ -4,12 +4,13 @@ import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
 import { IoIosAlert } from "react-icons/io";
-import Spinner from "react-bootstrap/Spinner";
-function VerifyReset(props) {
+
+const VerifyReset = (props) => {
+    const style = props.style;
     return (
         <>
-            <div className="note-for-user">
-                <IoIosAlert className="note-icon" />
+            <div className={style.note_for_user}>
+                <IoIosAlert className={style.note_icon} />
                 <span>
                     "Use the 6-digit number sent to your email for verification
                     and reset your password."
@@ -29,10 +30,8 @@ function VerifyReset(props) {
                     }}
                 />
             </FloatingLabel>
-            <div className="btn-form">
+            <div className={style.btn_form}>
                 <span
-                    style={{ backgroundColor: "#ffc008" }}
-                    className="btn"
                     onClick={() => {
                         props.handleVerifyReset();
                     }}
@@ -42,6 +41,6 @@ function VerifyReset(props) {
             </div>
         </>
     );
-}
+};
 
 export default VerifyReset;

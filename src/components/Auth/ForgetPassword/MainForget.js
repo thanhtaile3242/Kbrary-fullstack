@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../MainAuth.scss";
+import style from "../SCSS/MainForget.module.scss";
 import ResetPassword from "./ResetPassword.js";
 import SendOTP from "./SendOTP.js";
 import VerifyReset from "./VerifyReset.js";
@@ -13,7 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Steps } from "antd";
 import { toast } from "react-toastify";
-import HeaderAuth from "../HeaderAuth.js";
+import HeaderAuth from "../HeaderAuth/HeaderAuth.js";
 const validateEmail = (email) => {
     return String(email)
         .toLowerCase()
@@ -101,11 +101,11 @@ const FormForget = () => {
         <>
             <div>
                 <HeaderAuth isSignUp={true} />
-                <div className="form-heading">
+                <div className={style.form_heading}>
                     <h2>Reset your password</h2>
                 </div>
-                <div className="form-container">
-                    <div className="step-sign-in">
+                <div className={style.form_container}>
+                    <div className={style.step_sign_in}>
                         <Steps
                             items={[
                                 {
@@ -131,12 +131,14 @@ const FormForget = () => {
                     {/* Component */}
                     {statusGetOTP && (
                         <SendOTP
+                            style={style}
                             setEmailSendOTP={setEmailSendOTP}
                             handleSendEmail={handleSendEmail}
                         />
                     )}
                     {statusVerify && (
                         <VerifyReset
+                            style={style}
                             setCodeResetPassword={setCodeResetPassword}
                             handleVerifyReset={handleVerifyReset}
                         />
@@ -144,6 +146,7 @@ const FormForget = () => {
 
                     {statusResetPassword && (
                         <ResetPassword
+                            style={style}
                             setNewPassword={setNewPassword}
                             setConfirmPassword={setConfirmPassword}
                             handleResetPassword={handleResetPassword}

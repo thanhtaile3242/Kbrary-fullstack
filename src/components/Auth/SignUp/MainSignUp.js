@@ -1,11 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FormSignUp from "./FormSignUp.js";
-import FormSignIn from "../FormSignIn.js";
+import FormSignIn from "../SignIn/FormSignIn.js";
 import FormVerifyEmail from "./VerifyEmail.js";
-import { useNavigate, Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "../MainAuth.scss";
-import axios from "../../utils/axiosCustomize.js";
+import HeaderAuth from "../HeaderAuth/HeaderAuth.js";
 import {
     SolutionOutlined,
     UserOutlined,
@@ -13,7 +11,10 @@ import {
 } from "@ant-design/icons";
 import { Steps } from "antd";
 import { toast } from "react-toastify";
-import HeaderAuth from "../HeaderAuth.js";
+import style from "../SCSS/MainSignUp.module.scss";
+import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "../../utils/axiosCustomize.js";
+
 const validateEmail = (email) => {
     return String(email)
         .toLowerCase()
@@ -123,11 +124,11 @@ const MainSignUp = () => {
         <>
             <div>
                 <HeaderAuth isSignUp={true} />
-                <div className="form-heading">
+                <div className={style.form_heading}>
                     <h2>Welcome to Kmin library </h2>
                 </div>
-                <div className="form-container">
-                    <div className="step-sign-in">
+                <div className={style.form_container}>
+                    <div className={style.step_sign_in}>
                         <Steps
                             items={[
                                 {
@@ -161,6 +162,7 @@ const MainSignUp = () => {
                     {/* Sign Up Component */}
                     {statusSignUp && (
                         <FormSignUp
+                            style={style}
                             email={email}
                             username={username}
                             password={password}
@@ -173,10 +175,11 @@ const MainSignUp = () => {
                     {/* Verify Email */}
                     {statusVerifyEmail && (
                         <FormVerifyEmail
+                            style={style}
                             setCodeEmail={setCodeEmail}
                             handleVerifyEmail={handleVerifyEmail}
-                            text={`Use the 6-digit number sent to your email for verification.
-                                If your email isn't valid, go back to Sign Up with a correct one`}
+                            text={`Use 6-digit number in your email for verification.
+                                If your email isn't valid, go back and give a correct one`}
                         />
                     )}
                     {/* Sign In Component */}

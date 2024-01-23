@@ -1,0 +1,43 @@
+.signin_input {
+    margin-top: 35px;
+    margin-bottom: 24px;
+}
+.password_input {
+    position: relative;
+    .eye_open {
+        font-size: 22px;
+        position: absolute;
+        top: 19px;
+        right: 25px;
+        cursor: pointer;
+    }
+}
+.forget_password {
+    margin-top: 10px;
+    span {
+        color: #4db9e6;
+        cursor: pointer;
+    }
+}
+.btn_form {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    left: 50%;
+    transform: translate(-50%);
+    position: absolute;
+    span {
+        letter-spacing: 1px;
+        border-radius: 10px;
+        text-align: center;
+        background-color: #ffc008;
+        padding: 10px;
+        font-size: 25px;
+        font-weight: 800;
+        width: 250px;
+        cursor: pointer;
+        &:hover {
+            background-color: #f1c646;
+        }
+    }
+}

@@ -3,9 +3,9 @@ import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
-import Spinner from "react-bootstrap/Spinner";
 
 const FormSignUp = (props) => {
+    const style = props.style;
     const [isShowHideEyePassword, setIsShowHideEyePassword] = useState(true);
     return (
         <>
@@ -40,7 +40,7 @@ const FormSignUp = (props) => {
             <FloatingLabel
                 controlId="floatingPassword"
                 label="Password"
-                className="password-input"
+                className={style.password_input}
             >
                 <Form.Control
                     type={isShowHideEyePassword ? "password" : "text"}
@@ -52,23 +52,22 @@ const FormSignUp = (props) => {
                 />
                 {isShowHideEyePassword ? (
                     <FaEyeSlash
-                        className="eye-open"
+                        className={style.eye_open}
                         onClick={() => {
                             setIsShowHideEyePassword(!isShowHideEyePassword);
                         }}
                     />
                 ) : (
                     <FaEye
-                        className="eye-open"
+                        className={style.eye_open}
                         onClick={() => {
                             setIsShowHideEyePassword(!isShowHideEyePassword);
                         }}
                     />
                 )}
             </FloatingLabel>
-            <div className="btn-form">
+            <div className={style.btn_form}>
                 <span
-                    className="btn"
                     onClick={() => {
                         props.handleSignUp();
                     }}

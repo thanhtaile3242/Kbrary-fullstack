@@ -1,5 +1,6 @@
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
+import style from "../SCSS/FormSignIn.module.scss";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
@@ -12,7 +13,7 @@ function FormSignIn(props) {
             <FloatingLabel
                 controlId="floatingInput"
                 label="Username"
-                className="mb-4 signin-input"
+                className={style.signin_input}
             >
                 <Form.Control
                     type="text"
@@ -26,7 +27,7 @@ function FormSignIn(props) {
             <FloatingLabel
                 controlId="floatingPassword"
                 label="Password"
-                className="password-input"
+                className={style.password_input}
             >
                 <Form.Control
                     type={isShowHideEyePassword ? "password" : "text"}
@@ -38,23 +39,22 @@ function FormSignIn(props) {
                 />
                 {isShowHideEyePassword ? (
                     <FaEyeSlash
-                        className="eye-open"
+                        className={style.eye_open}
                         onClick={() => {
                             setIsShowHideEyePassword(!isShowHideEyePassword);
                         }}
                     />
                 ) : (
                     <FaEye
-                        className="eye-open"
+                        className={style.eye_open}
                         onClick={() => {
                             setIsShowHideEyePassword(!isShowHideEyePassword);
                         }}
                     />
                 )}
             </FloatingLabel>
-            <div style={{ marginTop: "10px" }}>
+            <div className={style.forget_password}>
                 <span
-                    style={{ color: "#4db9e6", cursor: "pointer" }}
                     onClick={() => {
                         navigate("/forgetpassword");
                     }}
@@ -62,9 +62,8 @@ function FormSignIn(props) {
                     Forget password?
                 </span>
             </div>
-            <div className="btn-form">
+            <div className={style.btn_form}>
                 <span
-                    style={{ backgroundColor: "#ffc008", cursor: "pointer" }}
                     onClick={() => {
                         props.handleSignIn();
                     }}

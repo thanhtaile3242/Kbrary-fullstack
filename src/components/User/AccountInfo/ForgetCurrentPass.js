@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../Auth/MainAuth.scss";
+// import "../../Auth/MainAuth.scss";
 import "./User.scss";
 import {
     BellOutlined,

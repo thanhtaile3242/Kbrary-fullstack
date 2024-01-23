@@ -1,16 +1,15 @@
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa6";
 import { IoIosAlert } from "react-icons/io";
-import Spinner from "react-bootstrap/Spinner";
-function FormVerifyEmail(props) {
+
+const FormVerifyEmail = (props) => {
+    const style = props.style;
     const [isShowHideEyePassword, setIsShowHideEyePassword] = useState(true);
     return (
         <>
-            <div className="note-for-user">
-                <IoIosAlert className="note-icon" />
+            <div className={style.note_for_user}>
+                <IoIosAlert className={style.note_icon} />
                 <span>{props.text}</span>
             </div>
 
@@ -28,10 +27,8 @@ function FormVerifyEmail(props) {
                     }}
                 />
             </FloatingLabel>
-            <div className="btn-form">
+            <div className={style.btn_form_2}>
                 <span
-                    style={{ backgroundColor: "#ffc008" }}
-                    className="btn"
                     onClick={() => {
                         props.handleVerifyEmail();
                     }}
@@ -41,6 +38,6 @@ function FormVerifyEmail(props) {
             </div>
         </>
     );
-}
+};
 
 export default FormVerifyEmail;
