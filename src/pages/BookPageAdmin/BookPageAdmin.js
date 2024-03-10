@@ -3,6 +3,10 @@ import DisplayBooksAdmin from "../../components/Display/AdminRole/DisplayBooksAd
 import "./BookPage.scss";
 import { useState, useEffect } from "react";
 import axios from "../../components/utils/axiosCustomize.js";
+
+//
+
+//
 const BookPage = () => {
     const [listBook, setListBook] = useState([]);
     useEffect(() => {
@@ -16,6 +20,7 @@ const BookPage = () => {
         }
         fetchData();
     }, []);
+
     return (
         <>
             <div className="manage-container">

@@ -15,6 +15,14 @@ const list = [
         key: "2",
         label: "Done",
     },
+    {
+        key: "3",
+        label: "Borrowed",
+    },
+    {
+        key: "4",
+        label: "Received",
+    },
 ];
 const ListRequest = (props) => {
     const { handleShowDetailRequest, setIdDetailRequest } = props;
@@ -49,9 +57,18 @@ const ListRequest = (props) => {
         if (key == "1") {
             status = "INPROGRESS";
             setFilterField("INPROGRESS");
-        } else {
+        }
+        if (key == "2") {
             status = "DONE";
             setFilterField("DONE");
+        }
+        if (key == "3") {
+            status = "BORROWED";
+            setFilterField("BORROWED");
+        }
+        if (key == "4") {
+            status = "RECEIVED";
+            setFilterField("RECEIVED");
         }
         const queryParams = { status };
         const queryString = new URLSearchParams(queryParams).toString();
@@ -141,7 +158,7 @@ const ListRequest = (props) => {
                         title="Username"
                         render={(record) => (
                             <span className="detail-account">
-                                {record.userId.username}
+                                {record?.userId?.username}
                             </span>
                         )}
                     />
@@ -155,6 +172,12 @@ const ListRequest = (props) => {
                             }
                             if (record.status === "DONE") {
                                 color = "green";
+                            }
+                            if (record.status === "BORROWED") {
+                                color = "geekblue";
+                            }
+                            if (record.status === "RECEIVED") {
+                                color = "cyan";
                             }
                             return (
                                 <Tag

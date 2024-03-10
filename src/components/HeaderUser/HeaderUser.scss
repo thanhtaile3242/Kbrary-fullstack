@@ -8,10 +8,10 @@
 
     .menu-container {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-evenly;
+        gap: 120px;
         position: absolute;
         left: 390px;
-        width: 500px;
         top: 60px;
 
         .item {

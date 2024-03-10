@@ -15,7 +15,7 @@ instance.interceptors.request.use(
         // const access_token = store?.getState()?.user?.account?.access_token;
         // config.headers["Authorization"] = "Bearer " + access_token;
 
-        NProgress.start();
+        // NProgress.start();
         // Do something before request is sent
         return config;
     },
@@ -28,11 +28,11 @@ instance.interceptors.request.use(
 // Add a response interceptor
 instance.interceptors.response.use(
     function (response) {
-        NProgress.done();
+        // NProgress.done();
         return response && response.data ? response.data : response;
     },
     function (error) {
-        NProgress.done();
+        // NProgress.done();
         // if (error.response.data && error.response.data.EC === -999) {
         //     window.location.href = "/login";
         // }

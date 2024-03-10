@@ -67,31 +67,13 @@ const HeaderUser = (props) => {
                     >
                         Books
                     </span>
-                    <span
-                        className="item"
-                        className={
-                            isSelectedUser ? "item item-selected" : "item"
-                        }
-                        onClick={() => {
-                            handleSelectUser();
-                        }}
-                    >
-                        Profile
-                    </span>
                 </div>
                 {props.isLogIn ? (
                     <div
                         className="auth-container-after"
                         style={{ gap: "90px" }}
                     >
-                        <div className="alert circle">
-                            {/* <FloatButton
-                                tooltip={<div>custom badge color</div>}
-                                badge={{ count: 5, color: "blue" }}
-                                className="icon-noti"
-                                icon={<IoNotifications />}
-                            /> */}
-                        </div>
+                        <div className="alert circle"></div>
                         <div className="account circle">
                             {props.avatar ? (
                                 <img
@@ -116,7 +98,11 @@ const HeaderUser = (props) => {
 
                             {isShowHideUserInfo && (
                                 <ul class="account__list">
-                                    <li>
+                                    <li
+                                        onClick={() => {
+                                            handleSelectUser();
+                                        }}
+                                    >
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         <span>Profile</span>
                                     </li>

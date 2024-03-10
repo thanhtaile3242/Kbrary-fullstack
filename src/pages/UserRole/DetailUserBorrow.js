@@ -8,6 +8,7 @@ import {
     MDBTypography,
 } from "mdb-react-ui-kit";
 import React from "react";
+
 import { toast } from "react-toastify";
 import { DatePicker } from "antd";
 import moment from "moment";
@@ -44,18 +45,19 @@ const UserBorrow = (props) => {
     const [listBorrowBooks, setListBorrowBooks] = useState([]);
     //
 
+    //
     useEffect(() => {
         const listSave = JSON.parse(
             localStorage.getItem("pending-list-kbrary")
         );
-        if (listSave) {
+        listPending.current = listSave;
+        if (listSave?.length > 0) {
             setListBorrowBooks(listSave);
-        } else {
         }
         return () => {
             localStorage.setItem(
                 "pending-list-kbrary",
-                JSON.stringify(listPending.current)
+                JSON.stringify([...listPending.current])
             );
         };
     }, []);
@@ -178,7 +180,7 @@ const UserBorrow = (props) => {
                                                 paddingTop: "10px",
                                             }}
                                         >
-                                            {listBorrowBooks.map((book) => {
+                                            {listBorrowBooks?.map((book) => {
                                                 return (
                                                     <MDBCard className="mb-3">
                                                         <div
@@ -205,8 +207,10 @@ const UserBorrow = (props) => {
                                                                         "80px",
                                                                 }}
                                                             >
-                                                                <h5
+                                                                <div
                                                                     style={{
+                                                                        fontSize:
+                                                                            "22px",
                                                                         width: "260px",
                                                                         whiteSpace:
                                                                             "nowrap",
@@ -221,7 +225,7 @@ const UserBorrow = (props) => {
                                                                             ?.bookId
                                                                             ?.bookName
                                                                     }
-                                                                </h5>
+                                                                </div>
                                                                 <h6>
                                                                     <span
                                                                         style={{

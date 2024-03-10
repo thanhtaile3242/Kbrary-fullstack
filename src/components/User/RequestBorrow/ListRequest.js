@@ -3,7 +3,6 @@ import { Tabs } from "antd";
 import { Select } from "antd";
 import { useEffect, useState } from "react";
 import "./RequestUser.scss";
-
 import { useOutletContext } from "react-router-dom";
 import axios from "../../utils/axiosCustomize.js";
 const { Column } = Table;
@@ -16,6 +15,14 @@ const list = [
     {
         key: "2",
         label: "Done",
+    },
+    {
+        key: "3",
+        label: "Borrowed",
+    },
+    {
+        key: "4",
+        label: "Received",
     },
 ];
 const ListRequest = (props) => {
@@ -54,9 +61,18 @@ const ListRequest = (props) => {
         if (key == "1") {
             status = "INPROGRESS";
             setFilterField("INPROGRESS");
-        } else {
+        }
+        if (key == "2") {
             status = "DONE";
             setFilterField("DONE");
+        }
+        if (key == "3") {
+            status = "BORROWED";
+            setFilterField("BORROWED");
+        }
+        if (key == "4") {
+            status = "RECEIVED";
+            setFilterField("RECEIVED");
         }
         const queryParams = { status, userId: userInfo.userId };
         const queryString = new URLSearchParams(queryParams).toString();
@@ -159,6 +175,14 @@ const ListRequest = (props) => {
                             if (record.status === "DONE") {
                                 color = "green";
                                 text = "DONE";
+                            }
+                            if (record.status === "BORROWED") {
+                                color = "geekblue";
+                                text = "BORROWED";
+                            }
+                            if (record.status === "RECEIVED") {
+                                color = "geekblue";
+                                text = "RECEIVED";
                             }
                             return (
                                 <Tag

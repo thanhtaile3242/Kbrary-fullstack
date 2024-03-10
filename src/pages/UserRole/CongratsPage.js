@@ -1,4 +1,4 @@
-import MainImage from "../../assets/congrats.svg";
+import MainImage from "../../assets/congrats.png";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 const CongratsPage = () => {

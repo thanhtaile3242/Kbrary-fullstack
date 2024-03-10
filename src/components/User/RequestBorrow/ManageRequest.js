@@ -1,8 +1,7 @@
 import { useState } from "react";
 import "./RequestUser.scss";
 import ListRequest from "./ListRequest.js";
-import DetailRequestUser from "./DetailRequestUser.js";
-
+import DetailRequestUser2 from "./DetailRequestUser2.js";
 const ManageRequest = (props) => {
     const [showListRequest, setShowListRequest] = useState(true);
     const [showDetailRequest, setShowDetailRequest] = useState(false);
@@ -26,7 +25,7 @@ const ManageRequest = (props) => {
                     />
                 )}
                 {showDetailRequest && (
-                    <DetailRequestUser
+                    <DetailRequestUser2
                         idDetailRequest={idDetailRequest}
                         handleShowListRequest={handleShowListRequest}
                     />

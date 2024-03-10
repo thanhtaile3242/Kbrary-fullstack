@@ -117,12 +117,14 @@ const DetailBookUser = (props) => {
                         >
                             Back
                         </span>
-                        <span
-                            className="btn btn-primary"
-                            onClick={handleAddBook2}
-                        >
-                            Borrow book
-                        </span>
+                        {status == "AVAILABLE" && (
+                            <span
+                                className="btn btn-primary"
+                                onClick={handleAddBook2}
+                            >
+                                Borrow book
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>
