@@ -119,8 +119,8 @@ export const findBooksControllerDisplay = async (req, res) => {
             searchBook: { $regex: new RegExp(keyword, "i") },
             status,
             category,
-            quantitySystem: { $ne: 0 },
-            status: "AVAILABLE",
+            // quantitySystem: { $ne: 0 },
+            // status: "AVAILABLE",
         };
 
         if (!validBookName) {

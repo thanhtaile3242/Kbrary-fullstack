@@ -68,12 +68,15 @@ const userRequestSchema = new mongoose.Schema(
         status: {
             type: String,
             required: true,
-            enum: ["DONE", "INPROGRESS"],
+            enum: ["DONE", "INPROGRESS", "BORROWED", "RECEIVED"],
         },
         isProgressing: {
             type: Boolean,
             default: false,
-            required: false,
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
         },
     },
     {

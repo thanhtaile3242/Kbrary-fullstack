@@ -1,6 +1,5 @@
 import express from "express";
 const router = express.Router();
-
 import {
     createUserRequestController,
     getDetailRequestController,
@@ -10,6 +9,10 @@ import {
     updateRequestControllerUser,
     deleteRequestController,
     sendEmailRequestController,
+    updateFromUserController,
+    lockFromUserController,
+    updateBorrowController,
+    completeReceiveRequestController,
 } from "../controllers/userRequestControllers.js";
 // Create a request of user
 router.post("/create", createUserRequestController);
@@ -24,4 +27,15 @@ router.put("/update/userrole", updateRequestControllerUser);
 router.delete("/deleteRequest/:id", deleteRequestController);
 // Send Email to user
 router.post("/sendEmailRequest", sendEmailRequestController);
+// Update user request (Role: User)
+router.put("/updateFromUser", updateFromUserController);
+// Lock request by User (Role: User)
+router.put("/lockFromUser", lockFromUserController);
+// Update request status (role: Admin)
+router.put("/updateStatus", updateBorrowController);
+// Update receive request and quantity of books (role: Admin)
+router.put("/completeReceiveRequest", completeReceiveRequestController);
+// Delete request (role: Admin)
+router.put("/deleteRequest", deleteRequestController);
+
 export default router;

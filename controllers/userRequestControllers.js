@@ -104,7 +104,6 @@ export const getDetailRequestController = async (req, res) => {
         return res.status(500).json({ status: false, message: error.message });
     }
 };
-
 // Find requests
 export const findRequestController = async (req, res) => {
     try {
@@ -122,6 +121,7 @@ export const findRequestController = async (req, res) => {
         const criteria = {
             status,
             userId,
+            isDeleted: false,
         };
         if (!userId) {
             delete criteria.userId;
@@ -292,23 +292,23 @@ export const updateRequestControllerUser = async (req, res) => {
     }
 };
 // Delete request - User role
-export const deleteRequestController = async (req, res) => {
-    try {
-        const { id } = req.params;
+// export const deleteRequestController = async (req, res) => {
+//     try {
+//         const { id } = req.params;
 
-        await userRequest.findByIdAndDelete({ _id: id });
-        return res.status(200).json({
-            status: true,
-            message: "Delete request succcessfully",
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(400).json({
-            status: false,
-            message: error.message,
-        });
-    }
-};
+//         await userRequest.findByIdAndDelete({ _id: id });
+//         return res.status(200).json({
+//             status: true,
+//             message: "Delete request succcessfully",
+//         });
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(400).json({
+//             status: false,
+//             message: error.message,
+//         });
+//     }
+// };
 // Send email controller
 export const sendEmailRequestController = async (req, res) => {
     try {
@@ -338,6 +338,216 @@ export const sendEmailRequestController = async (req, res) => {
         return res.status(400).json({
             status: false,
             message: "User not found",
+        });
+    }
+};
+//
+export const updateFromUserController = async (req, res) => {
+    const newListBook = req.body.listBorrowBooks;
+    newListBook.forEach((book) => {
+        book.bookId = book.bookId._id;
+    });
+    const newRequestInfor = req.body.requestInfor;
+    const requestId = req.body.requestId;
+    try {
+        const result = await userRequest.findByIdAndUpdate(
+            { _id: requestId },
+            {
+                $set: {
+                    requestInfor: newRequestInfor,
+                    listBorrowBooks: newListBook,
+                },
+            },
+            { new: true }
+        );
+        if (result) {
+            const result2 = await userRequest
+                .findById(requestId)
+                .populate("userId", "email")
+                .populate({
+                    path: "listBorrowBooks.bookId",
+                    populate: {
+                        path: "category",
+                        model: "category",
+                        select: "categoryName -_id",
+                    },
+                    select: "bookName category imageName quantitySystem",
+                });
+
+            return res.status(200).json({
+                status: true,
+                message: "Update request succcessfully",
+                data: result2,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+// lock
+export const lockFromUserController = async (req, res) => {
+    try {
+        await userRequest.findByIdAndUpdate(
+            { _id: req.body?.requestId },
+            {
+                $set: {
+                    isProgressing: req.body?.isProgressing,
+                },
+            },
+            { new: true }
+        );
+        return res.status(400).json({
+            status: true,
+            message: "request is look",
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+// update borrow
+export const updateBorrowController = async (req, res) => {
+    const { idRequest, status } = req.body;
+
+    try {
+        const result = await userRequest.findByIdAndUpdate(
+            { _id: idRequest },
+            {
+                $set: {
+                    status: status,
+                },
+            },
+            { new: true }
+        );
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Update request succcessfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Can not update request",
+                data: null,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+// Complete request
+export const completeReceiveRequestController = async (req, res) => {
+    const { idRequest, status } = req.body;
+    try {
+        const result1 = await userRequest.findById(idRequest);
+        const listBorrowBooks = [...result1.listBorrowBooks];
+        listBorrowBooks.forEach(async (book) => {
+            const idBook = book.bookId;
+            const quantityAllow = book.quantityAllow;
+            const result = await Book.findById(idBook);
+            const quantitySystem = result.quantitySystem;
+            await Book.findByIdAndUpdate(
+                { _id: idBook },
+                {
+                    $set: {
+                        quantitySystem: quantitySystem + quantityAllow,
+                    },
+                },
+                { new: true }
+            );
+        });
+        const result = await userRequest.findByIdAndUpdate(
+            { _id: idRequest },
+            {
+                $set: {
+                    status: status,
+                },
+            },
+            { new: true }
+        );
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Receive request succcessfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Can not receive request",
+                data: null,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
+// Delete request
+export const deleteRequestController = async (req, res) => {
+    const { idRequest, isDeleted } = req.body;
+    try {
+        //
+        const result1 = await userRequest.findById(idRequest);
+        const listBorrowBooks = [...result1.listBorrowBooks];
+        listBorrowBooks.forEach(async (book) => {
+            const idBook = book.bookId;
+            const quantityAllow = book.quantityAllow;
+            const result = await Book.findById(idBook);
+            const quantitySystem = result.quantitySystem;
+            await Book.findByIdAndUpdate(
+                { _id: idBook },
+                {
+                    $set: {
+                        quantitySystem: quantitySystem + quantityAllow,
+                    },
+                },
+                { new: true }
+            );
+        });
+        const result = await userRequest.findByIdAndUpdate(
+            { _id: idRequest },
+            {
+                $set: {
+                    isDeleted: isDeleted,
+                },
+            },
+            { new: true }
+        );
+        //
+        if (result) {
+            return res.status(200).json({
+                status: true,
+                message: "Delete request succcessfully",
+                data: result,
+            });
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Can not delete request",
+                data: null,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: false,
+            message: error.message,
         });
     }
 };
